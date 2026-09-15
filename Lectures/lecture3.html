@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Lecture 3</title>
+
+  <!-- Style global (identique Lecture 1) -->
+  <style>
+    :root{
+      --main:#14558c;
+      --accent:#f0be3c;
+      --soft:#e8f4fc;
+      --ink:#1d1f21;
+      --paper:#ffffff;
+      --muted:#aab2b9;
+      --green:#007d55;
+      --violet:#ba9beb;
+      --claim:#e11f32;
+    }
+
+    html,body{
+      margin:0; padding:0;
+      font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+      color:var(--ink);
+    }
+
+    .wrap{
+      max-width:900px;
+      margin:2rem auto;
+      padding:2rem;
+      background: rgba(255, 255, 255, 0.50);
+      border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+    }
+
+    h1,h2{ color:var(--main); line-height:1.2; }
+    h1{ font-size:2.1rem; margin:0 0 1.2rem 0; }
+    h2{ font-size:1.35rem; margin:1.8rem 0 .7rem; }
+
+    .box{
+      border:1px solid var(--muted);
+      border-left:6px solid var(--main);
+      border-radius:10px;
+      padding:1rem 1.1rem;
+      margin:1rem 0;
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .box .title{ font-weight:800; margin:0 0 .4rem 0; }
+
+    .illustration{
+      border-color:var(--violet);
+      border-left-color:var(--violet);
+      background: rgba(222, 206, 246, 0.12);
+    }
+
+    .keyq{
+      border-color:#6da7d6;
+      border-left-color:var(--main);
+      background: rgba(109, 167, 214, 0.15);
+    }
+
+    .definition{
+      border-color:#d6a531;
+      border-left-color:#d6a531;
+      background: rgba(240, 190, 60, 0.15);
+    }
+
+    .remark{
+      border-color:#999;
+      border-left-color:#999;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .lemma{
+      border-color:var(--claim);
+      border-left-color:var(--claim);
+      background: rgba(140, 47, 57, 0.09);
+    }
+
+    .math{ text-align:center; margin:.8rem 0; }
+
+    ul, ol{ padding-left: 1.3rem; }
+    li{ margin: 0.4rem 0; }
+
+    svg{ display:block; margin:1.5rem auto; }
+
+    /* Ordered list style (a), (b), ... */
+    .alpha-paren{
+      list-style-type: lower-alpha;
+    }
+    .alpha-paren > li::marker{
+      content: "(" counter(list-item, lower-alpha) ") ";
+    }
+
+    /* Liste (a'), (b'), ... */
+    .alpha-prime{
+      list-style-type: lower-alpha;
+    }
+    .alpha-prime > li::marker{
+      content: "(" counter(list-item, lower-alpha) "'" ") ";
+    }
+
+    @media print{
+      @page{ size:A4; margin:15mm 20mm; }
+      body{ background:#fff; }
+      .wrap{
+        box-shadow:none;
+        background:#fff;
+        max-width:none;
+        margin:0;
+        padding:0;
+        backdrop-filter:none;
+      }
+      .box, svg, .math{ break-inside:avoid; page-break-inside:avoid; }
+      h1,h2{ break-after:avoid; page-break-after:avoid; }
+      .box{ margin:1.6rem 0; }
+      p{ margin:1rem 0; }
+      *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+
+  <!-- MathJax -->
+  <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Lecture 3 : dimension and linear independence</h1>
+In the last lecture, we studied basic constructions with vector subspaces, including the span of a family of vectors. In this lecture, we use the latter in order to introduce the notion of finite dimensional vector space. This naturally leads us to linear independence of vectors.
+
+<h2> Dimension </h2>
+  <div class="box definition">
+    <div class="title">Definition</div>
+    <p>Let \(E\) be a \(\mathbb K\)-vector space. We say that \(E\) is <em>finite dimensional</em> if there exists a finite set of vectors \(e_1,\dots,e_n\) such that \(E=\langle e_1,\dots,e_n\rangle\). In this case, we define</p>
+    \[
+      \dim E=\min\{\,\#A \mid A\subset E \text{ finite and } E=\langle A\rangle \,\}.
+    \]
+    Otherwise, \(E\) is <em>infinite dimensional</em> and we write \(\dim E=+\infty\).</p>
+   </div>
+   <div class="box notation">
+    <div class="title">Convention/Fact</div>
+    <ul>
+      <li>If \(E=\{0\}\), then \(E=\langle\varnothing\rangle\) and \(\dim E=0\).</li>
+      <li>Conversely, if \(\dim E=0\), then \(E=\{0\}\).</li>
+    </ul>
+   </div>
+   <div class="box illustration">
+    <div class="title">Examples</div>
+    <ol>
+      <li>\(\mathbb{R}^2=\langle (1,0),(0,1)\rangle\), hence \(\dim\mathbb{R}^2\le 2\). Since \(\mathbb{R}^2\ne\{0\}\), we get \(\dim\mathbb{R}^2\ge1\). It cannot be \(1\). Otherwise \(\mathbb{R}^2=\langle e\rangle\), which would imply that for some \(\lambda,\mu\in\mathbb{R}\setminus\lbrace 0\rbrace\) we would have
+      \[
+      		(1,0)=\lambda e,\quad (0,1)=\mu e.
+	\]
+	From this it follows that
+	\[
+		(1,0)=\frac{\lambda}{\mu}(0,1),
+	\]	
+	which is absurd. Thus \(\dim\mathbb{R}^2=2\).</li>
+	  <li>\(\mathbb K[X]\) is infinite dimensional. Indeed, assume for contradiction that \(\mathbb K[X]=\langle P_1,\dots,P_n\rangle\) for some polynomials $P_1,\ldots,P_n$. There exists an integer $d\geq 0$ such that \(\deg P_i < d\) for all the $P_{i}$. Then \(X^d\) can not be written as \(\lambda_1 P_1+\cdots+\lambda_n P_n \), since in this expression all the monomials have degree strictly less than $d$. </li>
+    </ol>
+  </div>
+
+<h2> Linear independence </h2>
+  <div class="box definition">
+    <div class="title">Definition</div>
+    <p>Let $E$ be a vector space and \(u_1,\dots,u_n\in E\). We say that these vectors are <em>linearly independent</em> if
+      \[
+        \lambda_1u_1+\cdots+\lambda_nu_n=0 \ \Rightarrow\ \lambda_1=\cdots=\lambda_n=0
+      \]
+      for \(\lambda_i\in\mathbb K\). More generally, a family \((u_i)_{i\in I}\) is linearly independent if every finite subfamily is linearly independent.</p>
+</div>
+<div class="box remark">
+	<div class="title"> Remark </div>
+	<p> A vector $u\in E$ is linearly independent if, and only if, $u\neq 0$.</p>
+</div>
+   <div class="box illustration">
+    <div class="title">Pictures</div>
+    <div class="math"><em>\(\mathbb{R}^2\): two non-collinear vectors are linearly independent.</em></div>
+
+    <!-- R^2 picture -->
+    <svg viewBox="0 0 220 160" width="260" height="190" aria-label="LI in R2">
+      <!-- axes -->
+      <line x1="20" y1="140" x2="200" y2="140" stroke="#14558c" stroke-width="1"/>
+      <line x1="20" y1="140" x2="20"  y2="20"  stroke="#14558c" stroke-width="1"/>
+      <!-- vectors -->
+      <defs>
+        <marker id="arrow-red" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#e63946"></path>
+        </marker>
+        <marker id="arrow-yellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#f0be3c"></path>
+        </marker>
+      </defs>
+      <line x1="20" y1="140" x2="120" y2="90" stroke="#e63946" stroke-width="2" marker-end="url(#arrow-red)"/>
+      <line x1="20" y1="140" x2="80"  y2="40" stroke="#f0be3c" stroke-width="2"
+            marker-end="url(#arrow-yellow)"/>
+    </svg>
+
+    <div class="math"><em>\(\mathbb{R}^3\): three vectors are linearly independent if no two are collinear and they are not contained in the same plane.</em></div>
+
+    <!-- R^3 schematic -->
+    <svg viewBox="0 0 260 200" width="300" height="220" aria-label="LI in R3">
+   
+      <!-- axes -->
+      <line x1="60" y1="160" x2="220" y2="160" stroke="#14558c" stroke-width="1"/>
+      <line x1="60" y1="160" x2="60"  y2="40"  stroke="#14558c" stroke-width="1"/>
+      <line x1="60" y1="160" x2="30"  y2="190" stroke="#14558c" stroke-width="1"/>
+      <!-- vectors -->
+      <defs>
+        <marker id="arrow3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#e63946"></path>
+        </marker>
+        <marker id="arrow4" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#f0be3c"></path>
+        </marker>
+        <marker id="arrow5" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#2a9d8f"></path>
+        </marker>
+      </defs>
+      <line x1="60" y1="160" x2="150" y2="120" stroke="#e63946" stroke-width="2" marker-end="url(#arrow3)"/>
+      <line x1="60" y1="160" x2="90"  y2="60"  stroke="#f0be3c" stroke-width="2"  marker-end="url(#arrow4)"/>
+      <line x1="60" y1="160" x2="40"  y2="120" stroke="#2a9d8f" stroke-width="2"  marker-end="url(#arrow5)"/>
+    </svg>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma</div>
+    <p>Let \(E\) be a \(\mathbb K\)-vector space and \(u_1,\dots,u_n\in E\). The following are equivalent:</p>
+    <ol class="alpha-paren">
+      <li>\(u_1,\dots,u_n\) are linearly independent.</li>
+      <li>Every \(u\in\langle u_1,\dots,u_n\rangle\) has a <em>unique</em> representation
+        \(u=\lambda_1u_1+\cdots+\lambda_nu_n\) with \(\lambda_i\in\mathbb K\).</li>
+    </ol>
+
+    <div class="title">Proof</div>
+    <p>(a)\(\Rightarrow\)(b): If \(u=\mu_1u_1+\cdots+\mu_nu_n=\lambda_1u_1+\cdots+\lambda_nu_n\), subtract and use (a) to get \(\mu_i=\lambda_i\) for all \(i\).</p>
+    <p>(b)\(\Rightarrow\)(a): If \(\lambda_1u_1+\cdots+\lambda_nu_n=0\), compare with the trivial representation \(0=0\cdot u_1+\cdots+0\cdot u_n\) and use uniqueness.</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Examples</div>
+    <ol>
+      <li> In $\mathbb{K}^{n}$, the vectors $(1,0,\ldots, 0), (0,1,0,\ldots,0),\ldots, (0,0,\ldots, 1)$ are linearly independent.</li>
+      <li>In \(\mathbb K[X]\), the polynomials \(1,X,X^2,\dots\) are linearly independent.</li>
+      <li>Let \(E=\mathcal{F}(\mathbb{R},\mathbb{R})=\{f:\mathbb{R}\to\mathbb{R}\}\) the space of functions on $\mathbb{R}$ with real values. For \(\lambda\in\mathbb{R}\), set \(f_\lambda(x)=e^{\lambda x}\).
+          The family \(\{f_\lambda\}_{\lambda\in\mathbb{R}}\) is linearly independent. Indeed, suppose that for some distinct real numbers $\lambda_{1},\ldots,\lambda_{n}$ there exists a relationship
+           \[
+           	\alpha_1 e^{\lambda_1 x}+\cdots +\alpha_{n} e^{\lambda_n x}=0,\quad\text{for all }x\in\mathbb{R}.
+	\]
+	Without loss of generality we may assume \(\lambda_1<\cdots<\lambda_n\). Then, dividing by \(e^{\lambda_n x}\) we obtain
+	\[
+           	\alpha_1 e^{(\lambda_1-\lambda_n ) x}+\cdots +\alpha_{n-1} e^{(\lambda_{n-1}-\lambda_{n}) x}+\alpha_{n}=0,\quad\text{for all }x\in\mathbb{R}.
+	\]
+	We let $x\to+\infty$, and because $\lambda_{i}-\lambda_{n}<0$ for all $i\leq n-1$, we get \(\alpha_n=0\). Iterating this reasoning we see that all the coefficients $\alpha_{i}$ vanish. </li>
+    </ol>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma</div>
+    <p>If \(A=\{u_i\}_{i\in I}\) is linearly independent and \(B=\{u_j\}_{j\in J}\subset A\) is a subfamily \((J\subset I\)), then \(B\) is linearly independent.</p>
+     <div class="title">Proof</div>
+     <p> Immediate by restriction to finite subfamilies.</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Proposition</div>
+    <p>Let \(E\) be a finite dimensional \(\mathbb K\)-vector space and suppose \(\dim E=n\).
+       If \(E=\langle e_1,\dots,e_n\rangle\), then the vectors \(e_1,\dots,e_n\) are linearly independent.</p>
+<div class="title">Proof</div>
+	<p>Suppose for contradiction that the vectors are not linearly independent. Then, there exists a non-trivial linear relationship
+	\[
+		\lambda_{1}e_{1}+\ldots+\lambda_{n}e_{n}=0.
+	\]
+	Here, non-trivial means that some of the coefficients $\lambda_{i}$ is not zero. Without loss of generality we may assume that $\lambda_{1}\neq 0$. Then, rearranging we find
+	\[
+		e_{1}=-\frac{\lambda_{2}}{\lambda_{1}}e_{2}-\cdots-\frac{\lambda_{n}}{\lambda_{1}}e_{n}.
+	\]
+	This means that $e_{1}$ can be disregarded in the span $\langle e_{1},\ldots,e_{n}\rangle$, since it can be obtained as a combination of the other vectors. Therefore, we see that $E=\langle e_{2},\ldots, e_{n}\rangle$, which in turn entails that $\dim E\leq n-1$, contradicting $\dim E=n$.
+	 </p>
+	   </div>
+	   <h2> Linear dependence </h2>
+	   <div class="box definition">
+	   	<div class="title" > Definition </div>
+		<p> We say that a collection of vectors $u_{1},\ldots, u_{n}$ in a vector space is <em> linearly dependent</em> if it is not linearly independent. Namely, there exist a non-trivial relationship
+		\[
+			\lambda_{1}u_{1}+\cdots+\lambda_{n}u_{n}=0.
+		\]
+		We similarly define linear dependence of an arbitrary family of vectors, possibly infinite. </p>
+	   </div>
+	    
+	 <div class="box lemma">
+    		<div class="title">Lemma</div>
+	<p> A family $u_{1},\ldots, u_{n}$ is linearly dependent if, and only if, for some $i\in\lbrace 1,\ldots,n\rbrace$ we have
+		\[
+			\langle u_{1},\ldots,u_{i-1},u_{i+1},\ldots, u_{n}\rangle=\langle u_{1},\ldots, u_{n}\rangle.
+		\]
+		That is, we can disregard some vector without changing the span.
+	</p>
+	<div class="title"> Proof </div>
+	<p>Similar to the previous proposition.</p>
+	</div>
+</div>
+
+<!-- MathJax end -->
+</body>
+</html>

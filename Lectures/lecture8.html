@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Lecture 8</title>
+
+  <!-- Style global (identique Lecture 1) -->
+  <style>
+    :root{
+      --main:#14558c;
+      --accent:#f0be3c;
+      --soft:#e8f4fc;
+      --ink:#1d1f21;
+      --paper:#ffffff;
+      --muted:#aab2b9;
+      --green:#007d55;
+      --violet:#ba9beb;
+      --claim:#e11f32;
+    }
+
+    html,body{
+      margin:0; padding:0;
+      font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+      color:var(--ink);
+    }
+
+    .wrap{
+      max-width:900px;
+      margin:2rem auto;
+      padding:2rem;
+      background: rgba(255, 255, 255, 0.50);
+      border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.08);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
+    }
+
+    h1,h2{ color:var(--main); line-height:1.2; }
+    h1{ font-size:2.1rem; margin:0 0 1.2rem 0; }
+    h2{ font-size:1.35rem; margin:1.8rem 0 .7rem; }
+
+    .box{
+      border:1px solid var(--muted);
+      border-left:6px solid var(--main);
+      border-radius:10px;
+      padding:1rem 1.1rem;
+      margin:1rem 0;
+      background: rgba(255, 255, 255, 0.85);
+    }
+    .box .title{ font-weight:800; margin:0 0 .4rem 0; }
+
+    .illustration{
+      border-color:var(--violet);
+      border-left-color:var(--violet);
+      background: rgba(222, 206, 246, 0.12);
+    }
+
+    .keyq{
+      border-color:#6da7d6;
+      border-left-color:var(--main);
+      background: rgba(109, 167, 214, 0.15);
+    }
+
+    .definition{
+      border-color:#d6a531;
+      border-left-color:#d6a531;
+      background: rgba(240, 190, 60, 0.15);
+    }
+
+    .remark{
+      border-color:#999;
+      border-left-color:#999;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .lemma{
+      border-color:var(--claim);
+      border-left-color:var(--claim);
+      background: rgba(140, 47, 57, 0.09);
+    }
+
+    .math{ text-align:center; margin:.8rem 0; }
+
+    ul, ol{ padding-left: 1.3rem; }
+    li{ margin: 0.4rem 0; }
+
+    svg{ display:block; margin:1.5rem auto; }
+
+    /* Ordered list style (a), (b), ... */
+    .alpha-paren{
+      list-style-type: lower-alpha;
+    }
+    .alpha-paren > li::marker{
+      content: "(" counter(list-item, lower-alpha) ") ";
+    }
+
+    /* Liste (a'), (b'), ... */
+    .alpha-prime{
+      list-style-type: lower-alpha;
+    }
+    .alpha-prime > li::marker{
+      content: "(" counter(list-item, lower-alpha) "'" ") ";
+    }
+
+    @media print{
+      @page{ size:A4; margin:15mm 20mm; }
+      body{ background:#fff; }
+      .wrap{
+        box-shadow:none;
+        background:#fff;
+        max-width:none;
+        margin:0;
+        padding:0;
+        backdrop-filter:none;
+      }
+      .box, svg, .math{ break-inside:avoid; page-break-inside:avoid; }
+      h1,h2{ break-after:avoid; page-break-after:avoid; }
+      .box{ margin:1.6rem 0; }
+      p{ margin:1rem 0; }
+      *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+
+  <!-- MathJax -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Lecture 8 : spaces of linear maps and matrices</h1>
+ <h2> Spaces of linear maps and matrices </h2>
+  <p> Let $E$ and $F$ be vector spaces over $\mathbb{K}$. We assume in this lecture that these are finite dimensional. We saw in <b> Lecture 6</b> that the space of linear maps from $E$ to $F$, denoted by $\mathcal{L}(E,F)$ or $\mathrm{Hom}_{\mathbb{K}}(E,F)$, is naturally a vector space over $\mathbb{K}$: the vector space structure of $F$ induces a vector space structure on $\mathcal{L}(E,F)$.  </p> 
+  
+  <div class="box keyq">
+  <div class="title">Construction </div>
+ <p>  Let $e_{1},\ldots, e_{n}$ be a basis of $E$ and $u_{1},\ldots, u_{m}$ be a basis of $F$. Then, by <b> Lecture 6 </b> there exist unique linear maps</p>
+  <div class="math">
+  \[	
+	\varphi\colon E\to\mathbb{K}^{n}\quad\text{and}\quad \psi\colon F\to\mathbb{K}^{m},
+\]
+  </div>
+<p>   characterized by sending the $i$-th basis vector to the $i$-th standard basis element. Moreover, these are necessarily bijective. Therefore, given a linear map $f\colon E\to F$, we can construct a new linear map $\mathbb{K}^{n}\to\mathbb{K}^{m}$ by</p>
+  <div class="math">
+  \[
+  	\mathbb{K}^{n}\overset{\varphi^{-1}}{\longrightarrow} E\overset{f}{\longrightarrow} F\overset{\psi}{\longrightarrow}\mathbb{K}^{m},
+  \]
+ 
+  </div>
+ <p>  namely $\varphi^{-1}\circ f\circ \psi$. Conversely, given a linear map $g\colon\mathbb{K}^{n}\to\mathbb{K}^{m}$, we can form</p>
+ <div class="math">
+ \[
+ 	E\overset{\varphi}{\longrightarrow} \mathbb{K}^{n}\overset{g}{\longrightarrow} \mathbb{K}^{m}\overset{\psi^{-1}}{\longrightarrow} F.
+ \]
+ </div>
+  </div>
+  
+  <div class="box lemma">
+  <div class="title">Proposition  </div>
+  <p>With the notation as above, there is an isomorphism of $\mathbb{K}$-vector spaces </p>
+  <div class="math">
+  \begin{equation*}
+  	\begin{split}
+		\mathcal{L}(E,F)&\longrightarrow\mathcal{L}(\mathbb{K}^{n},\mathbb{K}^{m})\\
+		f &\longmapsto \psi\circ f\circ \varphi^{-1},
+	\end{split}
+  \end{equation*}
+  </div>
+  <p> with inverse </p>
+  <div class="math">
+  \begin{equation*}
+  	\begin{split}
+		\mathcal{L}(\mathbb{K}^{n},\mathbb{K}^{m})&\longrightarrow\mathcal{L}(E,F)\\
+		g &\longmapsto \psi^{-1}\circ g\circ \varphi.
+	\end{split}
+  \end{equation*}
+  </div>
+  <div class="title">Proof </div>
+ The constructions are clearly inverse to each other, and easily seen to be linear in $f$ and $g$.
+  </div>
+  <p> We next consider the relationship with the formalism of matrices.</p>
+  
+  <div class="box illustration"> 
+  <div class="title"> Definition/Notation </div>
+  <p> We denote by $M_{mn}(\mathbb{K})$ the set of matrices with $m$ rows and $n$ columns (resp. $M_{m}(\mathbb{K})$ if $m=n$). It is seen as a vector space over $\mathbb{K}$, with componentwise addition and multiplication by scalars.</p>
+  
+ <p> The zero matrix, denoted by $0$, is the matrix all of whose entries are $0$.</p>
+ 
+ <p> The identity matrix of size $m$ is the matrix $I_{m}$ with $1$ on the diagonal and $0$ otherewise. It is sometimes more simply denoted by $1_{m}$ or $1$. </p>
+  </div>
+  
+  <div class="box lemma">
+  <div class="title"> Proposition </div>
+ <p> For a matrix $A\in M_{mn}(\mathbb{K})$, denote by $f_{A}\colon \mathbb{K}^{n}\to\mathbb{K}^{m}$ denote the associated linear map. The, there is a bijective linear map</p>
+  <div calss="math"> 
+\begin{equation*}
+	\begin{split}
+		M_{mn}(\mathbb{K})&\longrightarrow \mathcal{L}(\mathbb{K}^{n},\mathbb{K}^{m})\\
+		A &\longmapsto f_{A},
+	\end{split}
+\end{equation*}  
+  </div>
+  <p> with inverse given </p>
+   <div calss="math"> 
+\begin{equation*}
+	 \begin{split}
+		 \mathcal{L}(\mathbb{K}^{n},\mathbb{K}^{m}) &\longrightarrow M_{mn}(\mathbb{K})\\
+		f &\longmapsto A_{f}
+	\end{split}
+\end{equation*}  
+  </div>
+  <p> where $A_{f}=(f(e_{1})\ \cdots \ f(e_{n})$ is the matrix obtained from the column vectors $f(e_{i})$, image of the standard basis vectors $e_{i}$ under $f$. </p>
+  <div class="title"> Proof </div>
+ <p> Both constructions are linear. For instance, the characterization of the construction $A\mapsto f_{A}$ readily implies the linearity in $A$. For $f\mapsto A_{f}$, this is apparent from the very definition. They are easily seen to be mutual inverse constructions. </p>
+  </div>
+  
+  Combining the previous results, we derive:
+  <div class="box lemma"> 
+  <div class="title"> Corollary </div>
+  <p> Let $E$, $F$ be finite dimensional vector spaces over $\mathbb{K}$. Fix bases $e_{1},\ldots, e_{n}$ of $E$ and $u_{1},\ldots, u_{m}$ of $F$. Given $f\in\mathcal{L}(E,F)$, denote by $M_{f}$ the matrix</p>
+  <div class="math"> 
+  \[
+  	M_{f}=\left(\begin{array}{ccc} a_{11} &\cdots &a_{1n}\\ \vdots	&	&\vdots\\ a_{m1}	&\cdots	& a_{mn} \end{array} \right)
+  \] 
+  </div>
+  <p> determined by</p>
+  <div class="math">
+  \begin{equation*}
+  	\begin{split}
+  		f(e_{1})&=a_{11}u_{1}+\cdots + a_{m1}u_{m}\\
+		&\vdots \\
+		f(e_{n})&=a_{1n} u_{1}+\cdots+ a_{mn} u_{m}.
+	\end{split}
+    \end{equation*}
+  </div>
+  <p> Then, there is a bijective linear map</p> 
+  <div class="math"> 
+  \begin{equation*}
+  	\begin{split}
+  		\mathcal{L}(E,F) &\longrightarrow M_{mn}(\mathbb{K})\\
+		f &\longmapsto M_{f}.
+	\end{split}
+  \end{equation*}
+  </div>
+  </div>
+  
+  <div class="box definition">
+  <div class="title"> Definition </div>
+ <p>  With the notation as in the previous corollary, we say that $M_{f}$ is the matrix of $f$ in the bases $(e_{i})_{i}$ and $(u_{j})_j$. </p>
+  </div>
+  
+  <div class="box remark">
+  <div class="title"> Remark </div>
+ <p>  It is important to note that, while the definition of basis does not require any order, the construction of the matrix of a linear map is naturally associated to an <i> orderer </i> basis, and the result depends of the order. Also, it is sometimes better to include the bases in the notation: if $\mathcal{B}$ refers to the basis $(e_{i})_{i}$ and $\mathcal{B}^{\prime}$ depends on the basis $(u_{j})_{j}$, then we may denote by $\mathrm{Mat}_{f,\mathcal{B},\mathcal{B}^{\prime}}$ the matrix of $f$ in these bases.  </p>
+  </div>
+  
+  
+  
+  
+<div class="box illustration">
+  <p class="title">Example</p>
+<ol>
+	<li>In $\mathbb{K}[X]_{\leq 3}$, fix the basis $1, X, X^{2}, X^{3}$. Consider the linear map
+	<div class="math">
+	\begin{equation*}
+		\begin{split}
+			D\colon \mathbb{K}[X]_{\leq 3}&\longrightarrow \mathbb{K}[X]_{\leq 3}\\
+			P(X) &\longmapsto P'(X).
+		\end{split}
+	\end{equation*}
+	</div>
+	Then, the matrix of $D$ in the basis above is
+	<div class="math">
+	\[
+		M_{D}=\left(
+			\begin{array}{cccc}
+				0	&1	&0	&0\\
+				0	&0	&2	&0\\
+				0	&0	&0	&3\\
+				0	&0	&0	&0
+			\end{array}
+		\right).
+	\]
+	</div>
+	</li>
+	<li> For $a\in\mathbb{K}$, introduce the evaluation map $\mathrm{ev}_{a}\colon\mathbb{K}[X]_{\leq d}\to\mathbb{K}$, given by $\mathrm{ev}_{a}(P(X))=P(a)$. If we take the basis $1, X, \ldots, X^{d}$ of $\mathbb{K}[X]_{\leq d}$ and $1$ of $\mathbb{K}$, then the matrix associated to $\mathrm{ev}_{a}$ is the vector 
+	<div class="math">
+		\[
+			M_{\mathrm{ev}_{a}}=(1, a, a^{2},\ldots, a^{d}).
+		\]
+	</div>
+	If instead we consider the basis $1, (X-a), (X-a)^{2},\ldots, (X-a)^{d}$ of  $\mathbb{K}[X]_{\leq d}$, then the associated matrix is
+	<div class="math">
+		\[
+			M_{\mathrm{ev}_{a}}'=(1, 0, 0,\ldots, 0).
+		\]
+	</div>
+	</li>
+</ol>
+</div>
+
+<div class="box lemma"> 
+<div class="title"> Corollary </div>
+<p> Let $E, F$ be finite dimensional vector spaces over $\mathbb{K}$. Then $\dim\mathcal{L}(E,F)=(\dim E)(\dim F)$. In particular, $\dim M_{mn}(\mathbb{K})=mn$. </p>
+<div class="title">Proof</div>
+It is enough to prove the statement for the space of matrices. Indeed, if we choose bases of $E$ and $F$, then we have an associated bijective linear map $\mathcal{L}(E,F)\simeq M_{mn}(\mathbb{K})$ given by the matrix of a linear map in the given bases. For the space of matrices, define $\delta_{ij}$ as the matrix with $1$ at the position $ij$ and $0$ elsewhere. This is easily seen to be a basis of $M_{mn}(\mathbb{K})$. This basis has cardinality $mn$. 
+</div>
+
+<h2> Matrix multiplication and invertible matrices</h2>
+<p> We have established the relationship between matrices and linear maps. This indicated that the composition of linear maps corresponds to some matrix operation. This operation is matrix multiplication.</p>
+
+<div class="box definition"> 
+<div class="title"> Definition (matrix multiplication) </div>
+<p>Let $A=(a_{ij})_{ij}\in M_{\ell m}(\mathbb{K})$ and $B=(b_{jk})\in M_{mn}(\mathbb{K})$ be matrices, so that in particular the number of rows of $B$ is equal to the number of columns of $A$, equal to $m$. We define the product $A\cdot B$, or simply $AB$, as the matrix $C=(c_{ik})_{ik}$ in $M_{\ell n}(\mathbb{K})$, given by</p>
+<div class="math">
+	\[
+		c_{ik}=\sum_{j=1}^{m}a_{ij}b_{jk}.
+	\]
+</div>
+<p>That is, the entry $c_{ik}$ at the position $ik$ of $C$ (row $i$, column $k$), is given by: take the $k$-th column of $B$, turn it into a horizontal vector, and hit it against the $i$-th row of $A$, namely multiply their entries and take the sum of the result. </p>
+</div>
+
+<div class="box remark">
+<div class="title"> Remark </div>
+<p> The following are easily checked:</p>
+<ul>
+	<li> <em> Product with the $0$ matrix. </em> $A\cdot 0=0$ and $0\cdot A=0$. </li>
+	<li> <em> Product with the identity matrix. </em> For $A\in M_{mn}(\mathbb{K})$, we have $A\cdot I_{m}=A$, and $I_{n}\cdot A=A$.</li>
+	<li> <em> Associativity. </em> Whenever defined, $(A\cdot B)\cdot C=A\cdot (B\cdot C)$. 
+	<li> <em> Distributivity. </em> Whenever defined, $A\cdot (B+C)=A\cdot B+A\cdot C$, and similarly $(A+B)\cdot C=A\cdot C+B\cdot C$.
+</ul>
+</div>
+<p> The precise relationship between composition of linear maps and matrix multiplication is described below.</p>
+<div class="box lemma">
+<div class="title"> Lemma </div>
+<p> Let $E, F, G$ be finite dimensional vector spaces, with respective bases $e_{1},\ldots e_{n}$, $u_{1},\ldots, u_{m}$ and $v_{1},\ldots, v_{\ell}$. Let $f\colon F\to G$ and $g\colon E\to F$ be linear maps, with matrices $A$ and $B$ in the given bases. Then, the linear map $f\circ g\colon E\to G$ has matrix $A\cdot B$ in the given bases.</p>
+
+<div class="title"> Proof </div>
+<p> Write </p>
+<div class="math">
+	\[
+		g(e_{k})=\sum_{j=1}^{m} b_{jk}u_{j}\quad\text{and}\quad f(u_{j})=\sum_{i=1}^{\ell}a_{ij}v_{i}.
+	\]
+</div>
+<p> Using the linearity of $f$ and its action on the given basis, we have</p>
+<div class="math">
+	\[
+		(f\circ g)(e_{k})=f\left(\sum_{j=1}^{m} b_{jk}u_{j}\right)=\sum_{j=1}^{m}b_{jk}f(u_{j})=\sum_{j=1}^{m}b_{jk}\sum_{i=1}^{\ell}a_{ij}v_{i}.
+	\]
+</div>
+<p> Rearranging this expression, we obtain</p>
+<div class="math">
+	\[
+		(f\circ g)(e_{k})=\sum_{i=1}^{\ell}\left(\sum_{j=1}^{m}a_{ij}b_{jk}\right)v_{i}.
+	\]
+</div>
+</div>
+
+Once the relationship between composition of linear maps and matrix multiplication is clear, we can discuss invertibility of matrices.
+<div class="box definition"> 
+<div class="title"> Definition (invertibility for matrices)</div>
+<p> Let $A\in M_{n}(\mathbb{K})$. We say that $A$ is invertible if, and only if, the associated linear map $f_{A}$ is bijective. In this case, we denote by $A^{-1}\in M_{n}(\mathbb{K})$ the matrix such that $(f_{A})^{-1}=f_{A^{-1}}$. </p>
+</div>
+
+<div class="box remark"> 
+<div class="title"> Remark </div>
+<p> By the relationship between matrix multiplication and composition of linear maps, we see that for an invertible matrix $A$ we have $A\cdot A^{-1}=A^{-1}\cdot A=I_{n}$. </p>
+</div>
+
+<div class="box lemma"> 
+<div class="title"> Lemma </div>
+<p> Let $A\in M_{n}(\mathbb{K})$. The following are equivalent:</p>
+<ol class="alpha-paren"> 
+<li> $A$ is invertible. </li>
+<li> $\mathrm{rk} A=n$. </li>
+<li> $\mathrm{nul} A=0$. </li>
+<li> There exists $B\in M_{n}(\mathbb{K})$ such that $A\cdot B=I_{n}$.</li>
+<li> There exists $B\in M_{n}(\mathbb{K})$ such that $B\cdot A=I_{n}$.</li>
+<li> For every $Y\in\mathbb{K}^{n}$, the equation $A\cdot X=Y$ has a unique solution $X\in\mathbb{K}^{n}$.  </li>
+</ol>
+<p> Moreover, if these conditions are satisfied, then (d) and (e) $B=A^{-1}$. </p>
+
+<div class="title"> Proof </div>
+<p> The equivalence of (a), (b), (c) follows from the corresponding property for the associated endomorphism $f_{A}$: equivalence between bijectivity, surjectivity and injectivity. If we have (d), then $f_{A}\circ f_{B}=\mathrm{id}$, which entails that $f_{A}$ is surjective, hence $\mathrm{rk} A=n$. If we have (e), then $f_{B}\circ f_{A}=\mathrm{if}$, which entails that $f_{A}$ is injective, hence $\mathrm{nul} A=0$. Property (f) amounts to saying that $f_{A}$ is bijective. Finally, if $A$ is invertible, and if $A\cdot B=I_{n}$, then we can multiply the equality from the left by $A^{-1}$, and using the associativity of the product we derive that $B=A^{-1}$. Similarly of $B\cdot A=I_{n}$. </p>
+</div>
+
+<div class="box keyq">
+<div class="title"> Gaussian algorithm for the computation of the inverse </div>
+<p> In practice, to find the inverse of a matrix $A\in M_{n}(\mathbb{K})$, we consider the equation $A\cdot B=I_{n}$, which needs to be solved for $B$. Wrtie $B=(X_{1}\ \cdots\ X_{n})$, where the $X_{i}$ are unknown column vectors in $\mathbb{K}^{n}$. Then</p> 
+<div class="math"> 
+\[
+	A\cdot B=(A\cdot X_{1}\ \cdots\ A\cdot X_{n}).
+\]
+</div>
+<p>Then, $A\cdot B=I_{n}$ amounts to solving $n$ equations:</p>
+<div class="math"> 
+\begin{equation*}
+	\begin{split}
+		A\cdot X_{1} &=\left( \begin{array}{c} 1\\ 0\\ \vdots\\ 0\end{array}\right)\\
+		&\vdots\\
+		A\cdot X_{n}&=\left( \begin{array}{c} 0\\ 0\\ \vdots\\ 1\end{array}\right).
+	\end{split}
+\end{equation*}
+</div>
+<p> This can be addressed by a Gauss-type elimination algorithm. One forms an augmented matrix $(A\mid I_{n})$. Hence, on the left hand side we write the matrix $A$, and on the right hand side we write the identity matrix $I_{n}$. Then, we perform the usual Gauss-type algorithm on rows: exchanging rows, mutliplying rows by non-zero scalars, adding to a row another row. One has to keep track of these operations on both sides of the augmented matrix. Step by step, one tries to carry the augmented matrix $(A\mid I_{n})$ into the form $(I_{n}\mid B)$. If this process succeeds, then $B=A^{-1}$. Note that this works exactly when $A$ is invertible. 
+</div>
+
+<div class="box illustration">
+<div class="title"> Example </div>
+<p>Let us work out an example of the Gaussian-type algorithm to determine the inverse of a matrix. Define</p>
+<div class="math">
+\[
+	A=\left(\begin{array}{ccc} 1 &-1 &0\\ 0 &1 &1\\ 1 &2 &1\end{array}\right).
+\]
+</div>
+<p> We form the augmented matrix:</p>
+ <div class="math">
+ \[
+ 	\widetilde{A}=	\left(\begin{array}{ccc|ccc} 1 &-1 &0 &1 &0 &0\\ 0 &1 &1 &0 &1 &0\\ 1 &2 &1 &0 &0 &1\end{array}\right).
+ \]
+ </div>
+ <p> We denote by $R_{1}$, $R_{2}$, $R_{3}$ the rows of $\widetilde{A}$. We next perform the allowed operations on rows, in order to achieve the goal: producing the identity matrix on the left hand side. The resulting matrix on the right hand side will then be $A^{-1}$.</p>
+ <ul>
+ 	<li> $R_{3}\leftarrow R_{3}-R_{1}$. By this we mean that we replace the row $R_{3}$ by $R_{3}-R_{1}$. The new row thus obtained is still denoted by $R_{3}$. The result of this manipulation is
+	<div class="math">
+ 	\[
+ 		\left(\begin{array}{ccc|ccc} 1 &-1 &0 &1 &0 &0\\ 0 &1 &1 &0 &1 &0\\ 0 &3 &1 &-1 &0 &1\end{array}\right).
+ 	\]
+ 	</div>
+ </li>
+	<li>$R_{3}\leftarrow R_{3}-R_{2}$ 	
+	<div class="math">
+ 	\[
+ 		\left(\begin{array}{ccc|ccc} 1 &-1 &0 &1 &0 &0\\ 0 &1 &1 &0 &1 &0\\ 0 &2 &0 &-1 &-1 &1\end{array}\right).
+	 \]
+ </div>
+	</li>
+	<li> $R_{3}\leftrightarrow R_{2}$. By this we mean exchanging the roles of $R_{3}$ and $R_{2}$. The result is
+	<div class="math">
+ 	\[
+ 		\left(\begin{array}{ccc|ccc} 1 &-1 &0 &1 &0 &0\\ 0 &2 &0 &-1 &-1 &1\\ 0 &1 &1 &0 &1 &0\end{array}\right).
+	 \]
+ 	</div>
+	</li>
+	<li> $R_{1}\leftarrow 2R_{1}$ and $R_{3}\leftarrow 2R_{3}$. Alternatively, one could divide $R_{2}$ by $2$, but this would have the effect of introducing denominators and making computations unpleasant. We thus try to postpone the introduction of denominators until the end. The result is
+	<div class="math">
+	 \[
+ 		\left(\begin{array}{ccc|ccc} 2 &-2 &0 &2 &0 &0\\ 0 &2 &0 &-1 &-1 &1\\ 0 &2 &2 &0 &2 &0\end{array}\right).
+ 	\]
+	 </div>
+	</li>
+	<li> $R_{1}\leftarrow R_{1}+R_{2}$ and $R_{3}\leftarrow R_{3}-R_{2}$.
+	<div class="math">
+	 \[
+ 		\left(\begin{array}{ccc|ccc} 2 &0 &0 &1 &-1 &1\\ 0 &2 &0 &-1 &-1 &1\\ 0 &0 &2 &1 &3 &-1\end{array}\right).
+ 	\]
+	 </div>
+	</li>
+	<li> Finally we divide by $2$, and we obtain
+	<div class="math">
+	 \[
+ 		\left(\begin{array}{ccc|ccc} 1 &0 &0 &1/2 &-1/2 &1/2\\ 0 &1 &0 &-1/2 &-1/2 &1/2\\ 0 &0 &1 &1/2 &3/2 &-1/2\end{array}\right).
+ 	\]
+	 </div>
+	</li>
+ </ul>
+ <p>We conclude that the inverse of $A$ indeed exists and is given by</p>
+ <div class="math">
+\[
+	A^{-1}=\left(\begin{array}{ccc} 1/2 &-1/2 &1/2\\ -1/2 &-1/2 &1/2\\ 1/2 &3/2 &-1/2\end{array}\right).
+\]
+</div>
+ <p>After such a computation, it is wise to check the result. In this case, we see that indeed $A\cdot A^{-1}=I_{3}$. </p>
+</div>
+
+<h2>Linear maps, matrices and change of bases </h2> 
+<p>We have seen that, <i> upon choosing bases </i>, linear maps between finite dimensional vector spaces are in a linear bijective correspondance with matrices. We next elaborate on the dependency of the choice of matrix.</p>
+
+<div class="box keyq">
+<div class="title">  Change of bases (or change of coordinates) matrices </div>
+<p>Let $E$ and $F$ be finite dimensional vector spaces over $\mathbb{K}$. Suppose we are given bases $(e_{1},\ldots, e_{n})$ and $(e_{1}',\ldots, e_{n}')$ of $E$, and $(u_{1},\ldots, u_{m})$ and $(u_{1}',\ldots, u_{m}')$ of $F$. </p>
+
+<p> Let $f\colon E\to F$ be a $\mathbb{K}$-linear map. We denote by $M_{f}$ the matrix of $f$ in the bases $(e_{i})$ and $(u_{j})$. Similarly, we denote by $M_{f}'$ the matrix of $f$ in the bases $(e_{i}')$ and $(u_{j}')$. </p>
+
+<p> The relationship between $M_{f}'$ and $M_{f}$ is obtained by writing the tautological factorization</p>
+<div class="math"> 
+\[
+	f=\mathrm{id}_{F}\circ f\circ \mathrm{id}_{E}.
+\]
+</div>
+<p> Define:</p>
+ <ul>
+ 	<li> $B$ the matrix of $\mathrm{id}_{E}\colon E\to E$, in the bases $(e_{i}')$ and $(e_{i})$. Hence, $B$ is obtained by writing
+	<div class="math"> 
+	\[
+		e_{i}'=b_{1i} e_{1} + b_{2i}e_{2}+\cdots b_{ni} e_{n},
+	\]
+</div>
+	and organizing the coefficients $b_{1i},\ldots, b_{ni}$ as the <i> columns</i> of $B$. The matrix $B$ passes from the basis $(e_{i}')$ to the basis $(e_{i})$. Precisely, if $u\in E$ and $(a_{1},\ldots, a_{n})$ are its coordinates in the basis $e_{i}'$, then 
+	<div class="math">
+	\[
+		B\cdot\left(\begin{array}{c} a_{1}\\ \vdots\\ a_{n}\end{array}\right)
+	\]
+	</div>
+	provides the coordinates of $u$ in the basis $(e_{i})$. You can double-check this by considering $u=e_{i}'$, in which case $a_{i}=1$ and $a_{j}=0$ for $j\neq i$. Then you recover the coefficients $(b_{1},\ldots, b_{ni})$.
+	</li>
+	<li> $A$ the matrix of $\mathrm{id}_{F}\colon F\to F$, in the bases $(u_{j})$ and $(u_{j}')$. Hence, one write the bases vectors $u_{j}$ in the new basis $(u_{j}')$, and organizes the resulting coefficients as the columns of the matrix $A$.
+ </ul>
+ <p>Then, the relationship $f=\mathrm{id}_{F}\circ f\circ \mathrm{id}_{E}$ translates into</p>
+ <div class="math"> 
+	\[
+		M_{f}'=A\cdot M_{f}\cdot B.
+	\]
+</div>
+<p> In a diagram: 
+<br>
+<img src="base-change.svg"
+     alt="diagram"
+     width="350"
+     style="display: block; margin: auto;">
+</p>
+
+<p> A particular important case is when $E=F$, that is $f\colon E\to E$ is an endomorphism. Then, in the procedure above, $A=B^{-1}$ is the matrix which passes from the basis $(e_{i})$ to the basis $(e_{i}')$. The relationship between $M_{f}$ and $M_{f}'$ is then </p>
+<div class="math">
+	\[
+		M_{f}'=B^{-1}\cdot M_{f}\cdot B.
+	\]
+</div>
+
+
+</div>
+
+</div>
+</body>
+</html>

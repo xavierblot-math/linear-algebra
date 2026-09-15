@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Lecture 1</title>
+
+  <!-- Style global -->
+  <style>
+   :root{
+  --main:#14558c;
+  --accent:#f0be3c;
+  --soft:#e8f4fc;
+  --ink:#1d1f21;
+  --paper:#ffffff;
+  --muted:#aab2b9;
+  --green:#007d55;
+  --violet:#ba9beb;
+  --claim:#e11f32;
+}
+html,body{
+  margin:0; padding:0;
+  font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:900px;
+  margin:2rem auto;
+  padding:2rem;
+  background: rgba(255, 255, 255, 0.50);
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+h1,h2{ color:var(--main); line-height:1.2; }
+h1{ font-size:2.1rem; margin:0 0 1.2rem 0; }
+h2{ font-size:1.35rem; margin:1.8rem 0 .7rem; }
+
+.box{
+  border:1px solid var(--muted);
+  border-left:6px solid var(--main);
+  border-radius:10px;
+  padding:1rem 1.1rem;
+  margin:1rem 0;
+  background: rgba(255, 255, 255, 0.85);
+}
+.box .title{ font-weight:800; margin:0 0 .4rem 0; }
+.illustration{
+  border-color:var(--violet);
+  border-left-color:var(--violet);
+  background: rgba(222, 206, 246, 0.12);
+}
+
+
+.keyq{
+  border-color:#6da7d6;
+  border-left-color:var(--main);
+  background: rgba(109, 167, 214, 0.15);
+}
+
+.definition{
+  border-color:#d6a531;
+  border-left-color:#d6a531;
+  background: rgba(240, 190, 60, 0.15);
+}
+
+.remark{
+  border-color:#999;
+  border-left-color:#999;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.lemma{
+  border-color:var(--claim);
+  border-left-color:var(--claim);
+  background: rgba(140, 47, 57, 0.09);
+} 
+
+.math{ text-align:center; margin:.8rem 0; }
+
+ul, ol{ padding-left: 1.3rem; }
+li{ margin: 0.4rem 0; }
+
+svg{ display:block; margin:1.5rem auto; }
+
+/* Ordered list style (a), (b), ... */
+.alpha-paren{
+  list-style-type: lower-alpha;
+}
+.alpha-paren > li::marker{
+  content: "(" counter(list-item, lower-alpha) ") ";
+}
+
+/* Liste (a'), (b'), ... */
+.alpha-prime{
+  list-style-type: lower-alpha;
+}
+.alpha-prime > li::marker{
+  content: "(" counter(list-item, lower-alpha) "'" ") ";
+}
+
+@media print{
+  @page{ size:A4; margin:15mm 20mm; }
+  body{ background:#fff; }
+  .wrap{
+    box-shadow:none;
+    background:#fff;
+    max-width:none;
+    margin:0;
+    padding:0;
+    backdrop-filter:none;
+  }
+  .box, svg, .math{ break-inside:avoid; page-break-inside:avoid; }
+  h1,h2{ break-after:avoid; page-break-after:avoid; }
+  .box{ margin:1.6rem 0; }
+  p{ margin:1rem 0; }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+  </style>
+
+  <!-- MathJax -->
+  <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Lecture 1 : groups, vector spaces and vector subspaces</h1>
+
+  <h2>What is Linear Algebra about?</h2>
+  <p>Linear algebra provides general concepts and tools for tackling systems of linear equations.</p>
+
+  <div class="box definition">
+  <div class="title">Definition (linear equation)</div>
+  <p>A <em>linear equation</em>  in the variables 
+     $x_1,\dots,x_n$ is an equation of the form</p>
+
+  <div class="math">
+    $$a_1x_1+a_2x_2+\cdots+a_nx_n=b$$
+  </div>
+
+  <p>where the coefficients $a_1,\dots,a_n,b$ are numbers in $\mathbb{Q}$, $\mathbb{R}$ or $\mathbb{C}$ 
+   .</p>
+</div>
+
+<div class="box illustration">
+  <div class="title">Examples</div>
+  <ul>
+    <li>$3x_1+5x_2=7$ &nbsp;is a linear equation.</li>
+    <li>$x_1x_2=3$ &nbsp;is <strong>not</strong> a linear equation.</li>
+    <li>$\cos(x)=7$ &nbsp;is <strong>not</strong> a linear equation either.</li>
+  </ul>
+</div>
+
+
+  <div class="box definition">
+    <div class="title">Definition (system of linear equations)</div>
+    A <em>system of linear equations</em> is a collection of linear equations. 
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example</div>
+    <div class="math">
+      \[
+      \begin{cases}
+      x + 2y + 3z = 10,\\
+      4x + 5y + 6z = 11,\\
+      7x + 8y + 9z = 12,
+      \end{cases}
+      \qquad (x,y,z)\ \text{unknowns.}
+      \]
+    </div>
+  </div>
+
+  <div class="box keyq">
+    <div class="title">Some key questions</div>
+    <ul>
+      <li>Do solutions exist?</li>
+      <li>If so, are they unique?</li>
+      <li>What is the structure of the solution space?</li>
+      <li>What is the "size" of the solution space?</li>
+    </ul>
+  </div>
+
+  <p>We will reformulate these questions using the language of matrices and vectors:</p>
+  <div class="math">
+    \[
+    \underbrace{\begin{pmatrix}1&2&3\\4&5&6\\7&8&9\end{pmatrix}}_{\text{matrix}}\hspace{0.7cm}\cdot
+    \underbrace{\begin{pmatrix}x\\y\\z\end{pmatrix}}_{\text{unknown vector}}
+    =
+    \underbrace{\begin{pmatrix}10\\11\\12\end{pmatrix}}_{\text{given vector}}.
+    \]
+  </div>
+
+  <h2>Matrices, vectors, and linear maps</h2>
+  <p>The above questions depend on the properties of the matrix and the given vector.
+     We will develop a general theory to study matrices and vectors.</p>
+  <p>The previous equation appears as a particular case of the equation \[f(u)=v.\]
+     Here \(u,v\) are vectors in a vector space. In our example
+     \(u=\begin{pmatrix}x\\y\\z\end{pmatrix}\), \(v=\begin{pmatrix}10\\11\\12\end{pmatrix}\) in \(\mathbb{R}^3\).</p>
+  <p>The function \(f\) is a <em>linear map</em> between vector spaces:
+    \[
+      f\!\begin{pmatrix}x\\y\\z\end{pmatrix}
+      =
+      \begin{pmatrix}1&2&3\\4&5&6\\7&8&9\end{pmatrix}\cdot
+      \begin{pmatrix}x\\y\\z\end{pmatrix}.
+    \]
+  </p>
+
+  <h2>From general theory to concrete problems</h2>
+  <div class="box keyq">
+    <div class="title">Why is Linear Algebra relevant?</div>
+    <p>Many practical problems are of this form, or can be studied by reducing them to this form. It is thus important to identify general facts which are common and apply to all these situations.</p>
+  </div>
+  <div class="box illustration">
+    <div class="title">Examples of contexts</div>
+    <ul>
+      <li>Quantum mechanics: the Schrödinger equation is a linear equation.</li>
+      <li>Neural networks combine linear algebra (affine functions) and non-linear functions.</li>
+      <li>Economics: dependence of several sectors on each other.</li>
+    </ul>
+  </div>
+
+  <h2>Groups</h2>
+  <div class="box definition">
+    <div class="title">Definition</div>
+    <p>A <em>group</em> is a non-empty set \(G\) together with a binary operation
+      \( *:G\times G\to G,\ (g,h)\mapsto g*h\), satisfying:</p>
+    <ul>
+      <li><strong>Identity element:</strong> there exists \(e\in G\) such that \(g*e=e*g=g\) for all \(g\in G\).</li>
+      <li><strong>Associativity:</strong> \((g_1*g_2)*g_3=g_1*(g_2*g_3)\) for all \(g_1,g_2,g_3\in G\).</li>
+      <li><strong>Inverse element:</strong> for each \(g\in G\) there exists \(h\in G\) with \(g*h=h*g=e\).</li>
+    </ul>
+    <p>The group is <em>commutative</em> (or <em>abelian</em>) if \(g*h=h*g\) for all \(g,h\in G\).</p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Notation</div>
+    <ul>
+      <li>The operation \( * \) is often written \(+\) or \(\cdot\).</li>
+      <li>The identity \(e\) is written \(0\) (for \(+\)) or \(1\) (for \(\cdot\)).</li>
+      <li>For \(+\) we say opposite rather than inverse.</li>
+      <li>Thanks to associativity, parentheses can be omitted.</li>
+    </ul>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Examples/non-examples</div>
+    <ol>
+      <li>\(\{0\}\) with \(+\).</li>
+      <li>\(\mathbb{Z}\) with \(+\) and identity \(0\) (abelian).</li>
+      <li>\(\mathbb{N}\) with \(+\): <em>not</em> a group (no additive inverses).</li>
+      <li>\(\mathbb{R}^\times=\mathbb{R}\setminus\{0\}\) with \(\cdot\) and identity \(1\). If \(x\neq 0\), then \(x\cdot\frac{1}{x}=\frac{1}{x}\cdot x=1\).</li>
+      <li> \(\mathbb{R}\) with \(\cdot\) is not a group, since \(0\) is not invertible.</li>
+    </ol>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Clock arithmetic (mod 12)</div>
+    <p>Add as usual, move the hand clockwise, and read the new hour.</p>
+    <div class="math">
+      \[
+        3+11=14\equiv 2 \pmod{12}, \quad 3+9=12\equiv 0 \pmod{12}.
+      \]
+    </div>
+    <p>Thus the opposite of \(3\) is \(9\).</p>
+    <svg viewBox="0 0 220 260" width="200" height="200" aria-label="Clock mod 12">
+      <circle cx="100" cy="115" r="80" fill="none" stroke="#14558c" stroke-width="2"/>
+      <g font-size="18" font-weight="600" font-family="system-ui, sans-serif"
+         fill="#14558c" text-anchor="middle" dominant-baseline="middle">
+        <text x="100" y="19">0</text>
+        <text x="150" y="33">1</text>
+        <text x="186" y="70">2</text>
+        <text x="200" y="120">3</text>
+        <text x="186" y="170">4</text>
+        <text x="150" y="207">5</text>
+        <text x="100" y="221">6</text>
+        <text x="50" y="207">7</text>
+        <text x="14" y="170">8</text>
+        <text x="0" y="120">9</text>
+        <text x="14" y="70">10</text>
+        <text x="50" y="33">11</text>
+      </g>
+      <line x1="100" y1="115" x2="168" y2="115" stroke="#f0be3c" stroke-width="4"/>
+      <line x1="100" y1="115" x2="140" y2="180" stroke="#e63946" stroke-width="3" stroke-dasharray="5 4"/>
+      <text x="100" y="250" text-anchor="middle" font-size="14" font-style="italic" fill="#14558c">
+        Addition 3+2=5
+      </text>
+    </svg>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma</div>
+    <p>Let \(G\) be a group. Then:</p>
+    <ol class="alpha-paren">
+      <li>The identity element is unique.</li>
+      <li>Inverses are unique.</li>
+    </ol>
+    <p><strong>Proof.</strong> (a) If \(e_1,e_2\) are both identities, then \(e_1*e_2=e_2\) and \(e_1*e_2=e_1\), hence \(e_1=e_2\).<br/>
+    (b) If \(h_1,h_2\) are inverses of \(g\), write \((h_1*g)*h_2 = h_1*(g*h_2)\). Using \(g*h_2=e\) and \(h_1*g=e\), we get \(h_1=h_2\).</p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Notation</div>
+    <ul>
+      <li>The inverse of \(g\) is written \(g^{-1}\) and satisfies \(g*g^{-1}=g^{-1}*g=e\).</li>
+      <li>In additive notation (commutative groups), the inverse of \(g\) is written \(-g\).</li>
+    </ul>
+  </div>
+  <!-- Nouvelle section : Vector spaces -->
+
+  <h2>Vector spaces</h2>
+  <p>Let us begin with an example. Recall
+    \(\mathbb{R}^2 = \{(x,y)\mid x,y\in \mathbb{R}\}\).
+  </p>
+  <ul>
+    <li>Addition: \((x,y)+(x',y')=(x+x',y+y')\).</li>
+    <li>Zero element: \((0,0)+(x,y)=(x,y)\).</li>
+    <li>Inverse: \(-(x,y)=(-x,-y)\).</li>
+  </ul>
+
+  <p>We see that \(\mathbb{R}^2\) with \(+\) and \(0=(0,0)\) is a commutative group.</p>
+  <p>But we can do something more: for \(\lambda\in\mathbb{R}\), define a product by
+    \(\lambda\cdot(x,y)=(\lambda x,\lambda y)\). This satisfies distributivity over the sum and other nice properties, giving an
+     “interaction” between product and addition.</p>
+
+  <div class="box remark">
+    <div class="title">Notation</div>
+    <p>From now on, \(\mathbb{K}=\mathbb{Q},\mathbb{R},\) or \(\mathbb{C}\). More generally, \(\mathbb{K}\) can be taken to be any field, although we won't discuss fields in these lectures.</p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition </div>
+    <p>A \(\mathbb{K}\)-vector space (or vector space over \(\mathbb{K}\)) is
+       a non-empty set \(E\) together with:</p>
+    <ol class="alpha-paren">
+  <li>
+    <strong>A commutative group structure</strong> \((E,+)\) with neutral element \(0_E\).
+  </li>
+  <li>
+    <strong>Multiplication by scalars</strong>: 
+    \(\mathbb{K}\times E \to E,\ (\lambda,u)\mapsto \lambda \cdot u\), satisfying:
+    <ul>
+      <li><em>Distributivity over vectors</em>: \(\lambda\cdot (u+v)=\lambda \cdot u+\lambda \cdot v\).</li>
+      <li><em>Distributivity over scalars</em>: \((\lambda+\mu)\cdot u=\lambda \cdot u+\mu \cdot u\).</li>
+      <li><em>Associativity</em>: \((\lambda\cdot\mu)\cdot u=\lambda\cdot (\mu \cdot u)\).</li>
+      <li><em>Identity</em>: \(1\cdot u=u\).</li>
+    </ul>
+  </li>
+</ol>
+
+    <p>The elements of \(E\) are usually called <em>vectors</em>.</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Examples</div>
+    <ol>
+      <li>\(\{0\}\) with \(0+0=0\) and \(\lambda\cdot 0=0\) (“zero vector space”).</li>
+      <li>\(\mathbb{K}^n=\{(a_1,\dots,a_n)\mid a_i\in\mathbb{K}\}\), with componentwise addition and scalar multiplication. In particular, \(\mathbb{K}\) itself is a vector space over \(\mathbb{K}\). </li>
+      <li>Sequences: \(\mathbb{K}^{\mathbb{N}}=\{(a_n)_{n\ge0}\mid a_n\in\mathbb{K}\}\), with componentwise addition and scalar multiplication.</li>
+      <li>Polynomials: the space $\mathbb{K}[X]$ of polynomials with coefficient in $\mathbb{K}$ (see Exercice sheet 1).</li>
+      <li> The space of $2\times2$ matrices with coefficient in $\mathbb{K}$ (see Exercice sheet 1)</li>
+      <li>If \(X\) is a set, the space of functions
+          \(\mathcal{F}(X,\mathbb{K})=\{f:X\to \mathbb{K}\}\) with addition
+          \((f+g)(x)=f(x)+g(x)\), zero \(0(x)=0\), inverse \((-f)(x)=-f(x)\), and scalar multiplication \((\lambda f)(x)=\lambda f(x)\). By convention, if \( X\) is empty, we define \(\mathcal{F}(X,\mathbb{K})\) to be the zero vector space. </li>
+    </ol>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma</div>
+    <p>Let \(E\) be a vector space. Then:</p>
+    <ol class="alpha-paren">
+      <li>\(0_{\mathbb{K}}\cdot u=0_E\).</li>
+      <li>\(\lambda\cdot 0_E=0_E\).</li>
+      <li>\((-1)\cdot u=-u\).</li>
+      <li>\(\lambda \cdot u=0_E \iff (\lambda=0_{\mathbb{K}} \ \text{or}\ u=0_E)\).</li>
+    </ol>
+    <p><strong>Proof.</strong> Based on standard verifications using distributivity and scalar inverses. Let us for instance check the first and the last ones. Since \(0_{\mathbb{K}}+0_{\mathbb{K}}=0_{\mathbb{K}}\), the first property follows from the distributivity of scalar multiplication over the sum of vectors. For the last one, it is enough to observe that if \(\lambda\neq 0\), then
+    \[
+    	\frac{1}{\lambda}\cdot (\lambda\cdot u)=(\frac{1}{\lambda}\cdot \lambda)\cdot u= u.
+	\]
+    </p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Conventions</div>
+    <ul>
+      <li>If there is no danger of confusion, then we write \(0\) instead of \(0_{\mathbb{K}},0_E\).</li>
+      <li>We write \(u-v\) instead of \(u+(-v)\).</li>
+      <li>We write \(\lambda u\) instead of \(\lambda\cdot u\).</li>
+      <li>We use associativity and commutativity to drop parentheses from the notation. Thus for finite index sets \(I\), one writes \(\sum_{i\in I}u_i\). 
+      </li>
+    </ul>
+  <p> With this notation, we have
+      \[
+      	\left(\sum_{i\in I}u_{i}\right)+\left(\sum_{i\in I}v_{i}\right)=\sum_{i\in I}(u_{i}+v_{i}),\quad \lambda\sum_{i\in I}u_{i}=\sum_{i\in I}\lambda u_{i},
+      \]
+      and also
+      \[
+      	\left(\sum_{i\in I}u_{i}\right)-\left(\sum_{i\in I}v_{i}\right)=\sum_{i\in I}(u_{i}-v_{i}).
+      \]
+      </p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Picture</div>
+    <p>In \(\mathbb{R}^2\), vectors are usually interpreted as arrows from the origin,
+       with addition given by the parallelogram rule.</p>
+       <!-- R^2: u+v et lambda*u -->
+<svg viewBox="0 0 360 260" width="100%" aria-label="R2 vectors">
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+
+  <!-- axes -->
+  <line x1="30" y1="230" x2="340" y2="230" stroke="#999"></line>
+  <line x1="30" y1="230" x2="30"  y2="30"  stroke="#999"></line>
+  <text x="345" y="235" font-size="12" fill="#666">x</text>
+  <text x="24"  y="22"  font-size="12" fill="#666">y</text>
+
+  <!-- vecteurs depuis l'origine -->
+  <!-- origine -->
+  <circle cx="30" cy="230" r="3" fill="#14558c"></circle>
+
+  <!-- u -->
+  <line x1="30" y1="230" x2="150" y2="180"
+        stroke="#e63946" stroke-width="1" marker-end="url(#arrow)"></line>
+  <text x="152" y="190" font-size="10" fill="#e63946">(x,y)</text>
+
+  <!-- v -->
+  <line x1="30" y1="230" x2="110" y2="110"
+        stroke="#007d55" stroke-width="1" marker-end="url(#arrow)"></line>
+  <text x="95" y="100" font-size="10" fill="#007d55">(x',y')</text>
+
+  <!-- u+v (parallélogramme) -->
+  <line x1="30" y1="230" x2="230" y2="60"
+        stroke="#14558c" stroke-width="1" marker-end="url(#arrow)"></line>
+  <text x="232" y="68" font-size="10" fill="#14558c">(x+x', y+y')</text>
+
+  <!-- côtés du parallélogramme (pointillés) -->
+  <line x1="150" y1="180" x2="230" y2="60" stroke="#14558c" stroke-dasharray="5 4"></line>
+  <line x1="110" y1="110" x2="230" y2="60" stroke="#14558c" stroke-dasharray="5 4"></line>
+</svg>
+
+  </div>
+
+  <!-- =======================
+       Vector spaces & subspaces
+       ======================= -->
+
+  <h2>Vector subspaces</h2>
+
+  <div class="box illustration">
+    <div class="title">Example in \(\mathbb{K}^3\)</div>
+    <p>Recall \(\mathbb{K}^3=\{(x,y,z)\mid x,y,z\in\mathbb{K}\}\). Consider
+      \[
+        \mathbb{K}^2\times\{0\}=\{(x,y,0)\in\mathbb{K}^3\}
+        \;=\;\{(x,y,z)\in\mathbb{K}^3\mid z=0\}.
+      \]
+      The vector-space operations of \(\mathbb{K}^3\) preserve this set:
+    </p>
+    <ul>
+      <li>\((0,0,0)\in \mathbb{K}^2\times\{0\}\).</li>
+      <li>\((x,y,0)+(x',y',0)=(x+x',y+y',0)\in \mathbb{K}^2\times\{0\}\).</li>
+      <li>\(\lambda\cdot(x,y,0)=(\lambda x,\lambda y,0)\in \mathbb{K}^2\times\{0\}\).</li>
+    </ul>
+    <p>Hence the vector-space structure on \(\mathbb{K}^3\) induces one on
+      \(\mathbb{K}^2\times\{0\}\) (the \(xy\)-plane).
+    </p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (vector subspace)</div>
+    <p>Let \(E\) be a \(\mathbb{K}\)-vector space and \(F\subset E\).
+       We say that \(F\) is a <em>vector subspace</em> of \(E\) if:
+    </p>
+    <ol class="alpha-paren">
+      <li>\(0_E\in F\).</li>
+      <li>\(F\) is closed under addition: \(x,y\in F\Rightarrow x+y\in F\).</li>
+      <li>\(F\) is closed under scalar multiplication: \(\lambda\in\mathbb{K},\,x\in F\Rightarrow \lambda x\in F\).</li>
+    </ol>
+    <p><strong>Variant (equivalent):</strong>
+      <ol class="alpha-prime">
+        <li>\(F\neq\varnothing\).</li>
+        <li>\(\forall x,y\in F,\ \forall \lambda\in\mathbb{K},\ \lambda x + y\in F\).</li>
+      </ol>
+    </p>
+  </div>
+  <p>The \(\mathbb{K}\)-vector space structure of \(E\) induces a \(\mathbb{K}\)-vector space structure on \(F\), namely:</p>
+
+ <div class="box lemma">
+    <div class="title">Lemma</div>
+   <p>Let \(F\) be a vector subspace of a \(\mathbb{K}\)-vector space \(E\). Then the operations of \(E\) restrict to \(F\), and \(F\) equipped with them is a \(\mathbb{K}\)-vector space.</p>
+  <p><strong>Proof.</strong> By (b) and (c), the addition and the scalar multiplication of \(E\) restrict to maps \(F\times F\to F\) and \(\mathbb{K}\times F\to F\). By (a) we have \(0_E\in F\), and it is a neutral element for the addition of \(F\) since it is one for the addition of \(E\). If \(x\in F\), then \(-x=(-1)\cdot x\in F\) by (c), so every element of \(F\) has an opposite in \(F\). The remaining axioms — associativity and commutativity of the addition, the two distributivities, \((\lambda\mu)x=\lambda(\mu x)\) and \(1\cdot x=x\) — are identities, valid for all elements of \(E\) and hence in particular for those of \(F\): there is nothing to check.</p>
+  </div>
+  
+
+  <p>In practice, one almost never verifies the axioms directly: to prove that a set is a \(\mathbb{K}\)-vector space, one realises it as a vector subspace of a space already known to be one.</p>
+
+
+
+
+
+
+  <div class="box illustration">
+    <div class="title">Examples/non-examples</div>
+    <ol>
+      <li>\(\varnothing\) is never a vector subspace.</li>
+      <li>\(\{0\}\) is always a vector subspace.</li>
+      <li>\(E\) itself is a vector subspace of \(E\).</li>
+      <li>As \(\mathbb{Q}\)-vector spaces: \(\mathbb{Q}\subset \mathbb{R}\subset \mathbb{C}\) (each inclusion is a \(\mathbb{Q}\)-subspace).</li>
+      <li>\(\mathbb{K}[X]\) (polynomials over \(\mathbb{K}\)) is a \(\mathbb{K}\)-vector space
+          by componentwise operations; the set
+          \(\mathbb{K}[X]_{\le d}=\{a_0+a_1X+\dots+a_dX^d\mid a_i\in\mathbb{K}\}\)
+          is a vector subspace of \(\mathbb{K}[X]\).</li>
+      <li>\(F=\{(x,y)\in\mathbb{K}^2\mid xy=0\}=\mathbb{K}\times\{0\}\ \cup\ \{0\}\times\mathbb{K}\)
+          is <em>not</em> a subspace of \(\mathbb{K}^2\) (union of axes, not stable under addition).</li>
+    </ol>
+
+    <!-- Mini croquis des axes (union) -->
+    <svg viewBox="0 0 260 180" width="320" aria-label="Union of axes in K^2">
+      <defs>
+        <marker id="arrSmall" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="currentColor"></path>
+        </marker>
+      </defs>
+      <line x1="30" y1="150" x2="240" y2="150" stroke="#999" stroke-width="1"></line>
+      <line x1="30" y1="150" x2="30"  y2="20"  stroke="#999" stroke-width="1"></line>
+      <circle cx="30" cy="150" r="3" fill="#14558c"></circle>
+
+      <!-- axes marqués comme sous-espaces candidats -->
+      <line x1="30" y1="150" x2="240" y2="150" stroke="#14558c" stroke-width="2"></line>
+      <line x1="30" y1="150" x2="30"  y2="20"  stroke="#14558c" stroke-width="2"></line>
+
+      <!-- vecteurs (1,0) et (0,1) -->
+      <line x1="30" y1="150" x2="110" y2="150"
+            stroke="#e63946" stroke-width="2" marker-end="url(#arrSmall)"></line>
+      <text x="112" y="148" font-size="12" fill="#e63946">(1,0)</text>
+
+      <line x1="30" y1="150" x2="30" y2="70"
+            stroke="#007d55" stroke-width="2" marker-end="url(#arrSmall)"></line>
+      <text x="36" y="70" font-size="12" fill="#007d55">(0,1)</text>
+
+      <!-- somme (1,1) qui n'est pas sur l’union des axes -->
+      <line x1="30" y1="150" x2="110" y2="70"
+            stroke="#14558c" stroke-width="2" marker-end="url(#arrSmall)"></line>
+      <text x="124" y="58" font-size="12" fill="#14558c">(1,1)=(1,0)+(0,1)</text>
+    </svg>
+    <p> In the picture, \( (1,1)\) is not in the union of the axes.</p>
+  </div>
+
+</div>
+</body>
+</html>
