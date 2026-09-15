@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Algèbre linéaire — notes de cours</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --ink: #1c1b19;
+    --ink-soft: #6b6862;
+    --rule: #e3e0da;
+    --link: #1b4b8f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #16161a;
+      --ink: #e8e6e1;
+      --ink-soft: #97948e;
+      --rule: #32323a;
+      --link: #8fb3e8;
+    }
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 4rem 1.5rem 6rem;
+  }
+  main { max-width: 34rem; margin: 0 auto; }
+
+  h1 {
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 0 0 0.4rem;
+  }
+  .meta {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0 0 2.5rem;
+  }
+
+  ol {
+    list-style: none;
+    counter-reset: cours;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+  }
+  li {
+    counter-increment: cours;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 0.75rem 0;
+  }
+  li::before {
+    content: counter(cours);
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    min-width: 1.5rem;
+    text-align: right;
+  }
+  a {
+    color: var(--link);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 3px;
+  }
+
+  footer {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-top: 2.5rem;
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Linear Algebra</h1>
+  <p class="meta">Lecture notes — (polytechnique, S1, 2026)</p>
+
+  <!--
+    Remplace « Cours 1 » par le vrai titre de chaque séance.
+    Vérifie que le nom de fichier après href= correspond exactement
+    au tien, majuscules comprises.
+  -->
+  <ol>
+    <li><a href="lecture1.html">Lecture 1</a></li>
+    <li><a href="lecture2.html">Lecture 2</a></li>
+    <li><a href="lecture3.html">Lecture 3</a></li>
+    <li><a href="lecture4.html">Lecture 4</a></li>
+    <li><a href="lecture5.html">Lecture 5</a></li>
+    <li><a href="lecture6.html">Lecture 6</a></li>
+    <li><a href="lecture7.html">Lecture 7</a></li>
+    <li><a href="lecture8.html">Lecture 8</a></li>
+    <li><a href="lecture9.html">Lecture 9</a></li>
+    <li><a href="lecture10.html">Lecture 10</a></li>
+  </ol>
+
+  <footer>
+    Xavier Blot — <a href="https://sites.google.com/view/xavier-blot">personal webpage</a>
+  </footer>
+
+</main>
+</body>
+</html>
