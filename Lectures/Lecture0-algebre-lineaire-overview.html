@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Algebra — Course overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- thème clair (par défaut) ---------- */
+  :root{
+    --bg:#fbf9f4;
+    --ink:#14171e;
+    --dim:#3f4552;
+    --muted:#6f7788;
+    --line:rgba(20,24,34,.16);
+    --accent:#a76a11;
+    --accent-soft:rgba(167,106,17,.45);
+    --card:rgba(255,255,255,.72);
+    --card-hover:rgba(20,24,34,.05);
+    --btn:rgba(20,24,34,.03);
+    --btn-on:rgba(167,106,17,.12);
+    --p1:#d4512a;
+    --p2:#0d8c83;
+    --p3:#bd8c16;
+    --sc-a:rgba(251,249,244,.98);
+    --sc-b:rgba(251,249,244,.94);
+    --sc-c:rgba(251,249,244,0);
+    --glow:rgba(96,126,196,.13);
+
+    --s: min(1vw, 1.72vh);
+    --pad: max(26px, calc(6.4 * var(--s)));
+  }
+  /* ---------- thème sombre ---------- */
+  html[data-theme="dark"]{
+    --bg:#070a12;
+    --ink:#f3eee4;
+    --dim:#c6c0b3;
+    --muted:#8d9ab8;
+    --line:rgba(255,255,255,.13);
+    --accent:#e8b04b;
+    --accent-soft:rgba(232,176,75,.5);
+    --card:rgba(255,255,255,.028);
+    --card-hover:rgba(255,255,255,.1);
+    --btn:rgba(255,255,255,.04);
+    --btn-on:rgba(232,176,75,.14);
+    --p1:#f47b5f;
+    --p2:#4fc9c0;
+    --p3:#f0c24c;
+    --sc-a:rgba(7,10,18,.97);
+    --sc-b:rgba(7,10,18,.93);
+    --sc-c:rgba(7,10,18,0);
+    --glow:rgba(72,104,178,.22);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;margin:0;}
+  html[data-theme="light"]{color-scheme:light;}
+  html[data-theme="dark"]{color-scheme:dark;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-weight:330;
+    overflow:hidden;
+    transition:background .4s ease, color .4s ease;
+  }
+
+  /* ---------- fond 3D ---------- */
+  #canvas{
+    position:fixed;inset:0;display:block;width:100%;height:100%;
+    opacity:0;transition:opacity .7s ease;z-index:0;
+  }
+  #canvas.on{opacity:1;}
+  .scrim{
+    position:fixed;inset:0;pointer-events:none;z-index:1;
+    opacity:0;transition:opacity .7s ease;
+    background:
+      radial-gradient(110% 80% at 72% 48%, var(--glow), transparent 62%),
+      linear-gradient(90deg, var(--sc-a) 0%, var(--sc-b) 30%, var(--sc-c) 60%);
+  }
+  .scrim.on{opacity:1;}
+  @media (max-aspect-ratio: 1/1){
+    .scrim{background:
+      radial-gradient(120% 60% at 50% 72%, var(--glow), transparent 62%),
+      linear-gradient(180deg, var(--sc-a) 0%, var(--sc-b) 38%, var(--sc-c) 66%);}
+  }
+
+  /* ---------- diapositives ---------- */
+  .slide{
+    position:fixed;inset:0;z-index:2;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:var(--pad) var(--pad) calc(var(--pad) * 1.5);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transform:translateY(14px);
+    transition:opacity .38s ease, transform .38s ease, visibility .38s;
+    overflow-y:auto;
+  }
+  .slide.active{opacity:1;visibility:visible;pointer-events:auto;transform:none;}
+
+  .eyebrow{
+    font-size:max(11px, calc(1.15 * var(--s)));
+    letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-weight:500;
+  }
+  h1{
+    font-family:'EB Garamond',Georgia,serif;font-weight:500;
+    font-size:max(40px, calc(7.4 * var(--s)));
+    line-height:1.02;margin:.28em 0 .18em;letter-spacing:-.01em;
+  }
+  h2{
+    font-family:'EB Garamond',Georgia,serif;font-weight:500;
+    font-size:max(30px, calc(4.5 * var(--s)));
+    line-height:1.06;margin:.22em 0 0;letter-spacing:-.005em;
+  }
+  h3{
+    font-size:max(15px, calc(1.75 * var(--s)));
+    font-weight:600;margin:0 0 .5em;
+  }
+  .rule{width:calc(9 * var(--s));min-width:70px;height:2px;background:var(--accent);margin:calc(2.4 * var(--s)) 0;}
+  p, li{font-size:max(14px, calc(1.62 * var(--s)));line-height:1.55;color:var(--dim);margin:0 0 .7em;}
+  strong{color:var(--ink);font-weight:600;}
+  em{color:var(--ink);font-style:italic;font-family:'EB Garamond',Georgia,serif;font-size:1.08em;}
+  .body{max-width:104ch;margin-top:calc(2.2 * var(--s));}
+  ul{margin:0;padding-left:1.15em;}
+  li{margin-bottom:.45em;}
+  li::marker{color:var(--accent);}
+  .k{color:var(--accent);font-weight:500;}
+
+  .cards{display:grid;gap:calc(1.8 * var(--s));margin-top:calc(2.4 * var(--s));}
+  .c2{grid-template-columns:repeat(2,1fr);}
+  .c3{grid-template-columns:repeat(3,1fr);}
+  @media (max-width:820px){ .c2,.c3{grid-template-columns:1fr;} }
+  .card{
+    border:1px solid var(--line);border-radius:calc(1.1 * var(--s));
+    padding:calc(2.1 * var(--s)) calc(2.2 * var(--s));
+    background:var(--card);
+  }
+  .card p, .card li{margin-bottom:.35em;}
+  .card .tag{
+    font-size:max(10px, calc(1.05 * var(--s)));letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;margin-bottom:.9em;display:block;
+  }
+  .card.p1{border-top:2px solid var(--p1);}
+  .card.p2{border-top:2px solid var(--p2);}
+  .card.p3{border-top:2px solid var(--p3);}
+  .num{
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:max(22px, calc(3.2 * var(--s)));
+    color:var(--accent);line-height:1;margin-bottom:.35em;
+  }
+
+  .quote{
+    font-family:'EB Garamond',Georgia,serif;font-style:italic;
+    font-size:max(19px, calc(2.9 * var(--s)));
+    line-height:1.3;color:var(--ink);
+    border-left:2px solid var(--accent);
+    padding-left:calc(2 * var(--s));
+    margin:calc(2.6 * var(--s)) 0 0;
+    max-width:60ch;
+  }
+  .todo{
+    border:1px dashed var(--accent-soft);border-radius:calc(1.1 * var(--s));
+    padding:calc(2 * var(--s));color:var(--muted);
+    font-size:max(13px, calc(1.45 * var(--s)));
+  }
+table.grades{width:100%;border-collapse:collapse;margin-top:calc(2.8 * var(--s));}
+table.grades th{
+  text-align:left;font-size:max(10px, calc(1.15 * var(--s)));
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500;
+  padding-bottom:calc(1.2 * var(--s));border-bottom:1px solid var(--line);
+}
+table.grades td{
+  font-size:max(14px, calc(1.85 * var(--s)));color:var(--dim);
+  padding:calc(1.6 * var(--s)) 0;border-bottom:1px solid var(--line);
+}
+table.grades td:first-child{color:var(--ink);font-weight:500;}
+table.grades th + th, table.grades td + td{padding-left:calc(2.4 * var(--s));}
+table.grades .w{text-align:right;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;}
+table.grades tr:last-child td{border-bottom:none;}
+.note{font-size:max(12px, calc(1.45 * var(--s)));color:var(--muted);margin-top:calc(2.4 * var(--s));}
+  .split{display:grid;grid-template-columns:1.05fr .95fr;gap:calc(4 * var(--s));align-items:start;}
+  @media (max-width:900px){ .split{grid-template-columns:1fr;} }
+
+  .title-text{max-width:min(46ch,52vw);}
+  @media (max-aspect-ratio: 1/1){ .title-text{max-width:none;} }
+  .sub{
+    font-family:'EB Garamond',Georgia,serif;font-style:italic;
+    font-size:max(17px, calc(2.3 * var(--s)));color:var(--dim);margin-bottom:1.2em;
+  }
+  .name{font-size:max(17px, calc(2.1 * var(--s)));font-weight:500;color:var(--ink);}
+  .affil{font-size:max(12px, calc(1.35 * var(--s)));color:var(--muted);margin-top:.35em;}
+
+  /* ---------- chrome ---------- */
+  .chrome{
+    position:fixed;z-index:5;
+    display:flex;align-items:center;gap:calc(1.2 * var(--s));
+    transition:opacity .5s ease;
+  }
+  .chrome.faded{opacity:.2;}
+  #confControls{left:var(--pad);bottom:calc(var(--pad) * .9);flex-wrap:wrap;}
+  #nav{right:calc(2 * var(--s));bottom:calc(2 * var(--s));}
+  button{
+    font-family:inherit;font-size:max(11px, calc(1.22 * var(--s)));
+    color:var(--dim);background:var(--btn);
+    border:1px solid var(--line);border-radius:999px;
+    padding:.55em 1.1em;cursor:pointer;transition:all .18s ease;
+  }
+  button:hover{background:var(--card-hover);color:var(--ink);}
+  button[aria-pressed="true"]{background:var(--btn-on);border-color:var(--accent-soft);color:var(--accent);}
+  .arrow{width:2.3em;height:2.3em;padding:0;display:grid;place-items:center;font-size:max(12px, calc(1.3 * var(--s)));}
+  #counter{font-size:max(10px, calc(1.15 * var(--s)));color:var(--muted);letter-spacing:.14em;margin-right:.4em;}
+  #caption{
+    position:fixed;left:var(--pad);z-index:5;
+    bottom:calc(var(--pad) * .9 + 3.2em);
+    font-size:max(11px, calc(1.28 * var(--s)));color:var(--muted);
+    max-width:min(50ch,52vw);pointer-events:none;
+    transition:opacity .4s ease;
+  }
+  #progress{
+    position:fixed;left:0;top:0;height:2px;z-index:6;
+    background:var(--accent);width:0;transition:width .38s ease;opacity:.8;
+  }
+  #topright{
+    position:fixed;right:calc(2 * var(--s));top:calc(2 * var(--s));z-index:5;
+    gap:calc(1 * var(--s));
+  }
+  .hint{
+    font-size:max(10px,calc(1.1 * var(--s)));color:var(--muted);opacity:.6;letter-spacing:.06em;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="scrim" id="scrim"></div>
+<div id="progress"></div>
+
+<!-- ===================== 1. TITRE ===================== -->
+<section class="slide" data-scene="on">
+  <div class="title-text">
+    <div class="eyebrow">École polytechnique &nbsp;·&nbsp; 2026–2027</div>
+    <h1>Linear Algebra</h1>
+    <div class="sub">Vector spaces, linear maps, determinants</div>
+    <div class="rule"></div>
+    <div class="name">Xavier Blot</div>
+    <div class="affil">CMLS — Centre de Mathématiques Laurent Schwartz</div>
+  </div>
+</section>
+
+<!-- ===================== 2. MOI ===================== -->
+<section class="slide">
+  <div class="eyebrow">Who is teaching this course</div>
+  <h2>Xavier Blot</h2>
+  <div class="rule"></div>
+  <div class="split">
+    <div>
+      <p>I am a researcher at the <strong>CMLS</strong>, the mathematics department here at École polytechnique.</p>
+      <p>I work in <strong>enumerative geometry</strong>: the art of counting geometric objects (curves passing through given points, coverings of a surface, and so on). <!--Counting them requires building a space whose points <em>are</em> the objects themselves, and then doing geometry on that space.--></p>
+      <p>These counts show up in physics, in particular in <strong>string theory</strong>. More surprisingly, they satisfy equations describing the propagation of certain waves, which connects them to <strong>mathematical physics</strong>. Understanding why is a large part of what I do.</p>
+    </div>
+    <div class="cards" style="margin-top:0">
+      <!--<div class="card">
+        <span class="tag">Where linear algebra shows up</span>
+        <p>Every single object above is, at some level, a vector space. The techniques of this course are not a prerequisite I want you to survive — they are the language everything afterwards is written in.</p>
+      </div>-->
+      <div class="card">
+        <span class="tag">Contact</span>
+        <p><span class="k">xavier.blot@polytechnique.edu</span></p>
+        <p>Office: CMLS, <span class="k">[bâtiment 6/ bureau 06.1055]</span></p>
+        <p>Questions by email are welcome — so are questions after the lecture.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. RYTHME ===================== -->
+<section class="slide">
+  <div class="eyebrow">Organisation</div>
+  <h2>How the semester runs</h2>
+  <div class="rule"></div>
+  <div class="cards c3">
+    <div class="card">
+      <span class="tag">Duration</span>
+      <div class="num">15</div>
+      <p>weeks of class.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Monday</span>
+      <div class="num">1 h 30</div>
+      <p><strong>Lecture.</strong> New definitions, statements, proofs...</p>
+    </div>
+    <div class="card">
+      <span class="tag">Tuesday</span>
+      <div class="num">2 h</div>
+      <p><strong>Exercise class.</strong> Where the material actually becomes yours.</p>
+    </div>
+  </div>
+  <div class="body">
+    <p><strong>Times and rooms occasionally change.</strong> Always check before coming — do not rely on last week's room.</p>
+  </div>
+</section>
+
+<!-- ===================== 4. MATERIEL ===================== -->
+<section class="slide">
+  <div class="eyebrow">Material</div>
+  <h2>Everything lives on Moodle</h2>
+  <div class="rule"></div>
+  <div class="cards c2">
+    <div class="card">
+      <span class="tag">After each lecture</span>
+      <ul>
+        <li><strong>Lecture notes</strong>, posted on Moodle.</li>
+        <li>The <strong>exercise sheet</strong> for the week.</li>
+        <li>The <strong>solutions</strong>, posted later in the week.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">Textbook</span>
+      <p>Written by my predecessors.</p>
+      <p>We will not follow it closely. Use it when you want a second exposition, extra material, or extra exercises.</p>
+    </div>
+  </div>
+  <div class="body">
+    <p>Course information, announcements, notes, sheets and solutions: <strong>all on Moodle</strong>. Check it regularly.</p>
+  </div>
+</section>
+
+<!-- ===================== 5. TD ===================== -->
+<section class="slide">
+  <div class="eyebrow">Exercise classes</div>
+  <h2>Your teaching assistants</h2>
+  <div class="rule"></div>
+  <div class="cards c3">
+    <div class="card"><span class="tag">Groups 1 & 6</span><p><span class="k">Andreas Studsgaard</span></p></div>
+    <div class="card"><span class="tag">Groups 2 & 7</span><p><span class="k">Longyu Chen</span></p></div>
+    <div class="card"><span class="tag">Groups 3 & 8</span><p><span class="k">Victor Chen</span></p></div>
+    <div class="card"><span class="tag">Groups 4 & 9</span><p><span class="k">Seungkyu Lee</span></p></div>
+    <div class="card"><span class="tag">Groups 5 & 10</span><p><span class="k">Xiao Li</span></p></div>
+  </div>
+  <div class="body">
+    <p> Tutorial : you work, the TA helps . Not a second lecture. They are the people best placed to tell you what you have not understood yet — use them.</p>
+  </div>
+</section>
+
+<!-- ===================== 6. TYPES D'EXERCICES ===================== -->
+<section class="slide">
+  <div class="eyebrow">Exercise sheets</div>
+  <h2>Two kinds of exercises</h2>
+  <div class="rule"></div>
+  <div class="cards c2">
+    <div class="card p2">
+      <span class="tag">Fundamental</span>
+      <h3>Do most of them.</h3>
+      <p>These are the baseline. To practice the core notions. This is where you should focus most of the effort. </p>
+      <!--<p>If a fundamental exercise is still difficult after you have seen the solution, that is the signal to come back to the definitions.</p>-->
+    </div>
+    <div class="card p1">
+      <span class="tag">Advanced</span>
+      <h3>Pick a few. Take your time.</h3>
+      <p>This is a challenge. Do not try to cover them all. Choose one or two and sit with them properly — an hour on one good problem beats ten minutes each on six.</p>
+      <p>To develop logical and abstract thinking in more advanced settings.</p>
+      <!--<p>This is where you learn to do mathematics rather than to apply recipes.</p>-->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 7. ETRE BLOQUE ===================== -->
+<section class="slide">
+  <div class="eyebrow">How to work</div>
+  <h2>Being stuck is part of learning</h2>
+  <div class="rule"></div>
+  <div class="split">
+    <div>
+      <p><strong>Understanding a solution is not the same as being able to produce one.</strong> Watching a clean proof feels like learning: every line follows, nothing is confusing. But that feeling of fluency is a very poor predictor of what you can do alone, later, in front of a blank page.</p>
+      <p>What consolidates knowledge is <strong>active recall <!--retrieval--> and production</strong>, not re-reading. The effort of recovering a definition from memory, of choosing which theorem to apply, of writing a proof from nothing — that effort is the mechanism. Remove it and very little is left behind.</p>
+      <p>So the twenty minutes you spend stuck are not wasted time. They <strong>are</strong> the real work. They also change what reading the solution does for you: you now know exactly which step you could not find, and that is the step you will remember.</p>
+    </div>
+    <div class="card">
+      <span class="tag">A concrete recipe</span>
+      <ul>
+        <li>Try <strong>alone, 15–20 minutes</strong>, before any help. </li>
+        <!--<li>Write down <strong>precisely where you are blocked</strong> — one sentence. "I don't see how to start" is a different problem from "I can't finish this computation".</li>-->
+        <li><em>Then</em> ask a TA, a classmate, or read the solution.</li>
+        <li><strong>Redo it from scratch a day later</strong>, notes closed. This step is the one everyone skips and the one that works.</li>
+      </ul>
+    </div>
+  </div>
+  <!--<div class="quote">If it feels easy and fast, you are probably not learning much.</div>-->
+</section>
+
+<!-- ===================== 8. IA ===================== -->
+<section class="slide">
+  <div class="eyebrow">Solutions &amp; AI</div>
+  <h2>Where AI helps, and where it costs you</h2>
+  <div class="rule"></div>
+  <div class="cards c2">
+    <div class="card p2">
+      <span class="tag">Reasonable</span>
+      <ul>
+        <li>Asking for <strong>more detail on one step</strong> you could not follow.</li>
+        <li>Asking for a <strong>second explanation</strong> of a definition, or an example.</li>
+        <li>Checking a computation you have already done yourself.</li>
+      </ul>
+      <p>Used this way, after you have struggled, it is a good tutor: infinitely patient, available at midnight.</p>
+    </div>
+    <div class="card p1">
+      <span class="tag">A waste of your own time</span>
+      <ul>
+        <li>Pasting the exercise in and copying the answer.</li>
+      </ul>
+      <p>You end up with a correct page and nothing else. It feels like you will remember it. You will not.</p>
+    </div>
+  </div>
+  <div class="body">
+    <p>Rule: use it <strong>after</strong> being stuck, never <strong>instead of</strong> being stuck. Solutions are posted at the end of the day anyway.</p>
+  </div>
+</section>
+
+<!-- ===================== 9. PLAN DU COURS ===================== -->
+<section class="slide">
+  <div class="eyebrow">Content</div>
+  <h2>The course in three parts</h2>
+  <div class="rule"></div>
+  <div class="cards c3">
+    <div class="card p1">
+      <div class="num">I</div>
+      <h3>Vector spaces</h3>
+      <ul>
+        <li>Groups</li>
+        <li>Vector spaces</li>
+        <li>Subspaces</li>
+        <!--<li>Spanning families, independence</li>--> 
+        <li>Bases and dimension</li>
+      </ul>
+    </div>
+    <div class="card p2">
+      <div class="num">II</div>
+      <h3>Linear maps</h3>
+      <ul>
+        <li>Linear maps and matrices</li>
+        <li>Kernel and image</li>
+        <li>Rank, rank–nullity theorem</li>
+        <li>Composition, inverses</li>
+        <li>Change of basis</li>
+      </ul>
+    </div>
+    <div class="card p3">
+      <div class="num">III</div>
+      <h3>Determinants</h3>
+      <ul>
+        <li>How to define them</li>
+        <li>How to compute them</li>
+        <li>Invertibility criterion</li>
+        <!--<li>Geometric meaning: volume</li>-->
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 10. EXAMEN ===================== -->
+<section class="slide">
+  <div class="eyebrow">Assessment</div>
+  <h2>Structure of the exam</h2>
+  <div class="rule"></div>
+
+  <table class="grades">
+    <thead>
+      <tr><th>Assessment</th><th>When</th><th>Duration</th><th class="w">Weight</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Short exam 1</td><td>13 or 20 Oct — exercise class</td>
+        <td>1 h</td><td class="w">15 %</td>
+      </tr>
+      <tr>
+        <td>Midterm</td><td>17 Nov — lecture</td>
+        <td>1 h 30</td><td class="w">20 %</td>
+      </tr>
+      <tr>
+        <td>Short exam 2</td><td>15 Dec — exercise class</td>
+        <td>1 h</td><td class="w">15 %</td>
+      </tr>
+      <tr>
+        <td>Final exam</td><td>date to be announced</td>
+        <td>2 h</td><td class="w">50 %</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="note">Weighting is indicative and may still be adjusted. All dates will be confirmed on Moodle.</p>
+</section>
+
+
+<!-- ===================== 11. QUESTIONS ===================== -->
+<section class="slide" data-scene="on">
+  <div class="title-text">
+    <div class="eyebrow">One last thing</div>
+    <h1>Ask questions</h1>
+    <div class="rule"></div>
+    <p><strong>During</strong> the lecture, not only at the end. If something is unclear to you, it is unclear to thirty other people who are also not raising their hand.</p>
+    <!-- <p>Questions of general interest are especially welcome — "why do we define it this way?" is a better question than you think.</p>
+    <p style="margin-top:1.4em"><span class="k">xavier.blot@polytechnique.edu</span> &nbsp;·&nbsp; Moodle</p>-->
+  </div>
+</section>
+
+<div id="caption"></div>
+<div class="chrome" id="confControls"></div>
+<div class="chrome" id="topright">
+  <button id="themeBtn" aria-label="Switch theme">Dark</button>
+  <span class="hint">← → &nbsp;·&nbsp; F</span>
+</div>
+<div class="chrome" id="nav">
+  <span id="counter"></span>
+  <button class="arrow" id="prev" aria-label="Previous slide">&#8249;</button>
+  <button class="arrow" id="next" aria-label="Next slide">&#8250;</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  'use strict';
+
+  /* =======================================================
+     A. Thème
+     ======================================================= */
+  var PALETTE = {
+    light: { planes:[0xd4512a, 0x0d8c83, 0xbd8c16], line:0x1a1d25, point:0x14171e,
+             planeOpacity:0.24, gridOpacity:0.42 },
+    dark:  { planes:[0xf47b5f, 0x4fc9c0, 0xf0c24c], line:0xfdf6e8, point:0xffffff,
+             planeOpacity:0.20, gridOpacity:0.22 }
+  };
+  var theme = 'light';
+  try {
+    var saved = localStorage.getItem('la-deck-theme');
+    if (saved === 'dark' || saved === 'light') theme = saved;
+  } catch(e){ /* stockage indisponible : on garde le clair */ }
+
+  var themeBtn = document.getElementById('themeBtn');
+  function applyTheme(t){
+    theme = t;
+    document.documentElement.setAttribute('data-theme', t);
+    themeBtn.textContent = (t === 'light') ? 'Dark' : 'Light';
+    try { localStorage.setItem('la-deck-theme', t); } catch(e){}
+    if (typeof rebuild === 'function') rebuild();
+  }
+
+  /* =======================================================
+     B. Navigation des diapositives
+     ======================================================= */
+  var slides   = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var canvasEl = document.getElementById('canvas');
+  var scrimEl  = document.getElementById('scrim');
+  var progress = document.getElementById('progress');
+  var counter  = document.getElementById('counter');
+  var confCtl  = document.getElementById('confControls');
+  var caption  = document.getElementById('caption');
+
+  var index = 0, sceneVisible = false;
+
+  function show(i){
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function(s, j){ s.classList.toggle('active', j === index); });
+
+    sceneVisible = slides[index].dataset.scene === 'on';
+    canvasEl.classList.toggle('on', sceneVisible);
+    scrimEl.classList.toggle('on', sceneVisible);
+    confCtl.style.display = sceneVisible ? 'flex' : 'none';
+    caption.style.opacity = sceneVisible ? '1' : '0';
+
+    counter.textContent = (index + 1) + ' / ' + slides.length;
+    progress.style.width = (index / (slides.length - 1) * 100) + '%';
+    slides[index].scrollTop = 0;
+  }
+  function go(d){ show(index + d); }
+
+  document.getElementById('next').addEventListener('click', function(){ go(1); });
+  document.getElementById('prev').addEventListener('click', function(){ go(-1); });
+  themeBtn.addEventListener('click', function(ev){
+    ev.stopPropagation();
+    applyTheme(theme === 'light' ? 'dark' : 'light');
+  });
+
+  document.addEventListener('keydown', function(e){
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter'){ e.preventDefault(); go(1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace'){ e.preventDefault(); go(-1); }
+    else if (k === 'Home'){ show(0); }
+    else if (k === 'End'){ show(slides.length - 1); }
+    else if (k === 'd' || k === 'D'){ applyTheme(theme === 'light' ? 'dark' : 'light'); }
+    else if (k === 'f' || k === 'F'){
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    }
+  });
+
+  var wheelLock = false;
+  window.addEventListener('wheel', function(e){
+    var s = slides[index];
+    if (s.scrollHeight > s.clientHeight + 4) return;
+    if (wheelLock || Math.abs(e.deltaY) < 8) return;
+    wheelLock = true;
+    setTimeout(function(){ wheelLock = false; }, 520);
+    go(e.deltaY > 0 ? 1 : -1);
+  }, { passive:true });
+
+  var tx = 0, ty = 0;
+  window.addEventListener('touchstart', function(e){
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY;
+  }, { passive:true });
+  window.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+  }, { passive:true });
+
+  var fadeTimer = null;
+  function wake(){
+    document.querySelectorAll('.chrome').forEach(function(c){ c.classList.remove('faded'); });
+    clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(function(){
+      document.querySelectorAll('.chrome').forEach(function(c){ c.classList.add('faded'); });
+    }, 3500);
+  }
+  document.addEventListener('pointermove', wake);
+  document.addEventListener('keydown', wake);
+
+  /* =======================================================
+     C. Scène 3D : trois plans qui s'intersectent
+     ======================================================= */
+  var CONFIGS = [
+    {
+      label: 'Unique solution',
+      caption: 'The three planes meet at a single point.',
+      planes: [
+        { n:[ 1   , 0.25, 0.15], d:0 },
+        { n:[ 0.15, 1   ,-0.25], d:0 },
+        { n:[-0.25, 0.35, 1   ], d:0 }
+      ]
+    },
+    {
+      label: 'A line of solutions',
+      caption: 'The three planes share a common line.',
+      planes: [
+        { n:[ 0    , 1    ,-0.3 ], d:0 },
+        { n:[-1.09 , 0.06 , 0.2 ], d:0 },
+        { n:[-0.872, 1.048,-0.14], d:0 }
+      ]
+    },
+    {
+      label: 'No solution',
+      caption: 'The three intersection lines are parallel.',
+      planes: [
+        { n:[ 0   , 1   ,-0.2], d:0   },
+        { n:[-1.04, 0.02, 0.1], d:0   },
+        { n:[-1.04, 1.02,-0.1], d:1.2 }
+      ]
+    }
+  ];
+
+  var SIZE = 5.6, RADIUS = 9.6;
+
+  var renderer = new THREE.WebGLRenderer({ canvas:canvasEl, antialias:true, alpha:true });
+  renderer.setClearColor(0x000000, 0);
+
+  var scene = new THREE.Scene();
+  var pivot = new THREE.Group();
+  var group = new THREE.Group();
+  pivot.add(group); scene.add(pivot);
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 200);
+
+  function V(a){ return new THREE.Vector3(a[0], a[1], a[2]); }
+  function cross(a,b){ return new THREE.Vector3().crossVectors(a,b); }
+  function det3(a,b,c){
+    return a.x*(b.y*c.z - b.z*c.y) - a.y*(b.x*c.z - b.z*c.x) + a.z*(b.x*c.y - b.y*c.x);
+  }
+  function linePoint(n1,d1,n2,d2,dir){
+    var t1 = cross(n2, dir).multiplyScalar(d1);
+    var t2 = cross(dir, n1).multiplyScalar(d2);
+    return t1.add(t2).divideScalar(dir.lengthSq());
+  }
+
+  function grid(size, div, color, opacity){
+    var pts = [], h = size/2, step = size/div;
+    for (var i=0;i<=div;i++){
+      var t = -h + i*step;
+      pts.push(-h, t, 0,  h, t, 0);
+      pts.push( t,-h, 0,  t, h, 0);
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+    return new THREE.LineSegments(g, new THREE.LineBasicMaterial({
+      color:color, transparent:true, opacity:opacity, depthWrite:false
+    }));
+  }
+
+  function makePlane(n, d, color, pal){
+    var nn = n.clone().normalize();
+    var mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(SIZE, SIZE),
+      new THREE.MeshBasicMaterial({
+        color:color, transparent:true, opacity:pal.planeOpacity,
+        side:THREE.DoubleSide, depthWrite:false
+      })
+    );
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1), nn);
+    mesh.position.copy(nn.clone().multiplyScalar(d / n.length()));
+    mesh.add(grid(SIZE, 8, color, pal.gridOpacity));
+    mesh.renderOrder = 1;
+    return mesh;
+  }
+
+  function makeLine(point, dir, length, color){
+    var geo = new THREE.CylinderGeometry(0.022, 0.022, length, 10, 1, true);
+    var mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color:color }));
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+    mesh.position.copy(point);
+    mesh.renderOrder = 2;
+    return mesh;
+  }
+
+  function clearGroup(){
+    while (group.children.length){
+      var o = group.children.pop();
+      o.traverse(function(c){
+        if (c.geometry) c.geometry.dispose();
+        if (c.material) c.material.dispose();
+      });
+    }
+  }
+
+  function build(cfg){
+    var pal = PALETTE[theme];
+    clearGroup();
+    var ns = cfg.planes.map(function(p){ return V(p.n); });
+    var ds = cfg.planes.map(function(p){ return p.d; });
+
+    for (var i=0;i<3;i++) group.add(makePlane(ns[i], ds[i], pal.planes[i], pal));
+
+    var lines = [];
+    [[0,1],[1,2],[0,2]].forEach(function(pr){
+      var a = pr[0], b = pr[1];
+      var dir = cross(ns[a], ns[b]);
+      if (dir.length() < 1e-6) return;
+      var p = linePoint(ns[a], ds[a], ns[b], ds[b], dir);
+      var u = dir.clone().normalize();
+      var key = p.clone().sub(u.clone().multiplyScalar(p.dot(u)));
+      var dup = lines.some(function(l){
+        return Math.abs(Math.abs(l.u.dot(u)) - 1) < 1e-4 && l.key.distanceTo(key) < 1e-3;
+      });
+      if (dup) return;
+      lines.push({ u:u, key:key });
+      group.add(makeLine(p, u, SIZE*1.55, pal.line));
+    });
+
+    var D = det3(ns[0], ns[1], ns[2]);
+    if (Math.abs(D) > 1e-4){
+      var Dx = det3(new THREE.Vector3(ds[0], ns[0].y, ns[0].z),
+                    new THREE.Vector3(ds[1], ns[1].y, ns[1].z),
+                    new THREE.Vector3(ds[2], ns[2].y, ns[2].z));
+      var Dy = det3(new THREE.Vector3(ns[0].x, ds[0], ns[0].z),
+                    new THREE.Vector3(ns[1].x, ds[1], ns[1].z),
+                    new THREE.Vector3(ns[2].x, ds[2], ns[2].z));
+      var Dz = det3(new THREE.Vector3(ns[0].x, ns[0].y, ds[0]),
+                    new THREE.Vector3(ns[1].x, ns[1].y, ds[1]),
+                    new THREE.Vector3(ns[2].x, ns[2].y, ds[2]));
+      var dot = new THREE.Mesh(
+        new THREE.SphereGeometry(0.105, 24, 16),
+        new THREE.MeshBasicMaterial({ color:pal.point })
+      );
+      dot.position.set(Dx/D, Dy/D, Dz/D);
+      dot.renderOrder = 3;
+      group.add(dot);
+    }
+  }
+
+  var buttons = [], currentCfg = 0;
+  CONFIGS.forEach(function(cfg, i){
+    var b = document.createElement('button');
+    b.textContent = cfg.label;
+    b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); select(i); });
+    confCtl.appendChild(b);
+    buttons.push(b);
+  });
+  function select(i){
+    currentCfg = i;
+    buttons.forEach(function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
+    caption.textContent = CONFIGS[i].caption;
+    build(CONFIGS[i]);
+  }
+  function rebuild(){ build(CONFIGS[currentCfg]); }
+
+  var theta = 0.9, phi = 1.16, autoSpin = true, idle = null;
+  var dragging = false, lastX = 0, lastY = 0;
+
+  function pause(){
+    autoSpin = false; clearTimeout(idle);
+    idle = setTimeout(function(){ autoSpin = true; }, 2600);
+  }
+  canvasEl.addEventListener('pointerdown', function(e){
+    if (!sceneVisible) return;
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+    canvasEl.setPointerCapture(e.pointerId); pause();
+  });
+  canvasEl.addEventListener('pointermove', function(e){
+    if (!dragging) return;
+    theta -= (e.clientX - lastX) * 0.006;
+    phi   -= (e.clientY - lastY) * 0.006;
+    phi = Math.max(0.18, Math.min(Math.PI - 0.18, phi));
+    lastX = e.clientX; lastY = e.clientY; pause();
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+    canvasEl.addEventListener(ev, function(){ dragging = false; pause(); });
+  });
+
+  function resize(){
+    var w = window.innerWidth, h = window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var right = new THREE.Vector3();
+  function frame(){
+    requestAnimationFrame(frame);
+    if (!sceneVisible) return;
+    if (autoSpin) theta += 0.0022;
+
+    camera.position.set(
+      RADIUS * Math.sin(phi) * Math.cos(theta),
+      RADIUS * Math.cos(phi),
+      RADIUS * Math.sin(phi) * Math.sin(theta)
+    );
+    camera.lookAt(0, 0, 0);
+    camera.updateMatrixWorld();
+
+    var wide = window.innerWidth / window.innerHeight > 1.0;
+    var halfW = RADIUS * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect;
+    right.setFromMatrixColumn(camera.matrixWorld, 0);
+    pivot.position.copy(right).multiplyScalar(wide ? 0.40 * halfW : 0);
+    pivot.position.y += wide ? 0 : -0.9;
+
+    renderer.render(scene, camera);
+  }
+
+  applyTheme(theme);
+  select(0);
+  show(0);
+  wake();
+  frame();
+})();
+</script>
+</body>
+</html>
