@@ -168,9 +168,9 @@ svg{ display:block; margin:1.5rem auto; }
     <div class="math">
       \[
       \begin{cases}
-      x + 2y + 3z = 10,\\
-      4x + 5y + 6z = 11,\\
-      7x + 8y + 9z = 12,
+      x + y - 2z = 1,\\
+      x - 2y + z = 1,\\
+      2x - y - z = 2,
       \end{cases}
       \qquad (x,y,z)\ \text{unknowns.}
       \]
@@ -194,10 +194,10 @@ svg{ display:block; margin:1.5rem auto; }
   <p>We will reformulate these questions using the language of matrices and vectors:</p>
   <div class="math">
     \[
-    \underbrace{\begin{pmatrix}1&2&3\\4&5&6\\7&8&9\end{pmatrix}}_{\text{matrix}}\hspace{0.7cm}\cdot
+    \underbrace{\begin{pmatrix}1&-1&-2\\1&-2&1\\2&-1&-1\end{pmatrix}}_{\text{matrix}}\hspace{0.7cm}\cdot
     \underbrace{\begin{pmatrix}x\\y\\z\end{pmatrix}}_{\text{unknown vector}}
     =
-    \underbrace{\begin{pmatrix}10\\11\\12\end{pmatrix}}_{\text{given vector}}.
+    \underbrace{\begin{pmatrix}1\\1\\2\end{pmatrix}}_{\text{given vector}}.
     \]
   </div>
 
@@ -206,12 +206,12 @@ svg{ display:block; margin:1.5rem auto; }
      We will develop a general theory to study matrices and vectors.</p>
   <p>The previous equation appears as a particular case of the equation \[f(u)=v.\]
      Here \(u,v\) are vectors in a vector space. In our example
-     \(u=\begin{pmatrix}x\\y\\z\end{pmatrix}\), \(v=\begin{pmatrix}10\\11\\12\end{pmatrix}\) in \(\mathbb{R}^3\).</p>
+     \(u=\begin{pmatrix}x\\y\\z\end{pmatrix}\), \(v=\begin{pmatrix}1\\1\\2\end{pmatrix}\) in \(\mathbb{R}^3\).</p>
   <p>The function \(f\) is a <em>linear map</em> between vector spaces:
     \[
       f\!\begin{pmatrix}x\\y\\z\end{pmatrix}
       =
-      \begin{pmatrix}1&2&3\\4&5&6\\7&8&9\end{pmatrix}\cdot
+      \begin{pmatrix}1&-1&-2\\1&-2&1\\2&-1&-1\end{pmatrix}\cdot
       \begin{pmatrix}x\\y\\z\end{pmatrix}.
     \]
   </p>
@@ -363,7 +363,7 @@ your problem and work there instead.</li>
   </li>
 </ol>
 
-    <p>The elements of \(E\) are usually called <em>vectors</em>.</p>
+    <p>The elements of \(E\) are usually called <em>vectors</em>. The elements of $\mathbb{K}$ are called <em>scalars</em>.</p>
   </div>
 
   <div class="box illustration">
