@@ -1,0 +1,147 @@
+/* ==========================================================
+   Linear Algebra — feuille de style commune à toutes les lectures
+   ========================================================== */
+
+:root{
+  --main:#14558c;
+  --accent:#f0be3c;
+  --soft:#e8f4fc;
+  --ink:#1d1f21;
+  --paper:#ffffff;
+  --muted:#aab2b9;
+  --green:#007d55;
+  --violet:#ba9beb;
+  --claim:#e11f32;
+}
+
+html,body{
+  margin:0; padding:0;
+  font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Noto Sans",sans-serif;
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:900px;
+  margin:2rem auto;
+  padding:2rem;
+  background: rgba(255, 255, 255, 0.50);
+  border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+h1,h2{ color:var(--main); line-height:1.2; }
+h1{ font-size:2.1rem; margin:0 0 1.2rem 0; }
+h2{ font-size:1.35rem; margin:1.8rem 0 .7rem; }
+
+/* ---------- Boîtes ---------- */
+
+.box{
+  border:1px solid var(--muted);
+  border-left:6px solid var(--main);
+  border-radius:10px;
+  padding:1rem 1.1rem;
+  margin:1rem 0;
+  background: rgba(255, 255, 255, 0.85);
+}
+.box .title{ font-weight:800; margin:0 0 .4rem 0; }
+
+.illustration{
+  border-color:var(--violet);
+  border-left-color:var(--violet);
+  background: rgba(222, 206, 246, 0.12);
+}
+
+.keyq{
+  border-color:#6da7d6;
+  border-left-color:var(--main);
+  background: rgba(109, 167, 214, 0.15);
+}
+
+.definition{
+  border-color:#d6a531;
+  border-left-color:#d6a531;
+  background: rgba(240, 190, 60, 0.15);
+}
+
+.remark{
+  border-color:#999;
+  border-left-color:#999;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.lemma{
+  border-color:var(--claim);
+  border-left-color:var(--claim);
+  background: rgba(140, 47, 57, 0.09);
+}
+
+/* ---------- Séparateur de fin de semaine ---------- */
+
+.week-end{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  margin:3rem 0 .5rem;
+  color:var(--main);
+  font-weight:800;
+  font-size:.95rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.week-end::before,
+.week-end::after{
+  content:"";
+  flex:1;
+  height:3px;
+  background:var(--accent);
+  border-radius:2px;
+}
+.week-end-note{
+  text-align:center;
+  font-style:italic;
+  color:#555;
+  margin:0 0 2rem;
+}
+
+/* ---------- Divers ---------- */
+
+.math{ text-align:center; margin:.8rem 0; }
+
+ul, ol{ padding-left: 1.3rem; }
+li{ margin: 0.4rem 0; }
+
+svg{ display:block; margin:1.5rem auto; }
+
+/* Listes (a), (b), ... */
+.alpha-paren{ list-style-type: lower-alpha; }
+.alpha-paren > li::marker{
+  content: "(" counter(list-item, lower-alpha) ") ";
+}
+
+/* Listes (a'), (b'), ... */
+.alpha-prime{ list-style-type: lower-alpha; }
+.alpha-prime > li::marker{
+  content: "(" counter(list-item, lower-alpha) "'" ") ";
+}
+
+/* ---------- Impression ---------- */
+
+@media print{
+  @page{ size:A4; margin:15mm 20mm; }
+  body{ background:#fff; }
+  .wrap{
+    box-shadow:none;
+    background:#fff;
+    max-width:none;
+    margin:0;
+    padding:0;
+    backdrop-filter:none;
+  }
+  .box, svg, .math{ break-inside:avoid; page-break-inside:avoid; }
+  h1,h2{ break-after:avoid; page-break-after:avoid; }
+  .box{ margin:1.6rem 0; }
+  p{ margin:1rem 0; }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
