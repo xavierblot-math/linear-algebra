@@ -23,7 +23,7 @@
     --btn-on:rgba(167,106,17,.12);
     --p1:#d4512a;
     --p2:#0d8c83;
-    --p3:#bd8c16;
+    --p3:#a8790d;
     --sc-a:rgba(251,249,244,.98);
     --sc-b:rgba(251,249,244,.94);
     --sc-c:rgba(251,249,244,0);
@@ -178,6 +178,30 @@ table.grades th + th, table.grades td + td{padding-left:calc(2.4 * var(--s));}
 table.grades .w{text-align:right;color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;}
 table.grades tr:last-child td{border-bottom:none;}
 .note{font-size:max(12px, calc(1.45 * var(--s)));color:var(--muted);margin-top:calc(2.4 * var(--s));}
+
+/* ---------- équations colorées ---------- */
+.eqs{
+  font-family:'EB Garamond',Georgia,serif;
+  font-variant-numeric:lining-nums tabular-nums;
+  margin-top:calc(2.6 * var(--s));
+}
+.eq{
+  display:flex;align-items:center;gap:calc(1.3 * var(--s));
+  font-size:max(18px, calc(2.7 * var(--s)));
+  line-height:1.5;white-space:nowrap;
+}
+.eq .swatch{
+  width:calc(1.15 * var(--s));height:calc(1.15 * var(--s));
+  min-width:9px;min-height:9px;border-radius:2px;flex:none;
+}
+.eq1{color:var(--p1);} .eq1 .swatch{background:var(--p1);}
+.eq2{color:var(--p2);} .eq2 .swatch{background:var(--p2);}
+.eq3{color:var(--p3);} .eq3 .swatch{background:var(--p3);}
+.eqnote{
+  font-size:max(13px, calc(1.6 * var(--s)));color:var(--dim);
+  margin-top:calc(2.2 * var(--s));
+}
+
   .split{display:grid;grid-template-columns:1.05fr .95fr;gap:calc(4 * var(--s));align-items:start;}
   @media (max-width:900px){ .split{grid-template-columns:1fr;} }
 
@@ -281,7 +305,7 @@ table.grades tr:last-child td{border-bottom:none;}
   <div class="cards c3">
     <div class="card">
       <span class="tag">Duration</span>
-      <div class="num">15</div>
+      <div class="num">14</div>
       <p>weeks of class.</p>
     </div>
     <div class="card">
@@ -296,6 +320,7 @@ table.grades tr:last-child td{border-bottom:none;}
     </div>
   </div>
   <div class="body">
+        <p><strong>Come to Tuesday knowing Monday's lecture.</strong> The exercise class assumes the definitions and statements are already familiar. Otherwise you spend the two hours learning them instead of using them.</p>
     <p><strong>Times and rooms occasionally change.</strong> Always check before coming — do not rely on last week's room.</p>
   </div>
 </section>
@@ -331,14 +356,14 @@ table.grades tr:last-child td{border-bottom:none;}
   <h2>Your teaching assistants</h2>
   <div class="rule"></div>
   <div class="cards c3">
-    <div class="card"><span class="tag">Groups 1 & 6</span><p><span class="k">Andreas Studsgaard</span></p></div>
-    <div class="card"><span class="tag">Groups 2 & 7</span><p><span class="k">Longyu Chen</span></p></div>
-    <div class="card"><span class="tag">Groups 3 & 8</span><p><span class="k">Victor Chen</span></p></div>
-    <div class="card"><span class="tag">Groups 4 & 9</span><p><span class="k">Seungkyu Lee</span></p></div>
-    <div class="card"><span class="tag">Groups 5 & 10</span><p><span class="k">Xiao Li</span></p></div>
+    <div class="card"><span class="tag">Groups 1 &amp; 6</span><p><span class="k">Andreas Studsgaard</span></p></div>
+    <div class="card"><span class="tag">Groups 2 &amp; 7</span><p><span class="k">Longyu Chen</span></p></div>
+    <div class="card"><span class="tag">Groups 3 &amp; 8</span><p><span class="k">Victor Chen</span></p></div>
+    <div class="card"><span class="tag">Groups 4 &amp; 9</span><p><span class="k">Seungkyu Lee</span></p></div>
+    <div class="card"><span class="tag">Groups 5 &amp; 10</span><p><span class="k">Xiao Li</span></p></div>
   </div>
   <div class="body">
-    <p> Tutorial : you work, the TA helps . Not a second lecture. They are the people best placed to tell you what you have not understood yet — use them.</p>
+    <p>Tutorial: you work, the TA helps. Not a second lecture. They guide you to solve the exercices. They are the best placed to spot what you have not understood yet — use them.</p>
   </div>
 </section>
 
@@ -351,13 +376,13 @@ table.grades tr:last-child td{border-bottom:none;}
     <div class="card p2">
       <span class="tag">Fundamental</span>
       <h3>Do most of them.</h3>
-      <p>These are the baseline. To practice the core notions. This is where you should focus most of the effort. </p>
+      <p>These are the baseline. To practice the core notions. This is where you should focus most of the effort, and time.</p>
       <!--<p>If a fundamental exercise is still difficult after you have seen the solution, that is the signal to come back to the definitions.</p>-->
     </div>
     <div class="card p1">
       <span class="tag">Advanced</span>
       <h3>Pick a few. Take your time.</h3>
-      <p>This is a challenge. Do not try to cover them all. Choose one or two and sit with them properly — an hour on one good problem beats ten minutes each on six.</p>
+      <p>This is a challenge. Do not try to cover them all. Choose one or two and sit with them properly. An hour on one good problem beats ten minutes on six of them. It is okay if you do not manage to solve it properly.</p>
       <p>To develop logical and abstract thinking in more advanced settings.</p>
       <!--<p>This is where you learn to do mathematics rather than to apply recipes.</p>-->
     </div>
@@ -371,14 +396,14 @@ table.grades tr:last-child td{border-bottom:none;}
   <div class="rule"></div>
   <div class="split">
     <div>
-      <p><strong>Understanding a solution is not the same as being able to produce one.</strong> Watching a clean proof feels like learning: every line follows, nothing is confusing. But that feeling of fluency is a very poor predictor of what you can do alone, later, in front of a blank page.</p>
-      <p>What consolidates knowledge is <strong>active recall <!--retrieval--> and production</strong>, not re-reading. The effort of recovering a definition from memory, of choosing which theorem to apply, of writing a proof from nothing — that effort is the mechanism. Remove it and very little is left behind.</p>
-      <p>So the twenty minutes you spend stuck are not wasted time. They <strong>are</strong> the real work. They also change what reading the solution does for you: you now know exactly which step you could not find, and that is the step you will remember.</p>
+      <p><strong>Understanding a solution is not the same as being able to produce one.</strong> Watching a clean proof feels like learning: every line follows, nothing is confusing. But doing it alone, later, in front of a blank page, is  another story.</p>
+      <p><strong>The effort is the mechanism.</strong> Recovering a definition from memory, choosing which theorem applies, writing a proof from nothing. This is where the learning actually happens. (active recall and production).</p>
+      <p>So twenty minutes stuck are not wasted. They also change how you read the solution: you know exactly which step you were missing, and that is the step you will remember.</p>
     </div>
     <div class="card">
       <span class="tag">A concrete recipe</span>
       <ul>
-        <li>Try <strong>alone, 15–20 minutes</strong>, before any help. </li>
+        <li>Try <strong>alone, 15–20 minutes</strong>, before any help.</li>
         <!--<li>Write down <strong>precisely where you are blocked</strong> — one sentence. "I don't see how to start" is a different problem from "I can't finish this computation".</li>-->
         <li><em>Then</em> ask a TA, a classmate, or read the solution.</li>
         <li><strong>Redo it from scratch a day later</strong>, notes closed. This step is the one everyone skips and the one that works.</li>
@@ -429,7 +454,7 @@ table.grades tr:last-child td{border-bottom:none;}
         <li>Groups</li>
         <li>Vector spaces</li>
         <li>Subspaces</li>
-        <!--<li>Spanning families, independence</li>--> 
+        <!--<li>Spanning families, independence</li>-->
         <li>Bases and dimension</li>
       </ul>
     </div>
@@ -490,7 +515,6 @@ table.grades tr:last-child td{border-bottom:none;}
   <p class="note">Weighting is indicative and may still be adjusted. All dates will be confirmed on Moodle.</p>
 </section>
 
-
 <!-- ===================== 11. QUESTIONS ===================== -->
 <section class="slide" data-scene="on">
   <div class="title-text">
@@ -503,10 +527,20 @@ table.grades tr:last-child td{border-bottom:none;}
   </div>
 </section>
 
+<!-- ===================== 12. LE SYSTEME ===================== -->
+<section class="slide" data-scene="on">
+  <div class="title-text">
+    <div class="eyebrow">A first look</div>
+    <h2>Three equations, three unknowns</h2>
+    <div class="rule"></div>
+    <div class="eqs" id="eqBox"></div>
+    <!--<p class="eqnote" id="eqNote"></p> -->
+  </div>
+</section>
+
 <div id="caption"></div>
 <div class="chrome" id="confControls"></div>
 <div class="chrome" id="topright">
-  <button id="themeBtn" aria-label="Switch theme">Dark</button>
   <span class="hint">← → &nbsp;·&nbsp; F</span>
 </div>
 <div class="chrome" id="nav">
@@ -524,23 +558,16 @@ table.grades tr:last-child td{border-bottom:none;}
      A. Thème
      ======================================================= */
   var PALETTE = {
-    light: { planes:[0xd4512a, 0x0d8c83, 0xbd8c16], line:0x1a1d25, point:0x14171e,
+    light: { planes:[0xd4512a, 0x0d8c83, 0xa8790d], line:0x1a1d25, point:0x14171e,
              planeOpacity:0.24, gridOpacity:0.42 },
     dark:  { planes:[0xf47b5f, 0x4fc9c0, 0xf0c24c], line:0xfdf6e8, point:0xffffff,
              planeOpacity:0.20, gridOpacity:0.22 }
   };
   var theme = 'light';
-  try {
-    var saved = localStorage.getItem('la-deck-theme');
-    if (saved === 'dark' || saved === 'light') theme = saved;
-  } catch(e){ /* stockage indisponible : on garde le clair */ }
 
-  var themeBtn = document.getElementById('themeBtn');
   function applyTheme(t){
     theme = t;
     document.documentElement.setAttribute('data-theme', t);
-    themeBtn.textContent = (t === 'light') ? 'Dark' : 'Light';
-    try { localStorage.setItem('la-deck-theme', t); } catch(e){}
     if (typeof rebuild === 'function') rebuild();
   }
 
@@ -554,6 +581,8 @@ table.grades tr:last-child td{border-bottom:none;}
   var counter  = document.getElementById('counter');
   var confCtl  = document.getElementById('confControls');
   var caption  = document.getElementById('caption');
+  var eqBox    = document.getElementById('eqBox');
+  var eqNote   = document.getElementById('eqNote');
 
   var index = 0, sceneVisible = false;
 
@@ -575,10 +604,6 @@ table.grades tr:last-child td{border-bottom:none;}
 
   document.getElementById('next').addEventListener('click', function(){ go(1); });
   document.getElementById('prev').addEventListener('click', function(){ go(-1); });
-  themeBtn.addEventListener('click', function(ev){
-    ev.stopPropagation();
-    applyTheme(theme === 'light' ? 'dark' : 'light');
-  });
 
   document.addEventListener('keydown', function(e){
     var k = e.key;
@@ -631,28 +656,31 @@ table.grades tr:last-child td{border-bottom:none;}
     {
       label: 'Unique solution',
       caption: 'The three planes meet at a single point.',
+      solution: 'Exactly one solution: (1, 1, 1).',
       planes: [
-        { n:[ 1   , 0.25, 0.15], d:0 },
-        { n:[ 0.15, 1   ,-0.25], d:0 },
-        { n:[-0.25, 0.35, 1   ], d:0 }
+        { n:[ 1,  1,  1], d:3 },
+        { n:[ 1, -1,  0], d:0 },
+        { n:[ 1,  1, -2], d:0 }
       ]
     },
     {
       label: 'A line of solutions',
       caption: 'The three planes share a common line.',
+      solution: 'Infinitely many: (1, 0, 0) + t · (1, 1, 1), for any t.',
       planes: [
-        { n:[ 0    , 1    ,-0.3 ], d:0 },
-        { n:[-1.09 , 0.06 , 0.2 ], d:0 },
-        { n:[-0.872, 1.048,-0.14], d:0 }
+        { n:[ 1,  1, -2], d:1 },
+        { n:[ 1, -2,  1], d:1 },
+        { n:[ 2, -1, -1], d:2 }
       ]
     },
     {
       label: 'No solution',
-      caption: 'The three intersection lines are parallel.',
+      caption: 'No point lies on all three planes. They meet pairwise, never all at once.',
+      solution: 'None: the first two equations force 2x − y − z = 2, not 3.',
       planes: [
-        { n:[ 0   , 1   ,-0.2], d:0   },
-        { n:[-1.04, 0.02, 0.1], d:0   },
-        { n:[-1.04, 1.02,-0.1], d:1.2 }
+        { n:[ 1,  1, -2], d:1 },
+        { n:[ 1, -2,  1], d:1 },
+        { n:[ 2, -1, -1], d:3 }
       ]
     }
   ];
@@ -773,6 +801,32 @@ table.grades tr:last-child td{border-bottom:none;}
     }
   }
 
+  /* ---------- équations affichées, dérivées des mêmes coefficients ---------- */
+  function formatEquation(n, d){
+    var vars = ['x','y','z'], html = '';
+    for (var i = 0; i < 3; i++){
+      var c = n[i];
+      if (c === 0) continue;
+      var a = Math.abs(c), v = '<i>' + vars[i] + '</i>';
+      if (html === '') html += (c < 0 ? '\u2212' : '') + (a === 1 ? '' : a) + v;
+      else html += ' ' + (c < 0 ? '\u2212' : '+') + ' ' + (a === 1 ? '' : a) + v;
+    }
+    if (html === '') html = '0';
+    return html + ' = ' + (d < 0 ? '\u2212' + Math.abs(d) : d);
+  }
+
+  function renderEquations(cfg){
+    if (!eqBox) return;
+    eqBox.innerHTML = '';
+    cfg.planes.forEach(function(p, i){
+      var row = document.createElement('div');
+      row.className = 'eq eq' + (i + 1);
+      row.innerHTML = '<span class="swatch"></span>' + formatEquation(p.n, p.d);
+      eqBox.appendChild(row);
+    });
+    if (eqNote) eqNote.textContent = cfg.solution || '';
+  }
+
   var buttons = [], currentCfg = 0;
   CONFIGS.forEach(function(cfg, i){
     var b = document.createElement('button');
@@ -786,6 +840,7 @@ table.grades tr:last-child td{border-bottom:none;}
     currentCfg = i;
     buttons.forEach(function(b, j){ b.setAttribute('aria-pressed', j === i ? 'true' : 'false'); });
     caption.textContent = CONFIGS[i].caption;
+    renderEquations(CONFIGS[i]);
     build(CONFIGS[i]);
   }
   function rebuild(){ build(CONFIGS[currentCfg]); }
