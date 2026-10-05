@@ -4,323 +4,423 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="robots" content="noindex, nofollow">
-  <title>Linear Algebra — Lecture 2</title>
+  <title>Linear Algebra — Lecture 3</title>
 
-  <!-- Style global -->
-
+  <!-- Style global (identique Lecture 1) -->
 <link rel="stylesheet" href="style.css">
 
   <!-- MathJax -->
   <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-
 </head>
 <body>
 <div class="wrap">
 
-  <h1>Lecture 2 : vector subspaces and span of a family of vectors</h1>
 
-  <!-- =======================
-       Vector spaces & subspaces
-       ======================= -->
+<!-- ===== Lecture 3 content ===== -->
 
-  <h2>Vector subspaces</h2>
+<!-- ================= Lecture 3 – Subspaces ================= -->
 
-  <div class="box illustration">
-    <div class="title">Example in \(\mathbb{K}^3\)</div>
-    <p>Recall \(\mathbb{K}^3=\{(x,y,z)\mid x,y,z\in\mathbb{K}\}\). Consider
-      \[
-        \mathbb{K}^2\times\{0\}=\{(x,y,0)\in\mathbb{K}^3\}
-        \;=\;\{(x,y,z)\in\mathbb{K}^3\mid z=0\}.
-      \]
-      The vector-space operations of \(\mathbb{K}^3\) preserve this set:
-    </p>
-    <ul>
-      <li>\((0,0,0)\in \mathbb{K}^2\times\{0\}\).</li>
-      <li>\((x,y,0)+(x',y',0)=(x+x',y+y',0)\in \mathbb{K}^2\times\{0\}\).</li>
-      <li>\(\lambda\cdot(x,y,0)=(\lambda x,\lambda y,0)\in \mathbb{K}^2\times\{0\}\).</li>
-    </ul>
-    <p>Hence the vector-space structure on \(\mathbb{K}^3\) induces one on
-      \(\mathbb{K}^2\times\{0\}\) (the \(xy\)-plane).
-    </p>
-  </div>
+<h1> Lecture 3 : sum, direct sum and complements </h1>
+<p> In the last lectures we introduced the notion of vector space and vector subspace, span, together with basic facts. In this lecture we study fundamental operations we can perform with vector spaces.</p>
 
-  <div class="box definition">
-    <div class="title">Definition (vector subspace)</div>
-    <p>Let \(E\) be a \(\mathbb{K}\)-vector space and \(F\subset E\).
-       We say that \(F\) is a <em>vector subspace</em> of \(E\) if:
-    </p>
-    <ol class="alpha-paren">
-      <li>\(0_E\in F\).</li>
-      <li>\(F\) is closed under addition: \(x,y\in F\Rightarrow x+y\in F\).</li>
-      <li>\(F\) is closed under scalar multiplication: \(\lambda\in\mathbb{K},\,x\in F\Rightarrow \lambda x\in F\).</li>
-    </ol>
-    <p><strong>Variant (equivalent):</strong>
-      <ol class="alpha-prime">
-        <li>\(F\neq\varnothing\).</li>
-        <li>\(\forall x,y\in F,\ \forall \lambda\in\mathbb{K},\ \lambda x + y\in F\).</li>
-      </ol>
-    </p>
-  </div>
-  <p>The \(\mathbb{K}\)-vector space structure of \(E\) induces a \(\mathbb{K}\)-vector space structure on \(F\), namely:</p>
+<h2> Intersection of vector subspaces</h2>
 
- <div class="box lemma">
-    <div class="title">Lemma</div>
-   <p>Let \(F\) be a vector subspace of a \(\mathbb{K}\)-vector space \(E\). Then the operations of \(E\) restrict to \(F\), and \(F\) equipped with them is a \(\mathbb{K}\)-vector space.</p>
-  <p><strong>Proof.</strong> By (b) and (c), the addition and the scalar multiplication of \(E\) restrict to maps \(F\times F\to F\) and \(\mathbb{K}\times F\to F\). By (a) we have \(0_E\in F\), and it is a neutral element for the addition of \(F\) since it is one for the addition of \(E\). If \(x\in F\), then \(-x=(-1)\cdot x\in F\) by (c), so every element of \(F\) has an opposite in \(F\). The remaining axioms — associativity and commutativity of the addition, the two distributivities, \((\lambda\mu)x=\lambda(\mu x)\) and \(1\cdot x=x\) — are identities, valid for all elements of \(E\) and hence in particular for those of \(F\): there is nothing to check.</p>
-  </div>
-  
+<!-- ====== Intersection: recap & generalization ====== -->
 
-  <p>In practice, one almost never verifies the axioms directly: to prove that a set is a \(\mathbb{K}\)-vector space, one realises it as a vector subspace of a space already known to be one.</p>
+<div class="box remark">
+  <div class="title">Intersection of vector subspaces</div>
+  <p>Let \(F,G\subset E\) be vector subspaces of a vector space \( E\). Then \(F\cap G\) is also a vector subspace of \( E\). Indeed:</p>
+  <ul>
+     <li>\(0\in F\cap G\).</li>
+     <li> If \(x,y\in F\cap G\), then \(x+y\in F\) and \(x+y\in G\), since both \( F\) and \( G\) are vector subspaces.</li>
+     <li> For any \(\lambda\in\mathbb{K}\) and \( x\in F\cap G\), \(\lambda x\in F\) and \(\lambda x\in G\).</li>
+  </ul>
+  <p>More generally, for an arbitrary family \(\{F_i\}_{i\in I}\) of subspaces of \( E\), by the same token, the intersection
+     \(\displaystyle \bigcap_{i\in I} F_i\) is a subspace of \( E\).</p>
+</div>
 
-
-
-
-
-
-  <div class="box illustration">
-    <div class="title">Examples/non-examples</div>
-    <ol>
-      <li>\(\varnothing\) is never a vector subspace.</li>
-      <li>\(\{0\}\) is always a vector subspace.</li>
-      <li>\(E\) itself is a vector subspace of \(E\).</li>
-      <li>As \(\mathbb{Q}\)-vector spaces: \(\mathbb{Q}\subset \mathbb{R}\subset \mathbb{C}\) (each inclusion is a \(\mathbb{Q}\)-subspace).</li>
-      <li>\(\mathbb{K}[X]\) (polynomials over \(\mathbb{K}\)) is a \(\mathbb{K}\)-vector space
-          by componentwise operations; the set
-          \(\mathbb{K}[X]_{\le d}=\{a_0+a_1X+\dots+a_dX^d\mid a_i\in\mathbb{K}\}\)
-          is a vector subspace of \(\mathbb{K}[X]\).</li>
-      <li>\(F=\{(x,y)\in\mathbb{K}^2\mid xy=0\}=\mathbb{K}\times\{0\}\ \cup\ \{0\}\times\mathbb{K}\)
-          is <em>not</em> a subspace of \(\mathbb{K}^2\) (union of axes, not stable under addition).</li>
-    </ol>
-
-    <!-- Mini croquis des axes (union) -->
-    <svg viewBox="0 0 260 180" width="320" aria-label="Union of axes in K^2">
+<div class="box illustration">
+  <div class="title">Example: coordinate planes in \(\mathbb{R}^3\)</div>
+  <p>In \(E=\mathbb{R}^3\), the \(xy\)-plane is the subspace \(F=\mathbb{R}^2\times\{0\}\), and the  \(yz\)-plane is the subspace  \(G=\{0\}\times\mathbb{R}^{2}\). They intersect in the $y$-axis, namely \(F\cap G=\{0\}\times\mathbb{R}\times\{0\}\).</p>
+    <figure style="text-align:center; margin:1em auto;">
+    <svg viewBox="0 0 400 285" width="100%" style="max-width:420px" role="img"
+         aria-label="The xy-plane and the yz-plane in R^3 intersecting along the y-axis">
       <defs>
-        <marker id="arrSmall" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L6,3 z" fill="currentColor"></path>
+        <marker id="ah-int-k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
         </marker>
       </defs>
-      <line x1="30" y1="150" x2="240" y2="150" stroke="#999" stroke-width="1"></line>
-      <line x1="30" y1="150" x2="30"  y2="20"  stroke="#999" stroke-width="1"></line>
-      <circle cx="30" cy="150" r="3" fill="#14558c"></circle>
-
-      <!-- axes marqués comme sous-espaces candidats -->
-      <line x1="30" y1="150" x2="240" y2="150" stroke="#14558c" stroke-width="2"></line>
-      <line x1="30" y1="150" x2="30"  y2="20"  stroke="#14558c" stroke-width="2"></line>
-
-      <!-- vecteurs (1,0) et (0,1) -->
-      <line x1="30" y1="150" x2="110" y2="150"
-            stroke="#e63946" stroke-width="2" marker-end="url(#arrSmall)"></line>
-      <text x="112" y="148" font-size="12" fill="#e63946">(1,0)</text>
-
-      <line x1="30" y1="150" x2="30" y2="70"
-            stroke="#007d55" stroke-width="2" marker-end="url(#arrSmall)"></line>
-      <text x="36" y="70" font-size="12" fill="#007d55">(0,1)</text>
-
-      <!-- somme (1,1) qui n'est pas sur l’union des axes -->
-      <line x1="30" y1="150" x2="110" y2="70"
-            stroke="#14558c" stroke-width="2" marker-end="url(#arrSmall)"></line>
-      <text x="124" y="58" font-size="12" fill="#14558c">(1,1)=(1,0)+(0,1)</text>
+      <!-- G = yz-plane -->
+      <polygon points="100,60 300,60 300,260 100,260" fill="#f59e0b" fill-opacity="0.18" stroke="#f59e0b" stroke-width="1.5"/>
+      <!-- F = xy-plane -->
+      <polygon points="45,200 245,200 355,120 155,120" fill="#3b82f6" fill-opacity="0.18" stroke="#3b82f6" stroke-width="1.5"/>
+      <!-- x and z axes -->
+      <line x1="200" y1="160" x2="200" y2="28" stroke="currentColor" stroke-width="1" marker-end="url(#ah-int-k)"/>
+      <text x="207" y="34" font-size="13" fill="currentColor" font-style="italic">z</text>
+      <line x1="200" y1="160" x2="128" y2="212" stroke="currentColor" stroke-width="1" marker-end="url(#ah-int-k)"/>
+      <text x="114" y="226" font-size="13" fill="currentColor" font-style="italic">x</text>
+      <!-- intersection = y-axis -->
+      <line x1="70" y1="160" x2="338" y2="160" stroke="#dc2626" stroke-width="3"/>
+      <text x="345" y="165" font-size="13" fill="currentColor" font-style="italic">y</text>
+      <!-- labels -->
+      <text x="316" y="140" font-size="13" fill="#2563eb">F (xy-plane)</text>
+      <text x="108" y="78" font-size="13" fill="#d97706">G (yz-plane)</text>
+      <text x="72" y="152" font-size="13" fill="#dc2626">F ∩ G</text>
     </svg>
-    <p> In the picture, \( (1,1)\) is not in the union of the axes.</p>
-  </div>
+    <figcaption style="font-size:0.9em;">The \(xy\)-plane \(F\) and the \(yz\)-plane \(G\) meet along the \(y\)-axis (in red).</figcaption>
+  </figure>
+</div>
 
-  <h2>Span of a family of vectors</h2>
+<!-- ====== Sum of subspaces ====== -->
 
-  <div class="box definition">
-    <div class="title">Definition (linear combination)</div>
-    <p>Let \(v_1,\dots,v_m\) be vectors in a \(\mathbb{K}\)-vector space \(E\).
-       A <em>linear combination</em> of \(v_1,\dots,v_m\) is a vector of the form</p>
-    <div class="math">
+<h2>Sum of vector spaces</h2>
+
+<div class="box definition">
+  <div class="title">Definition</div>
+  <p>For subspaces \(F,G\subset E\), we define
+    \[
+      F+G \;:=\; \{\,u+v\in E \mid u\in F,\ v\in G\,\},
+    \]
+    and we call it the <em> sum</em> of \( F\) and \(G\).
+  </p>
+</div>
+
+<div class="box lemma">
+  <div class="title">Lemma</div>
+  Let the notation be as above.
+  <ol class="alpha-paren">
+    <li>\(F+G\) is a subspace of \(E\).</li>
+    <li>\(F\subset F+G\) and \(G\subset F+G\).</li>
+    <li>Universal property: if \(H\subset E\) is a subspace with \(F\subset H\) and \(G\subset H\), then \(F+G\subset H\).</li>
+  </ol>
+  <p><strong>Proof</strong></p>
+    <p> Below we use letters \(u\) for vectors in \(F\) and letters \(v\) for vectors in \(G\). </p>
+    <p> (a) We have \(0=0+0\in F+G\) and \((u_1+v_1)+(u_2+v_2)=(u_1+u_2)+(v_1+v_2)\in F+G\). 
+     Similarly, for every \(\lambda\in\mathbb{K}\) we have \(\lambda(u+v)=(\lambda u)+(\lambda v)\in F+G\).</p>
+     <p>(b) Clear since \(u=u+0\) and \(v=0+v\).</p>
+     <p>(c) If \(F,G\subset H\) then \(u+v\in H\), hence \(F+G\subset H\).</p>
+</div>
+
+<div class="box remark">
+  <div class="title">Generalization: sum of a family of vector subspaces</div>
+  <p>For subspaces \(\{F_i\}_{i\in I}\) of $E$, we define
+    \[
+      \sum_{i\in I}F_i
+      \;:=\;
+      \left\{\,u_{i_1}+\cdots+u_{i_\ell}\ \middle|\ 
+      u_{i_j}\in F_{i_j}\ \text{for some finite } \{i_1,\dots,i_\ell\}\subset I \right\},
+    \]
+  </p>
+  <p>and we call it the sum of the subspaces \(\{F_i\}_{i\in I}\). It satisfies analogous properties to the case of two subspaces.</p>
+</div>
+
+<!-- ====== NEW: F+G is not F ∪ G, but Span(F ∪ G) ====== -->
+<div class="box remark">
+  <div class="title">Remark: \(F+G\) is not \(F\cup G\), but \(\mathrm{Span}(F\cup G)\)</div>
+  <p>Be careful not to confuse the sum \(F+G\) with the union
+    \[
+      F\cup G=\{\,u\in E \mid u\in F \text{ or } u\in G\,\}.
+    \]
+    In general, \(F\cup G\) is <em>not</em> a vector subspace of \(E\). For instance, in \(E=\mathbb{R}^2\), let \(F=\mathbb{R}\times\{0\}\) be the \(x\)-axis and \(G=\{0\}\times\mathbb{R}\) the \(y\)-axis. Then \((1,0)\in F\) and \((0,1)\in G\), but
+    \[
+      (1,0)+(0,1)=(1,1)\notin F\cup G .
+    \]
+    On the other hand, every \((x,y)\in\mathbb{R}^2\) can be written \((x,y)=(x,0)+(0,y)\), so \(F+G=\mathbb{R}^2\).</p>
+  <p>The correct statement is
+    \[
+      F+G=\mathrm{Span}(F\cup G).
+    \]
+    Indeed:</p>
+  <ul>
+    <li>\(F+G\) is a subspace containing \(F\) and \(G\), hence containing \(F\cup G\). Since \(\mathrm{Span}(F\cup G)\) is the smallest subspace containing \(F\cup G\), we get \(\mathrm{Span}(F\cup G)\subset F+G\).</li>
+    <li>Conversely, any \(u+v\) with \(u\in F\), \(v\in G\) is a linear combination of elements of \(F\cup G\), so \(F+G\subset \mathrm{Span}(F\cup G)\).</li>
+  </ul>
+  <p>In other words, \(F+G\) is the smallest subspace of \(E\) containing both \(F\) and \(G\) (this is exactly the universal property (c) above). By the same token, for a family of subspaces,
+    \(\displaystyle \sum_{i\in I}F_i=\mathrm{Span}\Big(\bigcup_{i\in I}F_i\Big)\).</p>
+</div>
+
+<!-- ====== NEW: the three axes ====== -->
+<div class="box illustration">
+  <div class="title">Example: the three coordinate axes in \(\mathbb{R}^3\)</div>
+  <p>In \(\mathbb{R}^3\), let \(F=\mathbb{R}\times\{0\}\times\{0\}\) be the \(x\)-axis, \(G=\{0\}\times\mathbb{R}\times\{0\}\) the \(y\)-axis and \(H=\{0\}\times\{0\}\times\mathbb{R}\) the \(z\)-axis. Then:</p>
+  <ul>
+    <li>\(F+G=\{(x,y,0)\mid x,y\in\mathbb{R}\}\) is the \(xy\)-plane, since \((x,y,0)=(x,0,0)+(0,y,0)\);</li>
+    <li>\(F+H\) is the \(xz\)-plane;</li>
+    <li>\(G+H\) is the \(yz\)-plane;</li>
+    <li>\(F+G+H=\mathbb{R}^3\), since \((x,y,z)=(x,0,0)+(0,y,0)+(0,0,z)\).</li>
+  </ul>
+</div>
+
+<div class="box illustration">
+  <div class="title">Example: sum of coordinate planes and axes in \(\mathbb{R}^3\)</div>
+  <p> In \(\mathbb{R}^3\), the sum of any two distinct coordinate planes is \(\mathbb{R}^3\). For instance, we can write 
+  \[
+  	(x,y,z)=(x,y,0)+(0,0,z),
+  \]
+  showing that \(\mathbb{R}^{3}\) is the sum of the \(xy\)-plane and the \(yz\)-plane. By the same token, \(\mathbb{R}^3\) is the sum of the \(xy\)-plane and the \(z\)-axis.</p>
+  <figure style="text-align:center; margin:1em auto;">
+    <svg viewBox="0 0 400 285" width="100%" style="max-width:420px" role="img"
+         aria-label="A vector of R^3 written as the sum of a vector in the xy-plane and a vector in the yz-plane">
+      <defs>
+        <marker id="ah-sum-k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+        <marker id="ah-sum-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+        </marker>
+        <marker id="ah-sum-o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#d97706"/>
+        </marker>
+      </defs>
+      <!-- G = yz-plane -->
+      <polygon points="100,60 300,60 300,260 100,260" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-width="1.5"/>
+      <!-- F = xy-plane -->
+      <polygon points="45,200 245,200 355,120 155,120" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" stroke-width="1.5"/>
+      <!-- axes -->
+      <line x1="200" y1="160" x2="200" y2="28" stroke="currentColor" stroke-width="1" stroke-opacity="0.6" marker-end="url(#ah-sum-k)"/>
+      <text x="207" y="34" font-size="13" fill="currentColor" font-style="italic">z</text>
+      <line x1="200" y1="160" x2="128" y2="212" stroke="currentColor" stroke-width="1" stroke-opacity="0.6" marker-end="url(#ah-sum-k)"/>
+      <text x="114" y="226" font-size="13" fill="currentColor" font-style="italic">x</text>
+      <line x1="70" y1="160" x2="338" y2="160" stroke="currentColor" stroke-width="1" stroke-opacity="0.6" marker-end="url(#ah-sum-k)"/>
+      <text x="345" y="165" font-size="13" fill="currentColor" font-style="italic">y</text>
+      <!-- parallelogram -->
+      <line x1="257" y1="184" x2="257" y2="114" stroke="currentColor" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="200" y1="90" x2="257" y2="114" stroke="currentColor" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- u in F, v in G, u+v -->
+      <line x1="200" y1="160" x2="257" y2="184" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ah-sum-b)"/>
+      <line x1="200" y1="160" x2="200" y2="90" stroke="#d97706" stroke-width="2.5" marker-end="url(#ah-sum-o)"/>
+      <line x1="200" y1="160" x2="257" y2="114" stroke="currentColor" stroke-width="2.5" marker-end="url(#ah-sum-k)"/>
+      <!-- labels -->
+      <text x="262" y="200" font-size="13" fill="#2563eb">(x,y,0) ∈ F</text>
+      <text x="194" y="86" font-size="13" fill="#d97706" text-anchor="end">(0,0,z) ∈ G</text>
+      <text x="263" y="110" font-size="13" fill="currentColor">(x,y,z)</text>
+      <text x="316" y="140" font-size="13" fill="#2563eb">F (xy-plane)</text>
+      <text x="108" y="250" font-size="13" fill="#d97706">G (yz-plane)</text>
+    </svg>
+    <figcaption style="font-size:0.9em;">Any vector of \(\mathbb{R}^3\) is the sum of a vector of the \(xy\)-plane \(F\) and a vector of the \(yz\)-plane \(G\), so \(F+G=\mathbb{R}^3\).</figcaption>
+  </figure>
+</div>
+
+<!-- ====== UPDATED: detailed proof ====== -->
+<div class="box illustration">
+  <div class="title">Example: two more interesting planes whose sum is \(\mathbb{R}^3\)</div>
+  <p>Let
+    \[
+      F=\{(x,y,z)\in\mathbb{R}^3\mid x+2y=0\},\qquad
+      G=\{(x,y,z)\in\mathbb{R}^3\mid x-y+z=0\}.
+    \]
+    We claim that \(F+G=\mathbb{R}^3\).</p>
+
+  <p><strong>Step 1: description of \(F\).</strong> A vector \((x,y,z)\) lies in \(F\) if and only if \(x=-2y\). Hence any vector of \(F\) is of the form
+    \[
+      \begin{pmatrix} -2y\\ y\\ z\end{pmatrix}
+      = y\begin{pmatrix} -2\\ 1\\ 0\end{pmatrix}
+      + z\begin{pmatrix} 0\\ 0\\ 1\end{pmatrix},
+      \qquad y,z\in\mathbb{R},
+    \]
+    that is,
+    \[
+      F=\mathrm{Span}\left(\begin{pmatrix} -2\\ 1\\ 0\end{pmatrix},\begin{pmatrix} 0\\ 0\\ 1\end{pmatrix}\right).
+    \]
+  </p>
+
+  <p><strong>Step 2: description of \(G\).</strong> A vector \((x,y,z)\) lies in \(G\) if and only if \(y=x+z\). Hence any vector of \(G\) is of the form
+    \[
+      \begin{pmatrix} x\\ x+z\\ z\end{pmatrix}
+      = x\begin{pmatrix} 1\\ 1\\ 0\end{pmatrix}
+      + z\begin{pmatrix} 0\\ 1\\ 1\end{pmatrix},
+      \qquad x,z\in\mathbb{R},
+    \]
+    that is,
+    \[
+      G=\mathrm{Span}\left(\begin{pmatrix} 1\\ 1\\ 0\end{pmatrix},\begin{pmatrix} 0\\ 1\\ 1\end{pmatrix}\right).
+    \]
+  </p>
+
+  <p><strong>Step 3: reduction to the standard basis vectors.</strong> Any vector of \(\mathbb{R}^3\) is a linear combination of
+    \[
+      e_1=\begin{pmatrix} 1\\ 0\\ 0\end{pmatrix},\quad
+      e_2=\begin{pmatrix} 0\\ 1\\ 0\end{pmatrix},\quad
+      e_3=\begin{pmatrix} 0\\ 0\\ 1\end{pmatrix},
+    \]
+    i.e. \(\mathbb{R}^3=\mathrm{Span}(e_1,e_2,e_3)\). Since \(F+G\) is a vector subspace, it is stable under linear combinations. Therefore, to show \(F+G=\mathbb{R}^3\), <em>it is enough to show that \(e_1,e_2,e_3\in F+G\)</em>.</p>
+
+  <p><strong>Step 4: \(e_1,e_2,e_3\in F+G\).</strong></p>
+  <ul>
+    <li>\(e_3\): we have \(e_3\in F\subset F+G\) directly from Step 1.</li>
+    <li>\(e_1\): we have
       \[
-        \lambda_1 v_1+\cdots+\lambda_m v_m,
+        e_1=\frac13\begin{pmatrix} 1\\ 1\\ 0\end{pmatrix}-\frac13\begin{pmatrix} -2\\ 1\\ 0\end{pmatrix},
       \]
-    </div>
-    <p>where $\lambda_1,\dots,\lambda_m\in\mathbb{K}.$</p>
-  </div>
-
-  <div class="box definition">
-    <div class="title">Definition (span)</div>
-    <p>The <em>span</em> of \(v_1,\dots,v_m\) is the set of all their linear combinations:</p>
-    <div class="math">
+      where the first vector lies in \(G\) and the second in \(F\). Hence \(e_1\in F+G\).</li>
+    <li>\(e_2\): we have
       \[
-        \langle v_1,\dots,v_m\rangle=\operatorname{Span}(v_1,\dots,v_m)
-        =\{\lambda_1 v_1+\cdots+\lambda_m v_m \mid \lambda_1,\dots,\lambda_m\in\mathbb{K}\}.
+        e_2=\frac23\begin{pmatrix} 1\\ 1\\ 0\end{pmatrix}+\frac13\begin{pmatrix} -2\\ 1\\ 0\end{pmatrix},
       \]
-    </div>
-    <p>More generally, for any subset \(A\subset E\) (possibly infinite), \(\operatorname{Span}(A)\) is the set of
-       linear combinations of <strong>finitely many</strong> elements of \(A\):</p>
-    <div class="math">
+      where again the first vector lies in \(G\) and the second in \(F\). Hence \(e_2\in F+G\).</li>
+  </ul>
+  <p>We conclude that \(\mathbb{R}^3=\mathrm{Span}(e_1,e_2,e_3)\subseteq F+G\), and therefore \(F+G=\mathbb{R}^3\).</p>
+</div>
+
+<!-- ====== Direct sum (intro) ====== -->
+
+<h2>Direct sums</h2>
+<p>Above we saw that $\mathbb{R}^{3}$ is the sum of the $xy$-plane and the $yz$-plane, but also the sum of the $xy$-plane and the $z$-axis. There is a substantial difference between these two situations. The $xy$-plane and the $yz$-plane intersect along the $y$-axis, i.e. they share a direction. By contrast, the intersection of the $xy$-plane and the $z$-axis is reduced to \(\{0\}\). These spaces do not share any direction. In such a situation, we speak of direct sum.</p>
+
+<div class="box lemma">
+  <div class="title">Lemma</div>
+  Let the notation be as above. The following conditions are equivalent:
+  <ol class="alpha-paren">
+    <li>\(F\cap G=\{0\}\).</li>
+    <li> For all $u\in F+G$, there exist unique $f\in F$ and $g\in G$ such that $u=f+g$.</li>
+  </ol>
+  <p><strong>Proof</strong></p>
+  <p> (a)\(\Rightarrow\)(b). Suppose first that the intersection is $0$. Let $u=f+g$, with $f\in F$ and $g\in G$. Suppose we have another such decomposition $u=f^{\prime}+g^{\prime}$. Then
+  \[
+  	f-f^{\prime}=g^{\prime}-g.
+  \]
+  Now, the left hand side belongs to $F$, and the right hand side belongs to $G$. Hence, both sides belong to $F\cap G$. Since the latter is zero, we infer $f=f^{\prime}$ and $g=g^{\prime}$. </p>
+  <p>(b)\(\Rightarrow\)(a). If $u\in F\cap G$, then we decompose $u=u+0=0+u$. Using the uniqueness of the decomposition, we conclude that $u=0$.</p>
+</div>
+
+<div class="box definition">
+  <div class="title">Definition</div>
+  <p>Let $F, G$ be subspaces of a vector space $E$. If any of the equivalent conditions of the previous lemma holds, then we say that $F$ and $G$ form a <em>direct sum</em>. In this case, we write $$F\oplus G$$ instead of $F+G$. The symbol $\oplus$ hence means $+$ together with the condition $F\cap G=\lbrace 0\rbrace$. </p>
+</div>
+
+<!-- ====== NEW: direct-sum examples in R^3 ====== -->
+<div class="box illustration">
+  <div class="title">Examples: planes and axes in \(\mathbb{R}^3\), revisited</div>
+  <ul>
+    <li><p><strong>The \(xy\)-plane and the \(yz\)-plane are not in direct sum.</strong> They share the \(y\)-axis, and indeed a vector of \(\mathbb{R}^3\) admits several decompositions, e.g.
       \[
-        \operatorname{Span}(A)=\{\lambda_1 a_1+\cdots+\lambda_m a_m \mid m\geq 1,\ a_1,\dots,a_m\in A,\ \lambda_1,\dots,\lambda_m\in\mathbb{K}\}.
+        (x,y,z)=\underbrace{(x,0,0)}_{xy\text{-plane}}+\underbrace{(0,y,z)}_{yz\text{-plane}}
+        =\underbrace{(x,y,0)}_{xy\text{-plane}}+\underbrace{(0,0,z)}_{yz\text{-plane}}.
       \]
+      These are two different decompositions as soon as \(y\neq 0\).</p></li>
+    <li><p><strong>The \(xy\)-plane and the \(z\)-axis are in direct sum.</strong> Their intersection is \(\{0\}\), and the decomposition
+      \[
+        (x,y,z)=(x,y,0)+(0,0,z)
+      \]
+      is unique. Hence \(\mathbb{R}^3=(xy\text{-plane})\oplus(z\text{-axis})\).</p></li>
+  </ul>
+  <p><em>Intuition.</em> \(\mathbb{R}^3\) has \(3\) independent directions, while each of the \(xy\)-plane and the \(yz\)-plane has \(2\). Since \(2+2=4>3\), the two planes are forced to share a direction. By contrast, \(2+1=3\) for the \(xy\)-plane and the \(z\)-axis. This will be made precise with the notion of dimension.</p>
+</div>
+
+<div class="box illustration">
+      <div class="title">Examples</div>
+	<ol>
+      <li><p>Recall: a polynomial of degree \(d \geq 0\) in \(\mathbb{K}[X]\) has at most \(d\) distinct roots.</p>
+      <p>In \(\mathbb{K}[X]_{\leq 3}\), let:</p>
+      <ul>
+        <li>\(F = \{ P \in \mathbb{K}[X]_{\leq 3} \mid P(0) = P(1) = 0 \}\)</li>
+        <li>\(G = \{ P \in \mathbb{K}[X]_{\leq 3} \mid P(2) = P(3) = 0 \}\)</li>
+      </ul>
+      <p>Then, by the property above, \(F \cap G = \{0\}\): a polynomial in \(F\cap G\) has degree at most \(3\) and vanishes at the four points \(0,1,2,3\). (This uses that \(0,1,2,3\) are distinct in \(\mathbb{K}\), which holds for \(\mathbb{K}=\mathbb{Q},\mathbb{R},\mathbb{C}\). Over \(\mathbb{F}_2\), however, \(2=0\) and \(3=1\), so \(F=G\).)</p>
+        <p>As a tedious exercise, you can try to show that 
+          \[
+          F \oplus G = \mathbb{K}[X]_{\leq 3}.
+          \]
+          We will later provide useful tools (dimension theory) which provide a simple approach. 
+        </p>
+    </li>
+      <li><p>In \(C^0(\mathbb{R}) = \{ f : \mathbb{R} \to \mathbb{R} \ \text{continuous}\}\), let:</p>
+      <ul>
+        <li>\(F_0 = \{ f \in C^0(\mathbb{R}) \mid f(0)=0 \}\)</li>
+        <li>\(F_1 = \{ f \in C^0(\mathbb{R}) \mid f(1)=0 \}\)</li>
+      </ul>
+      <p>Then \(F_0 \cap F_1 \neq \{0\}\), since \(f(x) = \sin(\pi x)\) belongs to both \(F_0\) and \(F_1\), and \(f \neq 0\).</p>
+        <p>As an exercise, try to show that 
+          \[
+          F_0 + F_1 = C^0(\mathbb{R}).
+          \]
+        </p>
+        <p><em>Hint:</em> for \(f\in C^0(\mathbb{R})\), write
+          \[
+            f=\big(f-f(0)\,(1-x)\big)+f(0)\,(1-x),
+          \]
+          and check which of \(F_0\), \(F_1\) each term belongs to.
+        </p>
+        </li>
+	</ol>
     </div>
-  </div>
-
-  <div class="box remark">
-    <div class="title">Convention</div>
-    <p>For the empty family \(\varnothing\), we set \(\operatorname{Span}(\varnothing)=\{0\}\).
-       This is consistent with the convention that an empty sum is equal to \(0\).</p>
-  </div>
-
-  <div class="box remark">
-    <div class="title">Remarks</div>
-    <ul>
-      <li>The word comes from the verb <em>to span</em>, i.e. <em>to cover</em>: the vectors \(v_1,\dots,v_m\) “cover” the set \(\operatorname{Span}(v_1,\dots,v_m)\).</li>
-      <li>You may also meet the notation \(\operatorname{Vect}(v_1,\dots,v_m)\) (French notation, from <em>sous-espace vectoriel engendré</em>). In these notes we write \(\operatorname{Span}\).</li>
-    </ul>
-  </div>
-
-  <div class="box illustration">
-    <div class="title">Lines and planes in \(\mathbb{R}^3\)</div>
-    <ul>
-      <li>Let \(u\in\mathbb{R}^3\), \(u\neq 0\). Then \(\operatorname{Span}(u)=\{\lambda u\mid \lambda\in\mathbb{R}\}\) is the line passing through \(0\) directed by \(u\).</li>
-      <li>Let \(u,v\in\mathbb{R}^3\), \(u,v\neq 0\). Then
+    <!-- ====== NEW: direct sums of several subspaces ====== -->
+    <div class="box remark">
+      <div class="title">Direct sums of more than two subspaces</div>
+      <p>Let \(F_1,\dots,F_n\) be subspaces of \(E\). We say that they form a <em>direct sum</em>, and write
         \[
-          \operatorname{Span}(u,v)=
-          \begin{cases}
-            \text{a plane} & \text{if } u,v \text{ are not collinear},\\
-            \text{a line} & \text{otherwise.}
-          \end{cases}
+          F_1\oplus\cdots\oplus F_n
         \]
-        Indeed, if \(v=\lambda u\) for some \(\lambda\in\mathbb{R}\), then \(\operatorname{Span}(u,\lambda u)=\operatorname{Span}(u)\).
-      </li>
-    </ul>
+        instead of \(F_1+\cdots+F_n\), if every \(u\in F_1+\cdots+F_n\) can be written <em>uniquely</em> as \(u=u_1+\cdots+u_n\) with \(u_i\in F_i\). As in the case of two subspaces, one shows (exercise) that this is equivalent to either of the following conditions:</p>
+      <ul>
+        <li>if \(u_1+\cdots+u_n=0\) with \(u_i\in F_i\), then \(u_1=\cdots=u_n=0\);</li>
+        <li>for every \(k\), \(\displaystyle F_k\cap\Big(\sum_{j\neq k}F_j\Big)=\{0\}\).</li>
+      </ul>
+      <p><strong>Warning.</strong> It is <em>not</em> enough to require that the subspaces intersect pairwise trivially, i.e. \(F_i\cap F_j=\{0\}\) for \(i\neq j\). For instance, in \(\mathbb{R}^2\), consider the three lines
+        \[
+          F_1=\mathrm{Span}\big((1,0)\big),\quad F_2=\mathrm{Span}\big((0,1)\big),\quad F_3=\mathrm{Span}\big((1,1)\big).
+        \]
+        Any two of them intersect in \(\{0\}\), but
+        \[
+          (1,1)=\underbrace{(1,0)}_{F_1}+\underbrace{(0,1)}_{F_2}+\underbrace{0}_{F_3}=\underbrace{0}_{F_1}+\underbrace{0}_{F_2}+\underbrace{(1,1)}_{F_3}
+        \]
+        gives two different decompositions. Hence \(F_1,F_2,F_3\) are not in direct sum. Equivalently, \(F_3\cap(F_1+F_2)=F_3\neq\{0\}\).</p>
+    </div>
 
-    <svg viewBox="0 0 640 250" width="100%" aria-label="Span of one vector and span of two vectors in R3">
-      <defs>
-        <marker id="arrRed" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L7,3 z" fill="#e63946"></path>
-        </marker>
-        <marker id="arrGreen" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-          <path d="M0,0 L0,6 L7,3 z" fill="#007d55"></path>
-        </marker>
-      </defs>
+    <h2>Complements of vector subspaces</h2>
+    <div class="box definition">
+      <div class="title">Definition</div>
+      <p>Let \(E\) be a vector space and \(F \subseteq E\) a vector subspace.  
+      A <em>complement</em> for \(F\) is a vector subspace \(G \subseteq E\) such that</p>
+      <p class="math">\[
+      E = F \oplus G.
+      \]</p>
+      <p>We then say that \(F\) and \(G\) are complementary vector subspaces.</p>
+    </div>
 
-      <!-- ===== Panneau gauche : Span(u) ===== -->
-      <!-- axes -->
-      <line x1="160" y1="140" x2="160" y2="30"  stroke="#bbb"></line>
-      <line x1="160" y1="140" x2="290" y2="140" stroke="#bbb"></line>
-      <line x1="160" y1="140" x2="100" y2="200" stroke="#bbb"></line>
-      <!-- droite -->
-      <line x1="40" y1="200" x2="280" y2="80" stroke="#14558c" stroke-width="2"></line>
-      <!-- u -->
-      <line x1="160" y1="140" x2="226" y2="107" stroke="#e63946" stroke-width="2" marker-end="url(#arrRed)"></line>
-      <text x="222" y="128" font-size="14" font-style="italic" fill="#e63946">u</text>
-      <circle cx="160" cy="140" r="3" fill="#14558c"></circle>
-      <text x="146" y="156" font-size="12" fill="#666">0</text>
-      <text x="160" y="240" text-anchor="middle" font-size="14" font-style="italic" fill="#14558c">Span(u): a line</text>
+    <!-- ====== NEW: complement example ====== -->
+    <div class="box illustration">
+      <div class="title">Example</div>
+      <p>In \(\mathbb{R}^3\), let \(F\) be the \(xy\)-plane and \(G\) the \(z\)-axis. We saw above that \(\mathbb{R}^3=F\oplus G\), so \(F\) and \(G\) are complementary subspaces.</p>
+      <p>A complement is <em>not unique</em>: for instance, the line \(\mathrm{Span}\big((1,1,1)\big)\) is also a complement of the \(xy\)-plane, since \((x,y,z)=(x-z,\,y-z,\,0)+z\,(1,1,1)\) and this line meets the \(xy\)-plane only at \(0\). More generally, any line not contained in the \(xy\)-plane is a complement of it.</p>
+    </div>
 
-      <!-- ===== Panneau droit : Span(u,v) ===== -->
-      <!-- plan -->
-      <polygon points="545,59 623,189 415,221 337,91"
-               fill="rgba(20,85,140,0.12)" stroke="#14558c" stroke-width="1.5"></polygon>
-      <!-- axes -->
-      <line x1="480" y1="140" x2="480" y2="20"  stroke="#bbb" stroke-dasharray="4 3"></line>
-      <line x1="480" y1="140" x2="620" y2="140" stroke="#bbb" stroke-dasharray="4 3"></line>
-      <line x1="480" y1="140" x2="420" y2="200" stroke="#bbb" stroke-dasharray="4 3"></line>
-      <!-- u, v -->
-      <line x1="480" y1="140" x2="560" y2="128" stroke="#e63946" stroke-width="2" marker-end="url(#arrRed)"></line>
-      <text x="562" y="124" font-size="14" font-style="italic" fill="#e63946">u</text>
-      <line x1="480" y1="140" x2="450" y2="90" stroke="#007d55" stroke-width="2" marker-end="url(#arrGreen)"></line>
-      <text x="436" y="88" font-size="14" font-style="italic" fill="#007d55">v</text>
-      <circle cx="480" cy="140" r="3" fill="#14558c"></circle>
-      <text x="480" y="240" text-anchor="middle" font-size="14" font-style="italic" fill="#14558c">Span(u,v): a plane (u, v not collinear)</text>
-    </svg>
-  </div>
-<div class="week-end">End of week 2</div>
-<p class="week-end-note">Next week we will study the following.</p>
-  <div class="box illustration">
-    <div class="title">The whole space \(\mathbb{K}^3\)</div>
-    <p>We have
-      \[
-        \operatorname{Span}\left(\begin{pmatrix}1\\0\\0\end{pmatrix},\begin{pmatrix}0\\1\\0\end{pmatrix},\begin{pmatrix}0\\0\\1\end{pmatrix}\right)=\mathbb{K}^3.
-      \]
-      Indeed, this span is the set of vectors
-      \[
-        \lambda_1\begin{pmatrix}1\\0\\0\end{pmatrix}+\lambda_2\begin{pmatrix}0\\1\\0\end{pmatrix}+\lambda_3\begin{pmatrix}0\\0\\1\end{pmatrix}
-        =\begin{pmatrix}\lambda_1\\\lambda_2\\\lambda_3\end{pmatrix},
-        \qquad \lambda_1,\lambda_2,\lambda_3\in\mathbb{K},
-      \]
-      which is exactly \(\mathbb{K}^3\).
-    </p>
-  </div>
 
-  <div class="box illustration">
-    <div class="title">A redundant family in \(\mathbb{K}^2\)</div>
-    <p>
-      \[
-        \operatorname{Span}\left(\begin{pmatrix}1\\0\end{pmatrix},\begin{pmatrix}0\\1\end{pmatrix},\begin{pmatrix}1\\1\end{pmatrix}\right)
-        =\operatorname{Span}\left(\begin{pmatrix}1\\0\end{pmatrix},\begin{pmatrix}0\\1\end{pmatrix}\right)=\mathbb{K}^2.
-      \]
-      The third vector brings nothing new, since \(\begin{pmatrix}1\\1\end{pmatrix}=\begin{pmatrix}1\\0\end{pmatrix}+\begin{pmatrix}0\\1\end{pmatrix}\).
-    </p>
-  </div>
-
-   <div class="box illustration">
-    <div class="title">A plane in \(\mathbb{K}^3\) and its equation</div>
-    <p>Consider the span
-      \(P=\operatorname{Span}\left(\begin{pmatrix}1\\2\\0\end{pmatrix},\begin{pmatrix}0\\1\\1\end{pmatrix}\right)\). We look for an equation of \(P\).
-    </p>
-    <p><strong>Step 1: translate membership into a linear system.</strong>
-      A vector \((x,y,z)\in\mathbb{K}^3\) belongs to \(P\) if and only if there exist \(\lambda_1,\lambda_2\in\mathbb{K}\) such that
-      \[
-        \begin{pmatrix}x\\y\\z\end{pmatrix}
-        =\lambda_1\begin{pmatrix}1\\2\\0\end{pmatrix}+\lambda_2\begin{pmatrix}0\\1\\1\end{pmatrix}
-        =\begin{pmatrix}\lambda_1\\2\lambda_1+\lambda_2\\\lambda_2\end{pmatrix}.
-      \]
-      In other words, \((x,y,z)\in P\) if and only if the following system, where the <em>unknowns</em> are \(\lambda_1,\lambda_2\) and \(x,y,z\) are given <em>parameters</em>, has at least one solution:
-      \[
-        (S)\qquad
-        \begin{cases}
-          \lambda_1=x,\\
-          2\lambda_1+\lambda_2=y,\\
-          \lambda_2=z.
-        \end{cases}
-      \]
-    </p>
-    <p><strong>Step 2: find when the system is solvable.</strong>
-      This system has three equations and only two unknowns. Two of the equations determine the unknowns, and the remaining one becomes a <em>condition</em> on \(x,y,z\).
-      Here the first and third equations force \(\lambda_1=x\) and \(\lambda_2=z\). So \((S)\) has a solution if and only if these values also satisfy the second equation, that is, \(2x+z=y\).
-    </p>
-    <p><strong>Conclusion.</strong> We have shown the chain of equivalences
-      \[
-        (x,y,z)\in P
-        \iff (S)\text{ has a solution}
-        \iff 2x-y+z=0,
-      \]
-      hence
-      \[
-        \boxed{\,P=\{(x,y,z)\in\mathbb{K}^3\mid 2x-y+z=0\}\,}
-      \]
-    </p>
-    <p><em>General method.</em> When the system is less simple, solve the system <!--apply Gaussian elimination to--> \((S)\), treating \(x,y,z\) as parameters on the right-hand side. The rows that become \(0=(\text{expression in }x,y,z)\) give exactly the equations of the span.
-    </p>
-  </div>
-
-  <div class="box illustration">
-    <div class="title">Polynomials</div>
+    <div class="box lemma">
+      <div class="title">Proposition</div>
+      <p>Let \(E\) be a vector space. Then any vector subspace \(F \subset E\) admits a complement.</p>
+      <div class="title">Proof</div>
+      <p>In general, a proof based on Zorn's Lemma is proposed in Exercise 13 of Exercise Sheet 3.</p>
+      <p>We will give another proof later when we discuss dimensions and bases, for finite-dimensional vector spaces.</p>
+    </div>
+    <h2>Going further</h2>
+<!-- ====== Going further (optional) ====== -->
+<div class="box further">
+    <div class="title">Direct sums of more than two subspaces</div>
+    <p class="note">This material was not discussed in the lectures and is not required. It is included for curious readers.<!--, and it will come back naturally when we study dimension (and later eigenspaces).--> For a related exercise, see Ex. 7 in Sheet 3. </p>
+    <p>Let \(F_1,\dots,F_n\) be subspaces of \(E\). We say that they form a <em>direct sum</em>, and write
+    \[
+        F_1\oplus\cdots\oplus F_n
+    \]
+    instead of \(F_1+\cdots+F_n\), if every \(u\in F_1+\cdots+F_n\) can be written <em>uniquely</em> as \(u=u_1+\cdots+u_n\) with \(u_i\in F_i\). As in the case of two subspaces, one shows (exercise) that this is equivalent to either of the following conditions:</p>
     <ul>
-      <li>\(\operatorname{Span}(1,X,X^2,\dots,X^d)=\mathbb{K}[X]_{\le d}\), the space of polynomials of degree \(\le d\).</li>
-      <li>\(\operatorname{Span}(\{1,X,X^2,\dots\})=\mathbb{K}[X]\). Here the family is infinite, but every polynomial is a linear combination of <em>finitely many</em> monomials \(X^k\).</li>
+    <li>if \(u_1+\cdots+u_n=0\) with \(u_i\in F_i\), then \(u_1=\cdots=u_n=0\);</li>
+    <li>for every \(k\), \(\displaystyle F_k\cap\Big(\sum_{j\neq k}F_j\Big)=\{0\}\).</li>
     </ul>
-  </div>
+    <p><strong>Warning.</strong> It is <em>not</em> enough to require that the subspaces intersect pairwise trivially, i.e. \(F_i\cap F_j=\{0\}\) for \(i\neq j\). For instance, in \(\mathbb{R}^2\), consider the three lines
+    \[
+        F_1=\mathrm{Span}\big((1,0)\big),\quad F_2=\mathrm{Span}\big((0,1)\big),\quad F_3=\mathrm{Span}\big((1,1)\big).
+    \]
+    Any two of them intersect in \(\{0\}\), but
+    \[
+        (1,1)=\underbrace{(1,0)}_{F_1}+\underbrace{(0,1)}_{F_2}+\underbrace{0}_{F_3}=\underbrace{0}_{F_1}+\underbrace{0}_{F_2}+\underbrace{(1,1)}_{F_3}
+    \]
+    gives two different decompositions. Hence \(F_1,F_2,F_3\) are not in direct sum. Equivalently, \(F_3\cap(F_1+F_2)=F_3\neq\{0\}\).</p>
 
-  <div class="box lemma">
-    <div class="title">Lemma (the span is a subspace)</div>
-    <p>Let \(E\) be a \(\mathbb{K}\)-vector space and \(A\subset E\) a subset.</p>
-    <ol class="alpha-paren">
-      <li>\(\operatorname{Span}(A)\) is a vector subspace of \(E\), and \(v\in\operatorname{Span}(A)\) for all \(v\in A\).</li>
-      <li>If \(H\subset E\) is a vector subspace and \(A\subseteq H\), then \(\operatorname{Span}(A)\subseteq H\).</li>
-    </ol>
-    <p><strong>Proof.</strong> Left as an exercise, see Ex. 7 in Sheet 2.</p>
-  </div>
-
-  <div class="box remark">
-    <div class="title">Remark</div>
-    <p>In other words, \(\operatorname{Span}(A)\) is the <em>smallest</em> vector subspace of \(E\) containing \(A\).</p>
-  </div>
-
+</div>
+<div class="week-end">End of week 3</div>
+<p class="week-end-note">Next week we will discuss to dimension and linear independence.</p>
 </div>
 </body>
 </html>
