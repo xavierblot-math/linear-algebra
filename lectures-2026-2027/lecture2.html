@@ -257,32 +257,44 @@
     </p>
   </div>
 
-  <div class="box illustration">
+   <div class="box illustration">
     <div class="title">A plane in \(\mathbb{K}^3\) and its equation</div>
-    <p>The span
-      \(\operatorname{Span}\left(\begin{pmatrix}1\\2\\0\end{pmatrix},\begin{pmatrix}0\\1\\1\end{pmatrix}\right)\)
-      is a plane in \(\mathbb{K}^3\). Its elements are the vectors
+    <p>Consider the span
+      \(P=\operatorname{Span}\left(\begin{pmatrix}1\\2\\0\end{pmatrix},\begin{pmatrix}0\\1\\1\end{pmatrix}\right)\). We look for an equation of \(P\).
+    </p>
+    <p><strong>Step 1: translate membership into a linear system.</strong>
+      A vector \((x,y,z)\in\mathbb{K}^3\) belongs to \(P\) if and only if there exist \(\lambda_1,\lambda_2\in\mathbb{K}\) such that
       \[
-        \lambda_1\begin{pmatrix}1\\2\\0\end{pmatrix}+\lambda_2\begin{pmatrix}0\\1\\1\end{pmatrix}
-        =\begin{pmatrix}\lambda_1\\2\lambda_1+\lambda_2\\\lambda_2\end{pmatrix},
-        \qquad \lambda_1,\lambda_2\in\mathbb{K}.
+        \begin{pmatrix}x\\y\\z\end{pmatrix}
+        =\lambda_1\begin{pmatrix}1\\2\\0\end{pmatrix}+\lambda_2\begin{pmatrix}0\\1\\1\end{pmatrix}
+        =\begin{pmatrix}\lambda_1\\2\lambda_1+\lambda_2\\\lambda_2\end{pmatrix}.
       \]
-      So a vector \((x,y,z)\) of the span satisfies
+      In other words, \((x,y,z)\in P\) if and only if the following system, where the <em>unknowns</em> are \(\lambda_1,\lambda_2\) and \(x,y,z\) are given <em>parameters</em>, has at least one solution:
       \[
+        (S)\qquad
         \begin{cases}
-          x=\lambda_1,\\
-          y=2\lambda_1+\lambda_2,\\
-          z=\lambda_2,
+          \lambda_1=x,\\
+          2\lambda_1+\lambda_2=y,\\
+          \lambda_2=z.
         \end{cases}
       \]
-      and eliminating \(\lambda_1,\lambda_2\) gives the equation of the plane:
+    </p>
+    <p><strong>Step 2: find when the system is solvable.</strong>
+      This system has three equations and only two unknowns. Two of the equations determine the unknowns, and the remaining one becomes a <em>condition</em> on \(x,y,z\).
+      Here the first and third equations force \(\lambda_1=x\) and \(\lambda_2=z\). So \((S)\) has a solution if and only if these values also satisfy the second equation, that is, \(2x+z=y\).
+    </p>
+    <p><strong>Conclusion.</strong> We have shown the chain of equivalences
       \[
-        \boxed{\,2x-y+z=0\,}
+        (x,y,z)\in P
+        \iff (S)\text{ has a solution}
+        \iff 2x-y+z=0,
       \]
-      Conversely, if \(2x-y+z=0\), take \(\lambda_1=x\) and \(\lambda_2=z\): then \(y=2\lambda_1+\lambda_2\), so \((x,y,z)\) lies in the span. Hence
+      hence
       \[
-        \operatorname{Span}\left(\begin{pmatrix}1\\2\\0\end{pmatrix},\begin{pmatrix}0\\1\\1\end{pmatrix}\right)=\{(x,y,z)\in\mathbb{K}^3\mid 2x-y+z=0\}.
+        \boxed{\,P=\{(x,y,z)\in\mathbb{K}^3\mid 2x-y+z=0\}\,}
       \]
+    </p>
+    <p><em>General method.</em> When the system is less simple, solve the system <!--apply Gaussian elimination to--> \((S)\), treating \(x,y,z\) as parameters on the right-hand side. The rows that become \(0=(\text{expression in }x,y,z)\) give exactly the equations of the span.
     </p>
   </div>
 
@@ -301,7 +313,7 @@
       <li>\(\operatorname{Span}(A)\) is a vector subspace of \(E\), and \(v\in\operatorname{Span}(A)\) for all \(v\in A\).</li>
       <li>If \(H\subset E\) is a vector subspace and \(A\subseteq H\), then \(\operatorname{Span}(A)\subseteq H\).</li>
     </ol>
-    <p><strong>Proof.</strong> Left as an exercise.</p>
+    <p><strong>Proof.</strong> Left as an exercise, see Ex. 7 in Sheet 2.</p>
   </div>
 
   <div class="box remark">
