@@ -105,6 +105,36 @@ h2{ font-size:1.35rem; margin:1.8rem 0 .7rem; }
   margin:0 0 2rem;
 }
 
+/* ---------- Pour aller plus loin (hors programme) ---------- */
+ 
+.further{
+  position:relative;
+  border:1px dashed var(--green);
+  border-left:6px solid var(--green);
+  background: rgba(0, 125, 85, 0.06);
+  margin-top:1.6rem;
+}
+.further::before{
+  content:"Optional";
+  position:absolute;
+  top:-.75rem; right:1rem;
+  padding:.1rem .6rem;
+  border-radius:999px;
+  background:var(--green);
+  color:#fff;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.further .note{
+  font-style:italic;
+  color:#555;
+  margin:0 0 .8rem 0;
+}
+
+
+
 /* ---------- Divers ---------- */
 
 .math{ text-align:center; margin:.8rem 0; }
