@@ -345,28 +345,6 @@
         </li>
 	</ol>
     </div>
-    <!-- ====== NEW: direct sums of several subspaces ====== -->
-    <div class="box remark">
-      <div class="title">Direct sums of more than two subspaces</div>
-      <p>Let \(F_1,\dots,F_n\) be subspaces of \(E\). We say that they form a <em>direct sum</em>, and write
-        \[
-          F_1\oplus\cdots\oplus F_n
-        \]
-        instead of \(F_1+\cdots+F_n\), if every \(u\in F_1+\cdots+F_n\) can be written <em>uniquely</em> as \(u=u_1+\cdots+u_n\) with \(u_i\in F_i\). As in the case of two subspaces, one shows (exercise) that this is equivalent to either of the following conditions:</p>
-      <ul>
-        <li>if \(u_1+\cdots+u_n=0\) with \(u_i\in F_i\), then \(u_1=\cdots=u_n=0\);</li>
-        <li>for every \(k\), \(\displaystyle F_k\cap\Big(\sum_{j\neq k}F_j\Big)=\{0\}\).</li>
-      </ul>
-      <p><strong>Warning.</strong> It is <em>not</em> enough to require that the subspaces intersect pairwise trivially, i.e. \(F_i\cap F_j=\{0\}\) for \(i\neq j\). For instance, in \(\mathbb{R}^2\), consider the three lines
-        \[
-          F_1=\mathrm{Span}\big((1,0)\big),\quad F_2=\mathrm{Span}\big((0,1)\big),\quad F_3=\mathrm{Span}\big((1,1)\big).
-        \]
-        Any two of them intersect in \(\{0\}\), but
-        \[
-          (1,1)=\underbrace{(1,0)}_{F_1}+\underbrace{(0,1)}_{F_2}+\underbrace{0}_{F_3}=\underbrace{0}_{F_1}+\underbrace{0}_{F_2}+\underbrace{(1,1)}_{F_3}
-        \]
-        gives two different decompositions. Hence \(F_1,F_2,F_3\) are not in direct sum. Equivalently, \(F_3\cap(F_1+F_2)=F_3\neq\{0\}\).</p>
-    </div>
 
     <h2>Complements of vector subspaces</h2>
     <div class="box definition">
@@ -394,6 +372,7 @@
       <p>In general, a proof based on Zorn's Lemma is proposed in Exercise 13 of Exercise Sheet 3.</p>
       <p>We will give another proof later when we discuss dimensions and bases, for finite-dimensional vector spaces.</p>
     </div>
+	
     <h2>Going further</h2>
 <!-- ====== Going further (optional) ====== -->
 <div class="box further">
