@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Lecture 5</title>
+
+  <!-- Style global (identique Lecture 1) -->
+<link rel="stylesheet" href="style.css">
+
+  <!-- MathJax -->
+  <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Lecture 5 : bases and dimension</h1>
+<p>In the previous lectures we have been dealing with linear independence, the span of a family of vectors, and the notion of dimension. These notions are actually related. For example, we saw that in a vector space of dimension $n$, any spanning family of cardinality $n$ is linearly independent. We wish to study such special families of vectors, and along the way provide tools to determine the dimension of a vector space.</p>
+
+<h2> Examples and definition </h2>
+<div class="box illustration">
+  <div class="title">First examples of bases</div>
+  <p>In many examples such as $\mathbb K^n$ and $\mathbb K[X]$, we have exhibited families of vectors with the aforementioned fundamental properties:</p>
+  <ol class="alpha-paren">
+    <li><em>Spanning family.</em>
+     <div class="math">
+      $$\mathbb K^n=\langle (1,0,\ldots,0),\ldots,(0,\ldots,0,1)\rangle,\qquad
+      \mathbb K[X]=\langle 1,X,X^2,\ldots\rangle.$$
+      </div>
+      Hence any vector can be written as a combination of such vectors.</li>
+    <li><em>Linear independence.</em> The displayed spanning families are also linearly independent. Consequently, any vector can be <em>uniquely</em> written in terms of such vectors, up to order.</li>
+  </ol>
+  <p>These are examples of bases, and they can be seen as the building blocks of a vector space, which encapsulate all of its algebraic structure.</p>
+</div>
+
+<div class="box definition">
+  <div class="title">Definition (Basis)</div>
+  <p>Let $E$ be a $\mathbb K$-vector space. A <em>basis</em> of $E$ is a family of vectors $\lbrace e_i\rbrace_{i\in I}$ such that:</p>
+  <ol class="alpha-paren">
+    <li> It is a spanning family for $E$, that is $E=\langle\{e_i\}_{i\in I}\rangle$;</li>
+    <li> It is linearly independent.</li>
+  </ol>
+  <p>Concretely, for every $v\in E$ there exist $e_{i_1},\ldots,e_{i_\ell}$ from the family and unique coefficients
+     $\lambda_{i_1},\ldots,\lambda_{i_\ell}\in\mathbb K$ such that
+     $$v=\lambda_{i_1}e_{i_1}+\cdots+\lambda_{i_\ell}e_{i_\ell}.$$
+     Furthermore, if $v\neq 0$ and we require the $\lambda_{i_j}$ to be non-zero, then the subfamily $e_{i_1},\ldots,e_{i_\ell}$ is unique, up to order.</p>
+</div>
+
+<div class="week-end">End of week 4</div>
+<p class="week-end-note">Next week we will discuss existence and cardinality of bases.</p>
+</div>
+
+</div>
+</body>
+</html>
