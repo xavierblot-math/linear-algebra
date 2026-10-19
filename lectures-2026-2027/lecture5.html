@@ -37,19 +37,247 @@
 
 <div class="box definition">
   <div class="title">Definition (Basis)</div>
-  <p>Let $E$ be a $\mathbb K$-vector space. A <em>basis</em> of $E$ is a family of vectors $\lbrace e_i\rbrace_{i\in I}$ such that:</p>
+  <p>Let $E$ be a $\mathbb K$-vector space. A <em>basis</em> of $E$ is a family of vectors $(e_i)_{i\in I}$ such that:</p>
   <ol class="alpha-paren">
-    <li> It is a spanning family for $E$, that is $E=\langle\{e_i\}_{i\in I}\rangle$;</li>
-    <li> It is linearly independent.</li>
+    <li>It is a spanning family for $E$, that is $E=\langle (e_i)_{i\in I}\rangle$;</li>
+    <li>It is linearly independent.</li>
   </ol>
-  <p>Concretely, for every $v\in E$ there exist $e_{i_1},\ldots,e_{i_\ell}$ from the family and unique coefficients
-     $\lambda_{i_1},\ldots,\lambda_{i_\ell}\in\mathbb K$ such that
-     $$v=\lambda_{i_1}e_{i_1}+\cdots+\lambda_{i_\ell}e_{i_\ell}.$$
-     Furthermore, if $v\neq 0$ and we require the $\lambda_{i_j}$ to be non-zero, then the subfamily $e_{i_1},\ldots,e_{i_\ell}$ is unique, up to order.</p>
+  <p>Equivalently, every $v\in E$ can be written in a unique way as a linear combination of the $e_i$. Precisely,
+     $$v=\lambda_1 e_{i_1}+\cdots+\lambda_n e_{i_n}$$
+     with $i_1,\ldots,i_n\in I$ distinct and $\lambda_1,\ldots,\lambda_n\in\mathbb K$, and this decomposition is unique up to order and terms with coefficient $0$.</p>
+  <p>The $\lambda_i$ are called the <em>coordinates</em> of $v$ in the basis.</p>
 </div>
 
 <div class="week-end">End of week 4</div>
 <p class="week-end-note">Next week we will discuss existence and cardinality of bases.</p>
+</div>
+
+<div class="box remark">
+  <div class="title">Remark</div>
+  <p>The two conditions of the definition correspond exactly to the two halves of "there exists a unique decomposition":</p>
+  <ul>
+    <li><em>Existence</em> ⟺ (a): every $v\in E$ is of the form $\lambda_1 e_{i_1}+\cdots+\lambda_n e_{i_n}$.</li>
+    <li><em>Uniqueness</em> ⟺ (b): if $\lambda_1 e_{i_1}+\cdots+\lambda_n e_{i_n}=\mu_1 e_{i_1}+\cdots+\mu_n e_{i_n}$ with $i_1,\ldots,i_n$ distinct, then $\lambda_k=\mu_k$ for all $k$. Indeed, this means $\sum_k(\lambda_k-\mu_k)e_{i_k}=0 \Rightarrow \lambda_k-\mu_k=0$.</li>
+  </ul>
+  <p>Two decompositions of $v$ may involve different indices, but adding terms with coefficient $0$ we can always write them on the same indices $i_1,\ldots,i_n$.</p>
+</div>
+
+<div class="box illustration">
+  <div class="title">Examples</div>
+  <ol>
+    <li>In $\mathbb K^n$, the vectors
+      $$e_1=(1,0,\ldots,0),\quad e_2=(0,1,0,\ldots,0),\quad\ldots,\quad e_n=(0,\ldots,0,1)$$
+      form a basis, called the <em>canonical basis</em> (or <em>standard basis</em>) of $\mathbb K^n$. The coordinates of $v=(x_1,\ldots,x_n)$ in this basis are its components: $v=x_1e_1+\cdots+x_ne_n$.</li>
+    <li>In $\mathbb K[X]$, the monomials $1,X,X^2,\ldots$, that is the family $(X^k)_{k\in\mathbb N}$, form a basis. The coordinates of a polynomial $P=a_0+a_1X+\cdots+a_dX^d$ are its coefficients $a_0,\ldots,a_d$.</li>
+  </ol>
+</div>
+
+<div class="box illustration">
+  <div class="title">Example (One vector, two bases)</div>
+  <p>In $\mathbb R^2$, consider the vector $v=(3,2)$ and two bases: the canonical basis $e_1=(1,0)$, $e_2=(0,1)$, and the basis $f_1=(1,0)$, $f_2=(1,1)$.</p>
+  <svg viewBox="0 0 640 260" width="100%" style="max-width:640px" role="img" aria-label="The vector v=(3,2) drawn on the grid of the canonical basis and on the skewed grid of the basis f1, f2.">
+    <defs>
+      <marker id="ah-v" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#e11f32"/></marker>
+      <marker id="ah-1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#007d55"/></marker>
+      <marker id="ah-2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#14558c"/></marker>
+    </defs>
+    <g font-family="serif" font-size="17" font-style="italic" fill="#1d1f21" text-anchor="middle">
+      <text x="140" y="30" font-style="normal" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Canonical basis</text>
+      <text x="480" y="30" font-style="normal" font-family="system-ui,sans-serif" font-size="14" font-weight="700">Basis (f₁, f₂)</text>
+    </g>
+    <g stroke="#aab2b9" stroke-width="0.7">
+      <line x1="40" y1="60" x2="40" y2="220"/><line x1="80" y1="60" x2="80" y2="220"/><line x1="120" y1="60" x2="120" y2="220"/><line x1="160" y1="60" x2="160" y2="220"/><line x1="200" y1="60" x2="200" y2="220"/><line x1="240" y1="60" x2="240" y2="220"/>
+      <line x1="40" y1="220" x2="240" y2="220"/><line x1="40" y1="180" x2="240" y2="180"/><line x1="40" y1="140" x2="240" y2="140"/><line x1="40" y1="100" x2="240" y2="100"/><line x1="40" y1="60" x2="240" y2="60"/>
+      <line x1="360" y1="220" x2="520" y2="60"/><line x1="400" y1="220" x2="560" y2="60"/><line x1="440" y1="220" x2="600" y2="60"/><line x1="480" y1="220" x2="600" y2="100"/><line x1="520" y1="220" x2="600" y2="140"/><line x1="560" y1="220" x2="600" y2="180"/>
+      <line x1="360" y1="220" x2="600" y2="220"/><line x1="400" y1="180" x2="600" y2="180"/><line x1="440" y1="140" x2="600" y2="140"/><line x1="480" y1="100" x2="600" y2="100"/><line x1="520" y1="60" x2="600" y2="60"/>
+    </g>
+    <line x1="40" y1="220" x2="160" y2="220" stroke="#007d55" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <line x1="160" y1="220" x2="160" y2="140" stroke="#14558c" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <line x1="40" y1="220" x2="77" y2="220" stroke="#007d55" stroke-width="3" marker-end="url(#ah-1)"/>
+    <line x1="40" y1="220" x2="40" y2="183" stroke="#14558c" stroke-width="3" marker-end="url(#ah-2)"/>
+    <line x1="40" y1="220" x2="157" y2="142" stroke="#e11f32" stroke-width="3" marker-end="url(#ah-v)"/>
+    <line x1="360" y1="220" x2="400" y2="220" stroke="#007d55" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <line x1="400" y1="220" x2="480" y2="140" stroke="#14558c" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <line x1="360" y1="220" x2="397" y2="220" stroke="#007d55" stroke-width="3" marker-end="url(#ah-1)"/>
+    <line x1="360" y1="220" x2="397" y2="183" stroke="#14558c" stroke-width="3" marker-end="url(#ah-2)"/>
+    <line x1="360" y1="220" x2="477" y2="142" stroke="#e11f32" stroke-width="3" marker-end="url(#ah-v)"/>
+    <g font-family="serif" font-size="17" font-style="italic" text-anchor="middle">
+      <text x="62" y="242" fill="#007d55">e₁</text>
+      <text x="24" y="200" fill="#14558c">e₂</text>
+      <text x="172" y="134" fill="#e11f32">v</text>
+      <text x="382" y="242" fill="#007d55">f₁</text>
+      <text x="368" y="184" fill="#14558c">f₂</text>
+      <text x="492" y="134" fill="#e11f32">v</text>
+    </g>
+  </svg>
+  <p>The vector $v$ is the same in both pictures; only the grid used to measure it changes.</p>
+  <ul>
+    <li>In the canonical basis, $v=3e_1+2e_2$: its coordinates $(3,2)$ are simply its components.</li>
+    <li>In the basis $(f_1,f_2)$, $v=f_1+2f_2$: its coordinates are $(1,2)$.</li>
+  </ul>
+  <p>A basis is a choice of grid: every point of the plane is reached in exactly one way by stepping along the basis vectors, and the numbers of steps are the coordinates.</p>
+</div>
+
+
+<h2> Existence, cardinality and dimension </h2>
+<div class="box lemma">
+  <div class="title">Theorem (Existence of bases)</div>
+  <p>Every vector space admits a basis.</p>
+  <div class="title">Proof</div>
+  <p> If $E$ is finite dimensional with $\dim E=n$ and $E=\langle e_1,\ldots,e_n\rangle$, we know from the previous lecture that $e_1,\ldots,e_n$ are linearly independent, hence form a basis. For general $E$, not necessarily finite dimensional, we admit the result. See Exercise Sheet 3.</p>
+</div>
+
+<div class="box lemma">
+  <div class="title">Theorem (Dimension and cardinality of bases)</div>
+  <p>Let $E$ be a finite dimensional $\mathbb K$-vector space. Suppose $\dim E=n$. Then any basis has exactly $n$ elements.</p>
+</div>
+
+<p>The proof of this theorem rests on a single statement, the exchange lemma, which compares linearly independent families with spanning families.</p>
+
+<h2> The exchange lemma </h2>
+<!--
+<div class="box lemma">
+  <div class="title">Lemma (Steinitz exchange lemma)</div>
+  <p>Let $E$ be a vector space with $E=\langle e_1,\ldots,e_n\rangle$, and let $u_1,\ldots,u_m\in E$ be linearly independent. Then $m\leq n$, and after renumbering the vectors $e_1,\ldots,e_n$ we have
+  $$E=\langle u_1,\ldots,u_m,\,e_{m+1},\ldots,e_n\rangle.$$</p>
+  <p>In words: the vectors $u_i$ can be brought into the spanning family one at a time, each of them taking the place of some $e_j$, without ever losing the spanning property.</p>
+
+  <div class="title">Proof</div>
+  <p>We argue by induction on $m$. For $m=0$ there is nothing to prove.</p>
+  <p>Let $m\geq 1$ and assume the statement holds for $m-1$. The vectors $u_1,\ldots,u_{m-1}$ are linearly independent (as a subfamily of a linearly independent family), so by the induction hypothesis $m-1\leq n$ and, after renumbering the $e_j$,
+  $$E=\langle u_1,\ldots,u_{m-1},\,e_{m},\ldots,e_n\rangle.$$
+  Since $u_m\in E$, we can write
+  $$u_m=a_1u_1+\cdots+a_{m-1}u_{m-1}+b_me_m+\cdots+b_ne_n$$
+  for some scalars $a_i,b_j$.</p>
+  <p><em>Some $b_j$ is non-zero.</em> Otherwise $u_m\in\langle u_1,\ldots,u_{m-1}\rangle$, which contradicts the linear independence of $u_1,\ldots,u_m$, by criterion (c) of <strong>Lemma (Characterizations of linear independence)</strong> in Lecture 4. In particular, there is at least one vector $e_j$ left with $j\geq m$, that is $m\leq n$.</p>
+  <p><em>Exchange.</em> Renumbering $e_m,\ldots,e_n$ (which does not affect the vectors already exchanged), we may assume $b_m\neq 0$. Then
+  $$e_m=\frac{1}{b_m}\Big(u_m-a_1u_1-\cdots-a_{m-1}u_{m-1}-b_{m+1}e_{m+1}-\cdots-b_ne_n\Big)$$
+  belongs to $F=\langle u_1,\ldots,u_m,\,e_{m+1},\ldots,e_n\rangle$. Thus $F$ contains $u_1,\ldots,u_{m-1},e_m,\ldots,e_n$, hence contains $E$. Since obviously $F\subseteq E$, we get $F=E$. $\square$</p>
+</div>
+-->
+
+<div class="box lemma">
+  <div class="title">Lemma (Steinitz exchange lemma)</div>
+  <p>Let $E$ be a vector space with $E=\langle e_1,\ldots,e_n\rangle$, and let $u_1,\ldots,u_m\in E$ be linearly independent. Then $m\leq n$, and after renumbering the vectors $e_1,\ldots,e_n$ we have
+  $$E=\langle u_1,\ldots,u_m,\,e_{m+1},\ldots,e_n\rangle.$$</p>
+  <p>In words: the vectors $u_i$ can be brought into the spanning family one at a time, each of them taking the place of some $e_j$, without ever losing the spanning property.</p>
+</div>
+
+<div class="box remark">
+  <div class="title">Remark (Renumbering)</div>
+  <p>"Renumbering" means that the vectors $e_1,\ldots,e_n$ are listed in a different order. The order of a family does not change its span, but it does change which vectors are called $e_{m+1},\ldots,e_n$, that is, which vectors are kept. The right order depends on the $u_i$. Without renumbering, the statement is false.</p>
+  <p><em>Example.</em> In $\mathbb R^2=\langle e_1,e_2\rangle$ with $e_1=(1,0)$, $e_2=(0,1)$, take $u_1=(0,1)$. Then
+  $$\langle u_1,e_2\rangle=\langle e_2\rangle\neq\mathbb R^2,$$
+  because $u_1=e_2$. Renumber: call $e'_1=e_2$ the first vector and $e'_2=e_1$ the second. Then
+  $$\mathbb R^2=\langle e'_1,e'_2\rangle=\langle u_1,e'_2\rangle.$$
+  Here the renumbering is forced: $u_1=0\cdot e_1+1\cdot e_2$, and since the coefficient of $e_1$ is zero, $u_1$ can only take the place of $e_2$.</p>
+  <p>Formally, renumbering means: there is a permutation $\sigma$ of $\{1,\ldots,n\}$ such that $E=\langle u_1,\ldots,u_m,\,e_{\sigma(m+1)},\ldots,e_{\sigma(n)}\rangle$.</p>
+</div>
+
+<div class="box lemma">
+  <div class="title">Proof of the exchange lemma</div>
+  <p>We proceed by induction. Fix $u_1,\ldots,u_m$. For $k=0,1,\ldots,m$, consider the statement
+  $$\boxed{\;P(k):\quad k\le n\ \text{ and, after renumbering the } e_j,\quad E=\langle u_1,\ldots,u_k,\,e_{k+1},\ldots,e_n\rangle.\;}$$
+  The lemma is $P(m)$. Concretely:</p>
+  <ul>
+    <li>$P(0)$: $0\le n$ and $E=\langle e_1,\ldots,e_n\rangle$;</li>
+    <li>$P(1)$: $1\le n$ and $E=\langle u_1,e_2,\ldots,e_n\rangle$;</li>
+    <li>$P(2)$: $2\le n$ and $E=\langle u_1,u_2,e_3,\ldots,e_n\rangle$;</li>
+    <li>$\ \vdots$</li>
+  </ul>
+  <p>Each step brings in one more vector $u_k$, which takes the place of one of the remaining $e_j$.</p>
+
+  <p><strong>Base case ($k=0$).</strong> $P(0)$ says $0\le n$ and $E=\langle e_1,\ldots,e_n\rangle$. This is the hypothesis: there is nothing to prove.</p>
+
+  <p><strong>Induction step.</strong> Let $1\le k\le m$ and assume $P(k-1)$, that is $k-1\le n$ and, after renumbering,
+  $$E=\langle u_1,\ldots,u_{k-1},\,e_k,\ldots,e_n\rangle.$$
+  We prove $P(k)$.</p>
+  <ol>
+    <li><em>Decompose.</em> Since $u_k\in E$, by $P(k-1)$ there are scalars $a_i,b_j$ such that
+    $$u_k=a_1u_1+\cdots+a_{k-1}u_{k-1}+b_ke_k+\cdots+b_ne_n.\tag{$*$}$$</li>
+    <li><em>Some $b_j\neq0$.</em> Otherwise $u_k\in\langle u_1,\ldots,u_{k-1}\rangle$, which contradicts the linear independence of $u_1,\ldots,u_m$.</li>
+    <li><em>Exchange.</em> Renumber $e_k,\ldots,e_n$ so that $b_k\neq0$. The vectors $u_1,\ldots,u_{k-1}$, already in place, are not touched. Then $(*)$ gives
+    $$e_k=\frac{1}{b_k}\Big(u_k-a_1u_1-\cdots-a_{k-1}u_{k-1}-b_{k+1}e_{k+1}-\cdots-b_ne_n\Big).$$
+    Let $F=\langle u_1,\ldots,u_k,\,e_{k+1},\ldots,e_n\rangle$. 
+    <ul>
+      <li>$F\subseteq E$, since all these vectors belong to $E$.</li>
+      <li>$e_k\in F$ by the formula above. So $F$ contains $u_1,\ldots,u_{k-1},e_k,\ldots,e_n$, which span $E$ by $P(k-1)$. Since a subspace containing some vectors contains their span, $E\subseteq F$.</li>
+    </ul>
+    Hence $E=F=\langle u_1,\ldots,u_k,\,e_{k+1},\ldots,e_n\rangle$.</li>
+    <li><em>Check the inequality $k\le n$.</em> By $P(k-1)$, $k-1\le n$. Suppose $k-1=n$, that is $k>n$. Then $P(k-1)$ reads $E=\langle u_1,\ldots,u_{k-1}\rangle$, so $u_k\in\langle u_1,\ldots,u_{k-1}\rangle$, which contradicts linear independence. Hence $k\le n$.</li>
+  </ol>
+  <p>This proves $P(k)$.</p>
+
+  <p><strong>Conclusion.</strong> By induction, $P(k)$ holds for all $0\le k\le m$. In particular $P(m)$, which is the lemma, holds. $\square$</p>
+</div>
+
+<div class="box illustration">
+  <div class="title">Example</div>
+  <p>In $E=\mathbb{R}^3=\langle e_1,e_2,e_3\rangle$ (canonical basis), take the linearly independent vectors $u_1=(1,1,0)$ and $u_2=(0,1,1)$.</p>
+  <ol>
+    <li>$u_1=e_1+e_2$. The coefficient of $e_1$ is non-zero, so $e_1=u_1-e_2$ and $\mathbb{R}^3=\langle u_1,e_2,e_3\rangle$.</li>
+    <li>$u_2=0\cdot u_1+e_2+e_3$. The coefficient of $e_2$ is non-zero, so $e_2=u_2-e_3$ and $\mathbb{R}^3=\langle u_1,u_2,e_3\rangle$.</li>
+  </ol>
+</div>
+
+<div class="box remark">
+  <div class="title">Remark</div>
+  <p>The vectors $e_1,\ldots,e_n$ are only assumed to span $E$: they need not be linearly independent. The lemma says that a linearly independent family can never be larger than a spanning family.</p>
+</div>
+
+<h2> Consequences </h2>
+<p>We now draw the consequences of the exchange lemma. They come in three steps: the cardinality of bases (which proves the Theorem), criteria to recognize a basis by counting, and the dimension of subspaces.</p>
+
+<h3> 1. Cardinality of bases </h3>
+
+<div class="box lemma">
+  <div class="title">Proof of the Theorem (Dimension and cardinality of bases)</div>
+  <p>By the theorem on existence of bases (see its proof), $E$ has a basis $e_1,\ldots,e_n$ with $n=\dim E$. Let $(u_i)_{i\in I}$ be another basis of $E$.</p>
+  <p><em>$I$ is finite and $|I|\leq n$.</em> Every finite subfamily of $(u_i)_{i\in I}$ is linearly independent and lies in $E=\langle e_1,\ldots,e_n\rangle$, hence has at most $n$ elements by the exchange lemma. Thus $I$ is finite; write $u_1,\ldots,u_m$ for this basis, with $m\leq n$.</p>
+  <p><em>$n\leq m$.</em> Exchange the roles of the two families: $e_1,\ldots,e_n$ are linearly independent and $E=\langle u_1,\ldots,u_m\rangle$, so the exchange lemma gives $n\leq m$.</p>
+  <p>Hence $m=n$. $\square$</p>
+</div>
+
+<p>This gives a simple way to compute the dimension of a vector space: construct a basis, and count its elements.</p>
+
+<div class="box lemma">
+  <div class="title">Corollary (Dimension of a span)</div>
+  <p>Let $E$ be a vector space and $e_{1},\ldots, e_{n}\in E$ linearly independent vectors. Then $e_{1},\ldots, e_{n}$ is a basis of $\langle e_{1},\ldots, e_{n}\rangle$ and $\dim \langle e_{1},\ldots, e_{n}\rangle=n$.</p>
+  <div class="title">Proof</div>
+  <p>The first claim holds by definition of a basis. The space $\langle e_{1},\ldots, e_{n}\rangle$ is finite dimensional, so by the theorem its dimension is the cardinality of any of its bases, namely $n$. $\square$</p>
+</div>
+
+<h3> 2. Bases in a space of dimension $n$ </h3>
+
+<div class="box lemma">
+  <div class="title">Corollary (Counting criteria)</div>
+  <p>Let $E$ be a $\mathbb K$-vector space with $\dim E=n$.</p>
+  <ol class="alpha-paren">
+    <li>Every linearly independent family of $E$ has at most $n$ elements.</li>
+    <li>Every spanning family of $E$ has at least $n$ elements.</li>
+    <li>For a family $u_1,\ldots,u_n$ of exactly $n$ vectors of $E$, the following are equivalent:
+      <ul>
+        <li>$u_1,\ldots,u_n$ are linearly independent;</li>
+        <li>$u_1,\ldots,u_n$ span $E$;</li>
+        <li>$u_1,\ldots,u_n$ is a basis of $E$.</li>
+      </ul>
+    </li>
+  </ol>
+  <div class="title">Proof</div>
+  <p>Let $e_1,\ldots,e_n$ be a basis of $E$.</p>
+  <p>(a) Apply the exchange lemma to a (finite subfamily of the) linearly independent family and to the spanning family $e_1,\ldots,e_n$.</p>
+  <p>(b) An infinite family has more than $n$ elements. If $E=\langle v_1,\ldots,v_p\rangle$, apply the exchange lemma to the linearly independent family $e_1,\ldots,e_n$ and to the spanning family $v_1,\ldots,v_p$: we get $n\leq p$.</p>
+  <p>(c) A spanning family of $n$ vectors is linearly independent by the previous lecture. Conversely, if $u_1,\ldots,u_n$ are linearly independent, the exchange lemma with $m=n$ exchanges all the $e_j$, so $E=\langle u_1,\ldots,u_n\rangle$. In both cases we get a basis, and a basis satisfies both conditions. $\square$</p>
+</div>
+
+
+<div class="box remark">
+  <div class="title">Remark</div>
+  <p>Once the dimension is known, half of the work is saved: to check that $n$ vectors form a basis of a space of dimension $n$, it is enough to check <em>either</em> linear independence <em>or</em> the spanning property.</p>
+</div>
+
+<div class="week-end">End of week 5</div>
+<p class="week-end-note">Next week we will go through the proof of the above corollary and continue the study of dimension theory.</p>
 </div>
 
 </div>
