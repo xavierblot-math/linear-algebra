@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Lecture 6</title>
+
+  <!-- Style global (identique Lecture 1) -->
+<link rel="stylesheet" href="style.css">
+
+  <!-- MathJax -->
+  <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+
+<h1>Lecture 6 : extraction, completion, and the Grassmann formula</h1>
+
+<p>We continue the study of bases and dimension in finite-dimensional vector spaces. We extract bases from spanning families, complete linearly independent families into bases, and use this to compute the dimension of a sum of subspaces.</p>
+
+<h2> Extraction of bases </h2>
+<div class="box lemma">
+  <p class="title">Proposition</p>
+  <p>Let $E$ be a $\mathbb K$-vector space and assume $E=\langle e_1,\ldots,e_n\rangle$. Then there exists a subfamily
+     $e_{k_1},\ldots,e_{k_m}$ which is a basis of $E$.</p>
+  <div class="title"> Proof </div>
+  <p>We have
+    $$\{0\}=\langle\varnothing\rangle\subseteq\langle e_1\rangle \subseteq \langle e_1,e_2\rangle \subseteq \cdots \subseteq \langle e_1,\ldots,e_n\rangle=E.$$
+  At each step:</p>
+  <ul>
+    <li>either $\langle e_1,\ldots,e_{k}\rangle=\langle e_1,\ldots,e_{k+1}\rangle$, that is $e_{k+1}\in\langle e_1,\ldots,e_k\rangle$: the span does not grow;</li>
+    <li>or $e_{k+1}\notin\langle e_1,\ldots,e_k\rangle$.</li>
+  </ul>
+  <p>We keep exactly the vectors of the second kind, and call them $e_{k_1},\ldots,e_{k_m}$, with $k_1\lt\cdots\lt k_m$. They form a basis of $E$. Indeed:</p>
+  <ul>
+    <li><em>$\langle e_{k_1},\ldots,e_{k_m}\rangle=E$.</em> Discarded vectors do not change the span along the chain. Hence, by induction on $k$, the kept vectors among $e_1,\ldots,e_k$ span $\langle e_1,\ldots,e_k\rangle$. For $k=n$, this gives $E$.</li>
+    <li><em>$e_{k_1},\ldots,e_{k_m}$ are linearly independent.</em> At each step, $e_{k_{i+1}}\notin\langle e_1,\ldots,e_{k_{i+1}-1}\rangle$, and this space contains $e_{k_1},\ldots,e_{k_i}$. Hence $e_{k_{i+1}}\notin\langle e_{k_1},\ldots,e_{k_i}\rangle$. By induction, using <strong>Lemma (Adding a vector to a linearly independent family)</strong> of Lecture 4, the family $e_{k_1},\ldots,e_{k_m}$ is linearly independent. $\square$</li>
+  </ul>
+</div>
+
+<div class="box remark">
+  <p class="title">Remark</p>
+  <p>The proof shows that, along the chain, the dimension grows by exactly one at each kept vector and does not change otherwise (Corollary (Dimension of a span), Lecture 5). The kept vectors are exactly those that make the dimension increase.</p>
+</div>
+
+<h2> Completion to a basis </h2>
+<div class="box lemma">
+  <p class="title">Theorem (Incomplete basis theorem)</p>
+  <p>Let $E$ be a finite-dimensional vector space with $\dim E=n$, and let $u_1,\ldots,u_m\in E$ be linearly independent. Then we can complete this family into a basis
+     $u_1,\ldots,u_m,u_{m+1},\ldots,u_n$ of $E$.</p>
+  <div class="title"> Proof </div>
+  <p>By the Counting criteria (Lecture 5), $m\leq n$. If $m=n$, the family $u_1,\ldots,u_m$ is already a basis, again by the Counting criteria.</p>
+  <p>Otherwise $m\lt n$, so $u_1,\ldots,u_m$ does not span $E$, since a spanning family of $E$ has at least $n$ elements. Choose $u_{m+1}\in E\setminus \langle u_1,\ldots,u_m\rangle$. By <strong>Lemma (Adding a vector to a linearly independent family)</strong> in Lecture 4, the vectors $u_1,\ldots,u_m,u_{m+1}$ are linearly independent.</p>
+  <p>Iterating, we add one vector at a time and keep a linearly independent family, until we obtain $n$ linearly independent vectors $u_1,\ldots,u_n$. They form a basis of $E$ by the Counting criteria. $\square$</p>
+</div>
+
+<div class="box remark">
+  <p class="title">Remarks</p>
+  <ol>
+    <li>Given any spanning family $g_1,\ldots,g_p$ of $E$, the added vectors can be chosen among the $g_j$. Indeed, if $\langle u_1,\ldots,u_k\rangle\neq E$, some $g_j$ does not belong to $\langle u_1,\ldots,u_k\rangle$: otherwise this subspace would contain all the $g_j$, hence $\langle g_1,\ldots,g_p\rangle=E$.</li>
+    <li>When $g_1,\ldots,g_n$ is a basis of $E$, the exchange lemma (Lecture 5) gives the completion directly: after renumbering, $E=\langle u_1,\ldots,u_m,g_{m+1},\ldots,g_n\rangle$. This is a spanning family of cardinality $n=\dim E$, hence a basis.</li>
+  </ol>
+</div>
+
+<div class="box lemma">
+  <p class="title">Corollary (existence complement)</p>
+  <p>Let $E$ be a finite-dimensional vector space and let $F\subset E$ be a vector subspace. Then $F$ admits a complement: there exists a subspace $G\subset E$ such that $E=F\oplus G$.</p>
+  <div class="title"> Proof </div>
+  <p>The subspace $F$ is finite dimensional (Lecture 5). Take a basis $e_{1},\ldots, e_{m}$ of $F$ and complete it into a basis $e_{1},\ldots, e_{n}$ of $E$, using the incomplete basis theorem. Define $G=\langle e_{m+1},\ldots, e_{n}\rangle$. Then
+  $$F+G=\langle e_{1},\ldots, e_{n}\rangle=E.$$
+  Let $x\in F\cap G$, and write
+  $$x=\lambda_{1}e_{1}+\cdots+\lambda_{m}e_{m}=\lambda_{m+1}e_{m+1}+\cdots+\lambda_{n}e_{n}.$$
+  Subtracting, $\lambda_{1}e_{1}+\cdots+\lambda_{m}e_{m}-\lambda_{m+1}e_{m+1}-\cdots-\lambda_{n}e_{n}=0$, so all the $\lambda_i$ vanish by linear independence of $e_1,\ldots,e_n$. Hence $x=0$, so $F\cap G=\lbrace 0\rbrace$ and $G$ is a complement of $F$. $\square$</p>
+</div>
+
+<div class="box remark">
+  <p class="title">Remark</p>
+  <p>The proof shows more generally: if $e_1,\ldots,e_m,v_1,\ldots,v_\ell$ are linearly independent, then $\langle e_1,\ldots,e_m\rangle\cap\langle v_1,\ldots,v_\ell\rangle=\{0\}$.</p>
+</div>
+
+<div class="box remark">
+  <p class="title">Remark</p>
+  <p>The incomplete basis theorem and the existence of complements hold in infinite dimension. It requires Zorn's lemma.</p>
+</div>
+
+<h2> Grassmann's formula </h2>
+<p>Given two vector subspaces of a finite dimensional vector space, Grassmann's formula relates the dimension of their sum and of their intersection to their own dimensions. This is a powerful tool, which allows in many instances to derive information on one of the constructions from information on the other.</p>
+
+<div class="box lemma">
+<div class="title"> Theorem (Grassmann's formula) </div>
+<p> Let $E$ be a finite-dimensional vector space, and $F, G\subseteq E$ two vector subspaces. Then</p>
+<div class="math">
+\[
+	\dim (F+G)=\dim F +\dim G-\dim (F\cap G).
+\]
+</div>
+<p> In particular, $\dim (F+G)\leq\dim F+\dim G$ and equality holds if, and only if, $F$ and $G$ form a direct sum.</p>
+
+<div class="title"> Proof </div>
+<p> All the subspaces involved are finite dimensional (Lecture 5). Let $e_{1},\ldots, e_{m}$ be a basis of $F\cap G$, so that $\dim(F\cap G)=m$. We complete it into a basis of $F$ by adding vectors $u_{1},\ldots, u_{n}$, so that $\dim F=m+n$. Similarly, we complete $e_{1},\ldots, e_{m}$ into a basis of $G$ by adding vectors $v_{1},\ldots, v_{\ell}$, so that $\dim G=m+\ell$.</p>
+
+<p> Now, $F+G=\langle e_{1},\ldots, e_{m}, u_{1},\ldots, u_{n}, v_{1},\ldots, v_{\ell}\rangle$. If we show that this spanning family of $F+G$ is linearly independent, then $\dim(F+G)=m+n+\ell$. This equals $(m+n)+(m+\ell)-m$, which is the statement of the theorem.</p>
+
+<p> Suppose we have a relationship</p>
+<div class="math">
+\[
+	a_{1}e_{1}+\cdots+a_{m}e_{m}+b_{1}u_{1}+\cdots+b_{n}u_{n}+c_{1}v_{1}+\cdots+ c_{\ell}v_{\ell}=0,
+\]
+</div>
+<p> and rearrange it in the form</p>
+<div class="math">
+\[
+	c_{1}v_{1}+\cdots+c_{\ell}v_{\ell}=-a_{1}e_{1}-\cdots-a_{m}e_{m}-b_{1}u_{1}-\cdots-b_{n}u_{n}.
+\]
+</div>
+<p> The left hand side belongs to $G$, while the right hand side belongs to $F$. Hence both sides belong to $F\cap G=\langle e_{1},\ldots, e_{m}\rangle$. The left hand side therefore lies in $\langle e_{1},\ldots, e_{m}\rangle\cap \langle v_{1},\ldots, v_{\ell}\rangle$, which is $\lbrace 0\rbrace$ by the previous remark, since $e_1,\ldots,e_m,v_1,\ldots,v_\ell$ is a basis of $G$. So both sides vanish. The vectors $v_1,\ldots,v_\ell$ are linearly independent, so the coefficients $c_{i}$ vanish. The vectors $e_1,\ldots,e_m,u_1,\ldots,u_n$ are linearly independent, so the coefficients $a_{i}$ and $b_{j}$ vanish as well.</p>
+
+<p> For the last claim, the formula shows that equality $\dim (F+G)=\dim F+\dim G$ holds if, and only if, $\dim (F\cap G)=0$, that is $F\cap G=\lbrace 0\rbrace$. $\square$</p>
+</div>
+
+<div class="week-end">End of Week 6</div>
+<p class="week-end-note">Next week, we will go through the the following applications of Grassmann's formula.</p>
+
+<div class="box illustration">
+<div class="title"> Example (Two planes in $\mathbb R^3$) </div>
+<p>Let $P,Q\subseteq\mathbb R^3$ be two distinct planes through the origin, that is, two distinct subspaces of dimension $2$. Then $P\cap Q$ is a line.</p>
+<p><em>Proof.</em> First, $Q\not\subseteq P$: otherwise $Q\subseteq P$ with $\dim Q=\dim P$, so $Q=P$ by Corollary (Dimension of subspaces). Hence $P\subsetneq P+Q\subseteq\mathbb R^3$. By the same corollary, $2\lt\dim(P+Q)\le 3$, so $\dim(P+Q)=3$. Grassmann's formula gives
+$$\dim(P\cap Q)=\dim P+\dim Q-\dim(P+Q)=2+2-3=1.$$</p>
+<p><em>Concretely.</em> Let $P=\{(x,y,z) : x+y+z=0\}$ and $Q=\{(x,y,z) : x=y\}$. The formula predicts a line without any computation. Solving confirms it: $x=y$ and $z=-2x$, so $P\cap Q=\langle(1,1,-2)\rangle$.</p>
+</div>
+
+<div class="box remark">
+<div class="title"> Remark (Dimension matters) </div>
+<p>In general, if $F,G$ are subspaces of a space $E$ of dimension $n$, then $\dim(F+G)\le n$, and Grassmann's formula gives
+$$\dim(F\cap G)\ \ge\ \dim F+\dim G-n.$$
+Two planes in $\mathbb R^3$ satisfy $2+2-3=1$, so they always share a line. In $\mathbb R^4$, the bound is $2+2-4=0$ and gives nothing. Indeed, $P=\langle e_1,e_2\rangle$ and $Q=\langle e_3,e_4\rangle$ satisfy $P\cap Q=\{0\}$ and $P\oplus Q=\mathbb R^4$. In the same way, two hyperplanes of $\mathbb R^n$ always meet in a subspace of dimension at least $n-2$.</p>
+</div>
+
+<div class="box illustration">
+<div class="title"> Examples </div>
+<ol>
+	<li> Let $E=\mathbb{K}[X]_{\leq 3}$, which has dimension $4$ since $(1,X,X^2,X^3)$ is a basis. Define $F$ to be the subspace of polynomials $P$ such that $P(0)=P(1)=0$, and $G$ to be the subspace of polynomials $P$ such that $P(2)=P(3)=0$. Since a non-zero polynomial of degree at most $3$ has at most $3$ distinct roots, we see that $F\cap G=\lbrace 0\rbrace$. We claim that the inclusion $F\oplus G\subseteq E$ is in fact an equality. Since $E$ is four-dimensional, it will be enough to show that $\dim F\geq 2$ and $\dim G\geq 2$. Indeed, by Grassmann formula, we will have
+	<div class="math">
+		\[
+		4\leq \dim (F\oplus G)\leq \dim E=4,
+		\]
+	</div>
+	forcing the equality. To show that $\dim F\geq 2$, we observe that the polynomials $X(X-1)$ and $X^{2}(X-1)$ belong to $F$, and they are linearly independent since $\deg(X(X-1)) < \deg(X^2(X-1))$. Hence, $$\dim F\geq \dim\langle X(X-1),X^2(X-1) \rangle = 2.$$ Similarly, $G$ contains the polynomials $(X-2)(X-3)$ and $(X-2)^{2}(X-3)$, and they are linearly independent. Hence $\dim G\geq 2$. We note in passing that we have proven that $X(X-1)$, $X^{2}(X-1)$, $(X-2)(X-3)$, $(X-2)^{2}(X-3)$ is a basis of $\mathbb{K}[X]_{\leq 3}$.
+	</li>
+</ol>
+<p><em>For the interested reader.</em> The next two examples are not treated in the course. They are left here for readers who want another application of Grassmann's formula, and a comparison with a direct argument.</p>
+<ol start="2">
+	<li> Let $E=\mathbb{K}[X]_{\leq 3}$ and $F$ be as above, and define $H$ as the subspace of polynomials $P$ such that $P(1)=P(2)=0$. Notice that $F\cap H$ is the subspace of polynomials $P$ with $P(0)=P(1)=P(2)=0$. Such a polynomial is necessarily a multiple of $X(X-1)(X-2)$, since it has degree at most $3$. We see that $F\cap H=\langle X(X-1)(X-2)\rangle$, which is one dimensional. As in the previous example, $\dim F=\dim H=2$. By the Grassmann's formula, we infer that $\dim (F+H)=3$. </li> 
+	<li> For the sake of comparison, in the previous example, let us prove that $\dim (F+H)=3$ without using the Grassmann's formula. First of all, since we have the inclusions $F\subseteq F+H\subseteq E$, taking dimensions we find $2\leq\dim(F+H)\leq 4$. It will be enough to show that the inequalities are strict. For this, it will be enough to show that the inclusions of vector subspaces are strict. Suppose, for a contradiction, that $F=F+H$. Then, we would have $H\subseteq F$. But this would mean in particular that the polynomial $(X-1)(X-2)$ belongs to $F$. It would thus be of the form $aX(X-1)+bX^{2}(X-1)$. Evaluating at $0$, we would infer that $2=0$, absurd. Similarly, suppose that we had $E=F+H$. This would in particular imply that the constant polynomial $1$ belongs to $F+H$. Now, every polynomial in $F+H$ vanishes at $x=1$, while the constant polynomial 1 does not vanish. </li>
+</ol>
+
+
+</div>
+
+</div>
+</body>
+</html>
