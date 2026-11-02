@@ -321,6 +321,25 @@
 <div class="week-end">End of Week 5</div>
 <p class="week-end-note">Next week, we will go through the proof of the corollary above and continue our study of dimension theory.</p>
 
+<h3> 3. Subspaces </h3>
+
+<div class="box lemma">
+  <div class="title">Corollary (Dimension of subspaces)</div>
+  <p>Let $E$ be a $\mathbb K$-vector space and $F\subseteq E$ a vector subspace.</p>
+  <ul>
+    <li>If $\dim E<\infty$, then $\dim F<\infty$ and $\dim F\le \dim E$.</li>
+    <li>Moreover, $\dim F=\dim E$ if and only if $F=E$.</li>
+  </ul>
+  <div class="title">Proof</div>
+  <p>Let $n=\dim E$. We do not assume that $F$ is finite dimensional: this will follow. Every linearly independent family of vectors of $F\subseteq E$ has at most $n$ elements, by (a) of the Corollary (Families in a space of dimension $n$). We choose a linearly independent family $u_1,\ldots,u_m$ of $F$ with $m$ as large as possible (the empty family is linearly independent, so such a choice exists). Then $m\le n$.</p>
+  <ul>
+    <li><em>$\dim F\le\dim E$.</em> The family $u_1,\ldots,u_m$ spans $F$. Otherwise, there is $u\in F\setminus\langle u_1,\ldots,u_m\rangle$, and by <strong>Lemma (Adding a vector to a linearly independent family)</strong> in Lecture 4, the family $u_1,\ldots,u_m,u$ of $F$ is linearly independent with $m+1$ elements, contradicting the maximality of $m$. So $u_1,\ldots,u_m$ is a basis of $F$. Hence $F$ is finite dimensional and $\dim F=m\le n$.</li>
+    <li><em>Equality case.</em> If $m=n$, then $u_1,\ldots,u_n$ are $n$ linearly independent vectors of $E$, hence a basis of $E$ by (c) of the Corollary (Families in a space of dimension $n$). Thus $F=\langle u_1,\ldots,u_n\rangle=E$. The converse is obvious. $\square$</li>
+  </ul>
+</div>
+
+<p>In the next lecture, we will see how to extract a basis from a spanning family and how to complete a linearly independent family into a basis.</p>
+
 </div>
 </body>
 </html>
