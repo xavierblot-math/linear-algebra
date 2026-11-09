@@ -58,6 +58,16 @@
     align-items: baseline;
     padding: 0.75rem 0;
   }
+  li::before {
+    content: "";
+    flex: none;
+    width: 0.4rem;
+    height: 0.4rem;
+    background: var(--link);
+    border-radius: 1px;
+    margin-left: 1.1rem;
+    align-self: center;
+  }
   a {
     color: var(--link);
     text-decoration-thickness: 1px;
