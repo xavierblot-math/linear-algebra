@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Gauss elimination</title>
+
+  <!-- Global style (same as the lectures) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Slide mode (same as Week 6) -->
+  <style>
+    html, body { height: 100%; margin: 0; }
+    body { font-size: 1.35em; overflow: hidden; }
+
+    .slide {
+      display: none;
+      height: 100vh;
+      box-sizing: border-box;
+      overflow-y: auto;
+      padding: 4vh 0 10vh;
+    }
+    .slide.active { display: block; }
+
+    .nav {
+      position: fixed; bottom: 2vh; right: 2vw;
+      display: flex; align-items: center; gap: .6em;
+      font-size: .7em; opacity: .55; user-select: none;
+    }
+    .nav:hover { opacity: 1; }
+    .nav button {
+      font: inherit; cursor: pointer; border: 1px solid currentColor;
+      background: transparent; color: inherit; border-radius: 4px; padding: .1em .6em;
+    }
+    .progress {
+      position: fixed; left: 0; bottom: 0; height: 4px;
+      background: currentColor; opacity: .3; transition: width .2s;
+    }
+
+    /* two columns, stacking on narrow screens */
+    .cols { display: flex; flex-wrap: wrap; gap: 1.5em; align-items: flex-start; }
+    .cols > * { flex: 1 1 320px; min-width: 0; }
+    .caption { text-align: center; font-style: italic; font-size: .8em; color: var(--main); }
+
+    @media print {
+      body { overflow: visible; }
+      .slide { display: block; height: auto; page-break-after: always; }
+      .nav, .progress { display: none; }
+    }
+  </style>
+
+  <!-- MathJax -->
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']] } };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<!-- ===================== 1. Goal ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Toolkit: Gauss elimination</h1>
+
+  <p><strong>Lecture 0:</strong> a linear system has no solution, exactly one, or infinitely many.</p>
+  <p><strong>Gauss elimination:</strong> a finite procedure which decides which case occurs, and produces all solutions.</p>
+
+  <!--
+  <div class="box keyq">
+    <div class="title">The plan</div>
+    <ol class="num-paren">
+      <li>Encode a system by a matrix.</li>
+      <li>Operations which do not change the solution set: <em>elementary row operations</em>.</li>
+      <li>The shape of a "solved" matrix: <em>(reduced) echelon form</em>.</li>
+      <li>An algorithm reaching that shape; read the solutions off it.</li>
+    </ol>
+  </div>
+</div>
+-->
+</section>
+
+<!-- ===================== 2. Augmented matrix ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Augmented matrices</h1>
+
+  <div class="box definition">
+    <div class="title">Definition (augmented matrix)</div>
+    <p>To the system of \(m\) equations in \(n\) unknowns
+      \[
+        \begin{cases}
+          a_{11}x_1+\cdots+a_{1n}x_n=b_1,\\
+          \qquad\qquad\vdots\\
+          a_{m1}x_1+\cdots+a_{mn}x_n=b_m,
+        \end{cases}
+        \qquad\text{we associate}\qquad
+        \left(\begin{array}{ccc|c}
+          a_{11}&\cdots&a_{1n}&b_1\\
+          \vdots& &\vdots&\vdots\\
+          a_{m1}&\cdots&a_{mn}&b_m
+        \end{array}\right).
+      \]
+      The bar only recalls where the sign \(=\) was.</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example</div>
+    \[
+      \begin{cases}
+        x+2y+3z=6,\\
+        2x-3y+2z=14,\\
+        3x+y-z=-2,
+      \end{cases}
+      \qquad\rightsquigarrow\qquad
+      \left(\begin{array}{ccc|c}
+        1&2&3&6\\ 2&-3&2&14\\ 3&1&-1&-2
+      \end{array}\right).
+    \]
+    <p>The letters \(x,y,z\) carry no information beyond the position of their column.</p>
+  </div>
+</div>
+</section>
+
+<!-- ===================== 3. Example: two bookkeepings ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>One system, two bookkeepings</h1>
+
+  <div class="math">
+    \[
+      \begin{array}{ccc}
+        \text{System} & & \text{Augmented matrix}\\[6pt]
+        \left\{\begin{array}{rcrcr} 3x&+&4y&=&10\\ x&+&2y&=&4 \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c} 3&4&10\\ 1&2&4 \end{array}\right)\\[4pt]
+        \Big\downarrow\ {\scriptstyle\text{swap}}
+        & & \Big\downarrow\ {\scriptstyle R_1\leftrightarrow R_2}\\[4pt]
+        \left\{\begin{array}{rcrcr}
+          \color{#14558c}{x}&\color{#14558c}{+}&\color{#14558c}{2y}&\color{#14558c}{=}&\color{#14558c}{4}\\
+          \color{#14558c}{3x}&\color{#14558c}{+}&\color{#14558c}{4y}&\color{#14558c}{=}&\color{#14558c}{10}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          \color{#14558c}{1}&\color{#14558c}{2}&\color{#14558c}{4}\\
+          \color{#14558c}{3}&\color{#14558c}{4}&\color{#14558c}{10}
+        \end{array}\right)\\[4pt]
+        \Big\downarrow\ {\scriptstyle\text{eq. 2} - 3\,\text{eq. 1}}
+        & & \Big\downarrow\ {\scriptstyle R_2:=R_2-3R_1}\\[4pt]
+        \left\{\begin{array}{rcrcr}
+          x&+&2y&=&4\\
+          &&\color{#14558c}{-2y}&\color{#14558c}{=}&\color{#14558c}{-2}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          1&2&4\\
+          \color{#14558c}{0}&\color{#14558c}{-2}&\color{#14558c}{-2}
+        \end{array}\right)\\[4pt]
+        \Big\downarrow\ {\scriptstyle\text{eq. 2}\times(-\frac12)}
+        & & \Big\downarrow\ {\scriptstyle R_2:=-\frac12 R_2}\\[4pt]
+        \left\{\begin{array}{rcrcr}
+          x&+&2y&=&4\\
+          &&\color{#14558c}{y}&\color{#14558c}{=}&\color{#14558c}{1}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          1&2&4\\
+          \color{#14558c}{0}&\color{#14558c}{1}&\color{#14558c}{1}
+        \end{array}\right)\\[4pt]
+        \Big\downarrow\ {\scriptstyle\text{eq. 1} - 2\,\text{eq. 2}}
+        & & \Big\downarrow\ {\scriptstyle R_1:=R_1-2R_2}\\[4pt]
+        \left\{\begin{array}{rcrcr}
+          \color{#14558c}{x}&&&\color{#14558c}{=}&\color{#14558c}{2}\\
+          &&y&=&1
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          \color{#14558c}{1}&\color{#14558c}{0}&\color{#14558c}{2}\\
+          0&1&1
+        \end{array}\right)
+      \end{array}
+    \]
+  </div>
+  <p>Same information on both sides; the matrix just saves writing \(x,y,+,=\). Solution: \(x=2\), \(y=1\).</p>
+  <p>Three kinds of moves were used: <em>swap</em> two equations, <em>add a multiple</em> of one equation to another, <em>multiply</em> an equation by a nonzero number.</p>
+</div>
+</section>
+
+<!-- ===================== 4. Elementary row operations ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Elementary row operations</h1>
+
+  <div class="box definition">
+    <div class="title">Definition (elementary row operations)</div>
+    <p>The three moves of the example. Let \(R_1,\dots,R_m\) be the rows of a matrix.</p>
+    <ol class="num-paren">
+      <li><strong>Replacement:</strong> \(R_i:=R_i+\lambda R_j\) with \(i\neq j\), \(\lambda\in\mathbb{K}\).</li>
+      <li><strong>Interchange:</strong> \(R_i\leftrightarrow R_j\).</li>
+      <li><strong>Scaling:</strong> \(R_i:=\lambda R_i\) with \(\lambda\neq0\).</li>
+    </ol>
+  </div>
+
+  <ul>
+    <li>\(R_i:=\dots\) is an <em>assignment</em> (the row is replaced), not an equality.</li>
+    <li>Each operation is <em>invertible</em>, by an operation of the same type:
+        \(R_i:=R_i-\lambda R_j\), the same interchange, \(R_i:=\tfrac1\lambda R_i\).
+        This is where \(\lambda\neq0\) is needed.</li>
+  </ul>
+</div>
+</section>
+
+<!-- ===================== 5. Row equivalence ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Row equivalence</h1>
+
+  <div class="box definition">
+    <div class="title">Definition (row equivalence)</div>
+    <p>Two matrices \(A,B\) are <em>row equivalent</em>, written $$A\sim B,$$ if
+       \(B\) can be obtained from \(A\) by finitely many elementary row operations.</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma (the point of all this)</div>
+    <p> $A\sim B$ ⟹  the corresponding systems have the
+       <strong>same set of solutions</strong>.</p>
+  </div>
+
+  <p><strong>Idea.</strong> Each new equation is a linear combination of the old ones, so solutions are kept;
+     the inverse operation gives the reverse inclusion.</p>
+</div>
+</section>
+
+<!-- ===================== 6. Echelon form ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Echelon form</h1>
+  <p>What should "solved" mean for a matrix? </p>
+  <div class="box definition">
+    <div class="title">Definition (echelon form, pivots)</div>
+    <p>The <em>leading entry</em> of a nonzero row is its leftmost nonzero coefficient.
+       A matrix is in <em>echelon form</em> if:</p>
+    <ol class="num-paren">
+      <li>all zero rows are at the bottom;</li>
+      <li>the leading entry of a row is strictly to the right of the leading entry of the row above;</li>
+      <li>all entries below a leading entry are zero.</li>
+    </ol>
+    <p>The <em>pivots</em> are the leading entries of the nonzero rows; a <em>pivot column</em> is a column containing a pivot.</p>
+  </div>
+
+  <div class="cols">
+    <div>
+      <svg viewBox="0 0 380 200" width="380" style="max-width:100%"
+           aria-label="Echelon form: staircase pattern">
+        <path d="M55,28 C38,65 38,160 55,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <path d="M335,28 C352,65 352,160 335,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <line x1="295" y1="34" x2="295" y2="188" stroke="#1d1f21" stroke-width="1.2"/>
+        <polyline points="46,70 145,70 145,110 195,110 195,150 340,150"
+                  fill="none" stroke="#14558c" stroke-width="2"/>
+        <g fill="none" stroke="#007d55" stroke-width="1.6">
+          <rect x="58" y="38" width="24" height="24" rx="4"/>
+          <rect x="158" y="78" width="24" height="24" rx="4"/>
+          <rect x="208" y="118" width="24" height="24" rx="4"/>
+        </g>
+        <g font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#1d1f21"
+           font-family="system-ui, sans-serif">
+          <text x="70" y="50" fill="#007d55" font-weight="700">∗</text>
+          <text x="120" y="50">∗</text><text x="170" y="50">∗</text>
+          <text x="220" y="50">∗</text><text x="270" y="50">∗</text><text x="320" y="50">∗</text>
+          <text x="70" y="90">0</text><text x="120" y="90">0</text>
+          <text x="170" y="90" fill="#007d55" font-weight="700">∗</text>
+          <text x="220" y="90">∗</text><text x="270" y="90">∗</text><text x="320" y="90">∗</text>
+          <text x="70" y="130">0</text><text x="120" y="130">0</text><text x="170" y="130">0</text>
+          <text x="220" y="130" fill="#007d55" font-weight="700">∗</text>
+          <text x="270" y="130">∗</text><text x="320" y="130">∗</text>
+          <text x="70" y="170">0</text><text x="120" y="170">0</text><text x="170" y="170">0</text>
+          <text x="220" y="170">0</text><text x="270" y="170">0</text><text x="320" y="170">0</text>
+        </g>
+      </svg>
+      <p class="caption">Below the staircase everything vanishes; pivots (green) are nonzero.</p>
+    </div>
+    <div>
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&1\\0&0&4&2\\0&0&0&0\end{array}\right)\ \text{echelon}
+      \]
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&1\\0&0&4&2\\0&0&\color{#e11f32}{5}&3\end{array}\right)\ \text{not echelon}
+      \]
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== 7. Reduced echelon form ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Reduced echelon form</h1>
+
+  <div class="box definition">
+    <div class="title">Definition (reduced echelon form)</div>
+    <p>A matrix is in <em>reduced echelon form</em> if it is in echelon form and, in addition:</p>
+    <ol class="num-paren" start="4">
+      <li>every pivot equals \(1\);</li>
+      <li>every pivot is the only nonzero entry of its column.</li>
+    </ol>
+  </div>
+
+  <div class="cols">
+    <div>
+      <svg viewBox="0 0 380 200" width="380" style="max-width:100%"
+           aria-label="Reduced echelon form">
+        <path d="M55,28 C38,65 38,160 55,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <path d="M335,28 C352,65 352,160 335,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <line x1="295" y1="34" x2="295" y2="188" stroke="#1d1f21" stroke-width="1.2"/>
+        <polyline points="46,70 145,70 145,110 195,110 195,150 340,150"
+                  fill="none" stroke="#14558c" stroke-width="2"/>
+        <g fill="none" stroke="#007d55" stroke-width="1.6">
+          <rect x="58" y="38" width="24" height="24" rx="4"/>
+          <rect x="158" y="78" width="24" height="24" rx="4"/>
+          <rect x="208" y="118" width="24" height="24" rx="4"/>
+        </g>
+        <g font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#1d1f21"
+           font-family="system-ui, sans-serif">
+          <text x="70" y="50" fill="#007d55" font-weight="700">1</text>
+          <text x="120" y="50">∗</text>
+          <text x="170" y="50" fill="#e11f32">0</text>
+          <text x="220" y="50" fill="#e11f32">0</text>
+          <text x="270" y="50">∗</text><text x="320" y="50">∗</text>
+          <text x="70" y="90">0</text><text x="120" y="90">0</text>
+          <text x="170" y="90" fill="#007d55" font-weight="700">1</text>
+          <text x="220" y="90" fill="#e11f32">0</text>
+          <text x="270" y="90">∗</text><text x="320" y="90">∗</text>
+          <text x="70" y="130">0</text><text x="120" y="130">0</text><text x="170" y="130">0</text>
+          <text x="220" y="130" fill="#007d55" font-weight="700">1</text>
+          <text x="270" y="130">∗</text><text x="320" y="130">∗</text>
+          <text x="70" y="170">0</text><text x="120" y="170">0</text><text x="170" y="170">0</text>
+          <text x="220" y="170">0</text><text x="270" y="170">0</text><text x="320" y="170">0</text>
+        </g>
+      </svg>
+      <p class="caption">Pivots equal \(1\), with red zeros above them.</p>
+    </div>
+    <div>
+      \[
+        \left(\begin{array}{ccc|c}1&0&0&2\\0&1&0&-1\\0&0&1&4\end{array}\right)\ \text{reduced}
+      \]
+      \[
+        \left(\begin{array}{cc|c}1&\color{#e11f32}{2}&3\\0&1&4\end{array}\right)\ \text{echelon, not reduced}
+      \]
+    </div>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Theorem</div>
+    <p>Every matrix is row equivalent to <strong>one and only one</strong> matrix in reduced echelon form.</p>
+    <p>(Existence: the Gauss algorithm. Uniqueness: admitted.)</p>
+  </div>
+</div>
+</section>
+
+<!-- ===================== 8. Gauss algorithm ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>The Gauss algorithm</h1>
+
+  <div class="cols">
+    <div class="box algo">
+      <div class="title">Algorithm (Gauss elimination)</div>
+      <p><strong>Phase 1 (going down): echelon form.</strong></p>
+      <ol class="num-paren">
+        <li>Leftmost nonzero column; the pivot position is at its top.</li>
+        <li>Interchange rows if needed, to get a nonzero entry there.</li>
+        <li>(Optional) scale so that the pivot is \(1\).</li>
+        <li>Replacements \(R_i:=R_i-\lambda R_{\text{piv}}\): zeros below the pivot.</li>
+        <li>Cover the pivot row; repeat on what remains.</li>
+      </ol>
+      <p><strong>Phase 2 (going up): reduced form.</strong></p>
+      <ol class="num-paren" start="6">
+        <li>Scale so that every pivot is \(1\).</li>
+        <li>From the rightmost pivot leftwards, clear the entries <em>above</em> each pivot.</li>
+      </ol>
+    </div>
+
+    <div class="gauss-stepper" id="gauss-stepper" tabindex="0">
+      <style>
+        .gauss-stepper{
+          --gs-ink:#1d1f21; --gs-green:#007d55; --gs-blue:#14558c;
+          --gs-red:#e11f32; --gs-grey:#aab2b9; --gs-orange:#c2610c;
+          outline:none; margin:.3em 0 .5em; font-size:.85em;
+        }
+        .gauss-stepper .gs-head{ display:flex; flex-wrap:wrap; align-items:center; gap:.5em; min-height:1.8em; }
+        .gauss-stepper .gs-tag{ font-weight:700; color:var(--gs-blue); }
+        .gauss-stepper .gs-badge{ font-size:.85em; font-weight:700; color:#fff; background:var(--gs-green);
+          padding:.15em .6em; border-radius:999px; }
+        .gauss-stepper .gs-badge[hidden]{ display:none; }
+        .gauss-stepper .gs-stage{ display:flex; justify-content:center; margin:.6em 0; }
+        .gauss-stepper .gs-grid{ display:grid; grid-template-columns:repeat(5, 2.3em); }
+        .gauss-stepper .gs-labels{ padding:0 14px; margin-bottom:.15em; }
+        .gauss-stepper .gs-label{ text-align:center; font-size:.85em; color:#6b7278; font-style:italic; }
+        .gauss-stepper .gs-label.free{ color:var(--gs-orange); font-weight:700; }
+        .gauss-stepper .gs-paren{ border-left:1.6px solid var(--gs-ink); border-right:1.6px solid var(--gs-ink);
+          border-radius:16px; padding:6px 12px; }
+        .gauss-stepper .gs-cell{ height:2.1em; display:flex; align-items:center; justify-content:center;
+          font-size:1.1em; color:var(--gs-ink); border-radius:7px; transition:color .25s, background-color .25s; }
+        .gauss-stepper .gs-cell.rhs{ border-left:1.3px solid var(--gs-ink); border-radius:0; }
+        .gauss-stepper .gs-cell.covered{ color:var(--gs-grey); }
+        .gauss-stepper .gs-cell.pivot{ color:var(--gs-green); font-weight:700;
+          box-shadow:inset 0 0 0 1.8px var(--gs-green); }
+        .gauss-stepper .gs-cell.target{ color:var(--gs-blue); font-weight:700; background:rgba(20,85,140,.13); }
+        .gauss-stepper .gs-cell.newzero{ color:var(--gs-red); font-weight:700; }
+        .gauss-stepper .gs-cell.look{ color:var(--gs-orange); font-weight:700;
+          outline:1.8px dashed var(--gs-orange); outline-offset:-4px; }
+        .gauss-stepper .gs-text{ min-height:6em; line-height:1.45; }
+        .gauss-stepper .gs-controls{ display:flex; align-items:center; justify-content:center; gap:.5em; margin-top:.4em; }
+        .gauss-stepper button{ font:inherit; font-size:.9em; padding:.3em .8em; border-radius:8px; cursor:pointer;
+          border:1.3px solid var(--gs-blue); background:#fff; color:var(--gs-blue); }
+        .gauss-stepper button:hover:not(:disabled){ background:rgba(20,85,140,.08); }
+        .gauss-stepper button:disabled{ opacity:.35; cursor:default; }
+        .gauss-stepper .gs-count{ font-size:.9em; color:#6b7278; min-width:4em; text-align:center; }
+      </style>
+
+      <div class="gs-head"><span class="gs-tag"></span><span class="gs-badge" hidden></span></div>
+      <div class="gs-stage">
+        <div>
+          <div class="gs-grid gs-labels"></div>
+          <div class="gs-paren"><div class="gs-grid gs-matrix"></div></div>
+        </div>
+      </div>
+      <div class="gs-text"></div>
+      <div class="gs-controls">
+        <button type="button" class="gs-restart">↺</button>
+        <button type="button" class="gs-prev">←</button>
+        <span class="gs-count"></span>
+        <button type="button" class="gs-next">→</button>
+      </div>
+
+      <script>
+      (function () {
+        var S = [
+          { tag:"Start", cov:[],
+            rows:["* * * * *","* * * * *","* * * * *","* * * * *"],
+            text:"An augmented matrix: \\(4\\) equations in \\(4\\) unknowns. Each \\(\\star\\) is an arbitrary number." },
+          { tag:"Phase 1 · Steps 1–2", cov:[],
+            rows:["*p * * * *","* * * * *","* * * * *","* * * * *"],
+            text:"Leftmost nonzero column: column \\(1\\). Pivot position at its top; interchange rows if that entry is \\(0\\)." },
+          { tag:"Phase 1 · Step 3", cov:[],
+            rows:["1p * * * *","* * * * *","* * * * *","* * * * *"],
+            text:"Scale the row so that the pivot equals \\(1\\)." },
+          { tag:"Phase 1 · Step 4", cov:[],
+            rows:["1p * * * *","*t * * * *","*t * * * *","*t * * * *"],
+            text:"Clear the entries below the pivot: \\(R_i:=R_i-\\lambda R_1\\)." },
+          { tag:"Phase 1 · Step 5", cov:[0],
+            rows:["1 * * * *","0 * * * *","0 * * * *","0 * * * *"],
+            text:"Cover the pivot row and start again on what remains." },
+          { tag:"Phase 1 · Steps 1–3", cov:[0],
+            rows:["1 * * * *","0 1p * * *","0 * * * *","0 * * * *"],
+            text:"Leftmost nonzero column of the uncovered part: column \\(2\\). Get a pivot \\(1\\)." },
+          { tag:"Phase 1 · Step 4", cov:[0],
+            rows:["1 * * * *","0 1p * * *","0 *t * * *","0 *t * * *"],
+            text:"Clear the entries below the pivot." },
+          { tag:"Phase 1 · Step 5", cov:[0,1],
+            rows:["1 * * * *","0 1 * * *","0 0 * * *","0 0 * * *"],
+            text:"Cover the second row as well." },
+          { tag:"Phase 1 · Step 1", cov:[0,1],
+            rows:["1 * * * *","0 1 * * *","0 0 0z * *","0 0 0z * *"],
+            text:"Suppose column \\(3\\) is zero in the uncovered part. <strong>This can happen!</strong> No pivot there: move to column \\(4\\). \\(x_3\\) will be a <em>free variable</em>." },
+          { tag:"Phase 1 · Steps 1–3", cov:[0,1],
+            rows:["1 * * * *","0 1 * * *","0 0 0 1p *","0 0 0 * *"],
+            text:"Pivot position: top of column \\(4\\) in the uncovered part. Get a \\(1\\) there." },
+          { tag:"Phase 1 · Step 4", cov:[0,1],
+            rows:["1 * * * *","0 1 * * *","0 0 0 1p *","0 0 0 *t *"],
+            text:"Clear the entry below the pivot." },
+          { tag:"Phase 1 · Step 5", cov:[0,1,2],
+            rows:["1 * * * *","0 1 * * *","0 0 0 1 *","0 0 0 0 0z"],
+            text:"What remains is \\((0\\ 0\\ 0\\ 0\\mid b)\\); here \\(b=0\\). If \\(b\\neq0\\), the equation \\(0=b\\) means <em>no solution</em>." },
+          { tag:"End of Phase 1", badge:"Echelon form", cov:[],
+            rows:["1p * * * *","0 1p * * *","0 0 0 1p *","0 0 0 0 0"],
+            text:"Echelon form, pivots in columns \\(1,2,4\\). Step 6 is already done (we scaled at each turn)." },
+          { tag:"Phase 2 · Step 7", cov:[],
+            rows:["1 * * *t *","0 1 * *t *","0 0 0 1p *","0 0 0 0 0"],
+            text:"Rightmost pivot (column \\(4\\)): clear the entries <em>above</em> it." },
+          { tag:"Phase 2 · Step 7", cov:[],
+            rows:["1 *t * 0r *","0 1p * 0r *","0 0 0 1 *","0 0 0 0 0"],
+            text:"Next pivot on the left (column \\(2\\)): clear the entry above it." },
+          { tag:"End of Phase 2", badge:"Reduced echelon form", cov:[], free:true,
+            rows:["1p 0r * 0r *","0 1p * 0r *","0 0 0 1p *","0 0 0 0 0"],
+            text:"Reduced echelon form. Basic variables \\(x_1,x_2,x_4\\) (pivot columns); \\(x_3\\) is free." }
+        ];
+
+        var root = document.getElementById("gauss-stepper");
+        var q = function (s) { return root.querySelector(s); };
+        var tagEl = q(".gs-tag"), badgeEl = q(".gs-badge"), labelsEl = q(".gs-labels"),
+            matEl = q(".gs-matrix"), textEl = q(".gs-text"), countEl = q(".gs-count"),
+            prevB = q(".gs-prev"), nextB = q(".gs-next"), restartB = q(".gs-restart");
+        var MARK = { p:"pivot", t:"target", r:"newzero", z:"look" };
+        var k = 0;
+
+        function render() {
+          var st = S[k];
+          tagEl.textContent = st.tag;
+          badgeEl.hidden = !st.badge;
+          badgeEl.textContent = st.badge || "";
+
+          var lab = "";
+          for (var c = 0; c < 5; c++) {
+            lab += '<div class="gs-label' + (st.free && c === 2 ? ' free' : '') + '">' +
+                   (c < 4 ? 'x<sub>' + (c + 1) + '</sub>' + (st.free && c === 2 ? ' free' : '') : '') + '</div>';
+          }
+          labelsEl.innerHTML = lab;
+
+          var html = "";
+          st.rows.forEach(function (row, r) {
+            row.split(" ").forEach(function (tok, c) {
+              var v = tok.charAt(0), m = tok.charAt(1), cls = "gs-cell";
+              if (c === 4) cls += " rhs";
+              if (st.cov.indexOf(r) >= 0) cls += " covered";
+              if (MARK[m]) cls += " " + MARK[m];
+              html += '<div class="' + cls + '">' + (v === "*" ? "★" : v) + '</div>';
+            });
+          });
+          matEl.innerHTML = html;
+
+          textEl.innerHTML = st.text;
+          countEl.textContent = (k + 1) + " / " + S.length;
+          prevB.disabled = (k === 0);
+          nextB.disabled = (k === S.length - 1);
+          if (window.MathJax && MathJax.typesetPromise) {
+            if (MathJax.typesetClear) MathJax.typesetClear([textEl]);
+            MathJax.typesetPromise([textEl]).catch(function () {});
+          }
+        }
+
+        prevB.addEventListener("click", function () { if (k > 0) { k--; render(); } });
+        nextB.addEventListener("click", function () { if (k < S.length - 1) { k++; render(); } });
+        restartB.addEventListener("click", function () { k = 0; render(); });
+        /* When the widget has focus, arrows move inside it; at its ends they go on to the slides. */
+        root.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowRight" && k < S.length - 1) { k++; render(); e.preventDefault(); e.stopPropagation(); }
+          else if (e.key === "ArrowLeft" && k > 0)        { k--; render(); e.preventDefault(); e.stopPropagation(); }
+        });
+
+        if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+          MathJax.startup.promise.then(render);
+        } else {
+          render();
+          window.addEventListener("load", render);
+        }
+      })();
+      </script>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== 9. Worked example 3x3 ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Example</h1>
+
+  \[
+    \begin{cases}
+      x+y+z=6,\\
+      2x+3y+z=11,\\
+      x+2y+3z=14,
+    \end{cases}
+    \qquad\rightsquigarrow\qquad
+    \left(\begin{array}{ccc|c}\color{#007d55}{\boxed{1}}&1&1&6\\2&3&1&11\\1&2&3&14\end{array}\right).
+  \]
+
+  <p><strong>Phase 1.</strong></p>
+  \[
+    \xrightarrow[\;R_3:=R_3-R_1\;]{\;R_2:=R_2-2R_1\;}
+    \left(\begin{array}{ccc|c}1&1&1&6\\0&\color{#007d55}{\boxed{1}}&-1&-1\\0&1&2&8\end{array}\right)
+    \xrightarrow{\;R_3:=R_3-R_2\;}
+    \left(\begin{array}{ccc|c}1&1&1&6\\0&1&-1&-1\\0&0&3&9\end{array}\right)
+    \xrightarrow{\;R_3:=\tfrac13R_3\;}
+    \left(\begin{array}{ccc|c}1&1&1&6\\0&1&-1&-1\\0&0&\color{#007d55}{\boxed{1}}&3\end{array}\right)
+  \]
+  <p>Echelon form, pivots in columns \(1,2,3\).</p>
+
+  <p><strong>Phase 2.</strong></p>
+  \[
+    \xrightarrow[\;R_1:=R_1-R_3\;]{\;R_2:=R_2+R_3\;}
+    \left(\begin{array}{ccc|c}1&1&\color{#e11f32}{0}&3\\0&1&\color{#e11f32}{0}&2\\0&0&1&3\end{array}\right)
+    \xrightarrow{\;R_1:=R_1-R_2\;}
+    \left(\begin{array}{ccc|c}1&\color{#e11f32}{0}&0&1\\0&1&0&2\\0&0&1&3\end{array}\right)
+  \]
+  <p>Reduced echelon form: \(x=1,\ y=2,\ z=3\), so \(S=\{(1,2,3)\}\).</p>
+</div>
+</section>
+
+<!-- ===================== 10. Inconsistency, basic/free ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Reading the solutions (1)</h1>
+
+  <p>A system is <strong>consistent</strong> if it has at least one solution, and <strong>inconsistent</strong> if it has none.</p>
+
+  <div class="box lemma">
+    <div class="title">Criterion of inconsistency</div>
+    <p>A system has <strong>no solution</strong> if and only if an echelon form of its augmented
+       matrix has a row \((0\ \cdots\ 0\mid b)\) with \(b\neq0\), i.e. the <strong>last column is a pivot column</strong>.</p>
+    <p>(Such a row is the equation \(0=b\).)</p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (basic and free variables)</div>
+    <p>For a consistent system, with \(A\) an echelon form of its augmented matrix, the unknown \(x_i\) is
+       <em>basic</em> if the \(i\)-th column of \(A\) is a pivot column, and <em>free</em> otherwise.</p>
+  </div>
+  <!--
+  <div class="box algo">
+    <div class="title">Recipe (parametric form)</div>
+    <ol class="num-paren">
+      <li>Row reduce to reduced echelon form.</li>
+      <li>Write down the corresponding system.</li>
+      <li>Move the free variables to the right-hand side.</li>
+    </ol>
+    <p>Basic variables are expressed in terms of the free ones; each choice of the free ones gives one solution.</p>
+  </div>
+  -->
+</div>
+</section>
+
+<!-- ===================== 11. Example with a free variable ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Reading the solutions (2)</h1>
+
+  <h3>No free variable</h3>
+  \[
+    \left(\begin{array}{ccc|c}\color{#007d55}{\boxed{1}}&0&0&2\\0&\color{#007d55}{\boxed{1}}&0&-1\\0&0&\color{#007d55}{\boxed{1}}&4\end{array}\right)
+    \rightsquigarrow
+    \begin{cases}x_1=2,\\ x_2=-1,\\ x_3=4.\end{cases}
+  \]
+  <p>A pivot in every column of unknowns: all variables are basic, nothing to move.
+     The solution can be read directly: \(S=\{(2,-1,4)\}\).</p>
+
+  <h3>One free variable</h3>
+  <div class="cols">
+    <div>
+      \[
+        \left(\begin{array}{ccc|c}\color{#007d55}{\boxed{1}}&0&3&5\\0&\color{#007d55}{\boxed{1}}&4&6\end{array}\right)
+        \rightsquigarrow
+        \begin{cases}x_1+3x_3=5,\\ x_2+4x_3=6.\end{cases}
+      \]
+      <p>\(x_1,x_2\) basic, \(x_3\) free:</p>
+      \[
+        \begin{cases}x_1=5-3x_3,\\ x_2=6-4x_3,\\ x_3 \ \text{free}.\end{cases}
+      \]
+      <p>With \(x_3=t\):</p>
+      \[
+        S=\left\{\begin{pmatrix}5\\6\\0\end{pmatrix}
+        +t\begin{pmatrix}-3\\-4\\1\end{pmatrix}\ \Bigm|\ t\in\mathbb{K}\right\}.
+      \]
+    </div>
+    <div>
+      <svg viewBox="0 0 400 300" width="400" style="max-width:100%"
+           aria-label="The solution set as a line through (5,6,0) with direction (-3,-4,1)">
+        <g stroke="#1d1f21" stroke-width="1.4" fill="none">
+          <line x1="143" y1="196" x2="43"  y2="253"/>
+          <line x1="108" y1="203" x2="351" y2="203"/>
+          <line x1="130" y1="225" x2="130" y2="39"/>
+        </g>
+        <g fill="#1d1f21">
+          <path d="M43,253 L49.1,245.6 L52.5,251.5 Z"/>
+          <path d="M351,203 L342,199.6 L342,206.4 Z"/>
+          <path d="M130,39 L126.6,48 L133.4,48 Z"/>
+        </g>
+        <line x1="240" y1="285" x2="52" y2="63" stroke="#14558c" stroke-width="2.4"/>
+        <line x1="130" y1="203" x2="204" y2="243" stroke="#e11f32" stroke-width="2"/>
+        <path d="M204,243 L194.5,241.7 L197.7,235.7 Z" fill="#e11f32"/>
+        <line x1="204" y1="243" x2="150" y2="179" stroke="#007d55" stroke-width="2"/>
+        <path d="M150,179 L158.4,183.7 L153.2,188.1 Z" fill="#007d55"/>
+        <circle cx="130" cy="203" r="2.6" fill="#1d1f21"/>
+        <g font-family="system-ui, sans-serif" font-size="14" fill="#1d1f21">
+          <text x="35"  y="266" text-anchor="middle">x</text>
+          <text x="361" y="209" text-anchor="middle">y</text>
+          <text x="130" y="27"  text-anchor="middle">z</text>
+          <text x="122" y="192" text-anchor="end">O</text>
+          <text x="222" y="252" font-weight="700" fill="#e11f32">P = (5, 6, 0)</text>
+          <text x="166" y="174" font-weight="700" fill="#007d55">v = (−3, −4, 1)</text>
+          <text x="72"  y="56"  font-size="15" font-weight="700" fill="#14558c">S</text>
+        </g>
+      </svg>
+      <p class="caption">\(S\) is the line through \(P\) with direction \(v\).</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ===================== 12. Existence and uniqueness ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Existence and uniqueness</h1>
+
+  <div class="box lemma">
+    <div class="title">Theorem</div>
+    <p>Let \(S\) be a system of \(m\) equations in \(n\) unknowns, and \(r\) the number of
+       pivots of an echelon form of its augmented matrix.</p>
+    <ol class="alpha-paren">
+      <li>If the last column is a pivot column: <strong>no solution</strong>.</li>
+      <li>Otherwise, if \(r=n\) (a pivot in every column of unknowns): <strong>a unique solution</strong>.</li>
+      <li>Otherwise \(r&lt;n\): at least one free variable, <strong>infinitely many solutions</strong>.</li>
+    </ol>
+  </div>
+
+  <p><strong>Why.</strong> In cases (b), (c) the solutions are in bijection with \(\mathbb{K}^{\,n-r}\) (the values of the free variables).</p>
+</div>
+</section>
+
+<!-- ===================== 13. Three cases in 2x2 ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>The three cases, in the plane</h1>
+
+  <style>
+    .three-cases{ display:flex; flex-wrap:wrap; justify-content:center; gap:1em; margin:.5em 0; font-size:.85em; }
+    .three-cases .case{ flex:1 1 0; min-width:220px; text-align:center; }
+    .three-cases .case h4{ margin:.2em 0 .3em; color:#14558c; font-size:1em; }
+    .three-cases svg{ width:140px; max-width:100%; display:block; margin:0 auto .3em; }
+    .three-cases .verdict{ font-size:.85em; margin-top:.2em; }
+  </style>
+
+  <div class="three-cases">
+    <div class="case">
+      <h4>Unique solution</h4>
+      <svg viewBox="0 0 160 160" aria-label="Lines x+y=3 and x-y=1 meeting at (2,1)">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="0" x2="160" y2="160" stroke="#e63946" stroke-width="2"/>
+        <line x1="32" y1="160" x2="160" y2="32" stroke="#007d55" stroke-width="2"/>
+        <circle cx="96" cy="96" r="4" fill="#14558c"/>
+        <text x="102" y="90" font-size="12" fill="#14558c" font-family="system-ui, sans-serif">(2,1)</text>
+      </svg>
+      \[
+        \begin{cases}\color{#e63946}{x+y=3}\\ \color{#007d55}{x-y=1}\end{cases}
+      \]
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&3\\1&-1&1\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&3\\0&\color{#007d55}{\boxed{-2}}&-2\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">\(r=n=2\): \(S=\{(2,1)\}\).</div>
+    </div>
+
+    <div class="case">
+      <h4>No solution</h4>
+      <svg viewBox="0 0 160 160" aria-label="Parallel lines x+y=1 and x+y=3">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="64" x2="96" y2="160" stroke="#e63946" stroke-width="2"/>
+        <line x1="0" y1="0" x2="160" y2="160" stroke="#007d55" stroke-width="2"/>
+      </svg>
+      \[
+        \begin{cases}\color{#e63946}{x+y=1}\\ \color{#007d55}{x+y=3}\end{cases}
+      \]
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&1\\1&1&3\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&1\\0&0&\color{#e11f32}{\boxed{2}}\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">Pivot in the last column (\(0=2\)): \(S=\varnothing\).</div>
+    </div>
+
+    <div class="case">
+      <h4>Infinitely many</h4>
+      <svg viewBox="0 0 160 160" aria-label="The lines x+y=2 and 2x+2y=4 coincide">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="32" x2="128" y2="160" stroke="#e63946" stroke-width="4"/>
+        <line x1="0" y1="32" x2="128" y2="160" stroke="#007d55" stroke-width="2" stroke-dasharray="6 5"/>
+      </svg>
+      \[
+        \begin{cases}\color{#e63946}{x+y=2}\\ \color{#007d55}{2x+2y=4}\end{cases}
+      \]
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&2\\2&2&4\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-2R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&2\\0&0&0\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">\(r=1&lt;2\), \(y\) free: \(S=\{(2-t,t)\mid t\in\mathbb{R}\}\).</div>
+    </div>
+  </div>
+
+  <p>Elimination tells the three cases apart algebraically, even when no picture is available.</p>
+</div>
+</section>
+
+<!-- ===================== 14. Structure of the solution set ===================== -->
+<section class="slide">
+<div class="wrap">
+  <h1>Link with dimension</h1>
+
+  <div class="box definition">
+    <div class="title">Definition (associated homogeneous system)</div>
+    <p>Keep the left-hand sides, replace the right-hand sides by \(0\):</p>
+    \[
+      (\Sigma)\ \begin{cases}x_1+3x_3=\color{#e11f32}{5}\\ x_2+4x_3=\color{#e11f32}{6}\end{cases}
+      \qquad\rightsquigarrow\qquad
+      (\Sigma_0)\ \begin{cases}x_1+3x_3=\color{#e11f32}{0}\\ x_2+4x_3=\color{#e11f32}{0}\end{cases}
+    \]
+    <p>A system whose right-hand sides are all \(0\) is called <em>homogeneous</em>.</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Proposition (structure of the solution set)</div>
+    <p>Let \((\Sigma)\) be a consistent system with \(n\) unknowns and \(r\) pivots, \(S\) its set of solutions,
+       and \(S_0\) the set of solutions of \((\Sigma_0)\).</p>
+    <ol class="num-paren">
+      <li>\(S_0\) is a vector subspace of \(\mathbb K^n\), and \(\dim S_0=n-r\) (the number of free variables).</li>
+      <li>If \(p\in S\) is any particular solution, then
+          \(S=p+S_0=\{\,p+v\mid v\in S_0\,\}.\)</li>
+    </ol>
+  </div>
+
+  <ul>
+    <li>\(S\) is a vector space only if \((\Sigma)\) is homogeneous (otherwise \(0\notin S\)). In general it is a
+        <strong>translate</strong> of a vector space of dimension \(n-r\).</li>
+    <li>\(n-r=0\): a point; \(n-r=1\): a line; \(n-r=2\): a plane; …</li>
+  </ul>
+
+  <p><strong>Why.</strong> The parametric form reads
+    \[
+      S=\{\,p+t_1v_1+\cdots+t_{n-r}v_{n-r}\mid t_j\in\mathbb K\,\},
+    \]
+    and \((v_1,\dots,v_{n-r})\) is a <em>basis</em> of \(S_0\):</p>
+  <ul>
+    <li><em>spanning:</em> the recipe applied to \((\Sigma_0)\) gives \(p=0\) and the same \(v_j\);</li>
+    <li><em>independent:</em> \(v_j\) has a \(1\) in the coordinate of the \(j\)-th free variable and \(0\)
+        in those of the other free variables.</li>
+  </ul>
+
+  <p><strong>Example.</strong> The system above (slide 11): \(p=(5,6,0)\), \(S_0=\langle(-3,-4,1)\rangle\), \(\dim S_0=3-2=1\):
+     \(S\) is a line not through \(0\).</p>
+</div>
+</section>
+
+<!-- ===================== Navigation ===================== -->
+<div class="progress" id="progress"></div>
+<div class="nav">
+  <button id="prev" aria-label="Previous">&larr;</button>
+  <span id="counter"></span>
+  <button id="next" aria-label="Next">&rarr;</button>
+</div>
+
+<script>
+(function () {
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  let i = Math.min(Math.max(parseInt(location.hash.slice(1)) - 1 || 0, 0), slides.length - 1);
+
+  function show(k) {
+    i = Math.min(Math.max(k, 0), slides.length - 1);
+    slides.forEach((s, j) => s.classList.toggle('active', j === i));
+    counter.textContent = (i + 1) + ' / ' + slides.length;
+    progress.style.width = (100 * (i + 1) / slides.length) + '%';
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+
+  document.addEventListener('keydown', e => {
+    /* Space/Enter on a focused button should press the button, not change slide */
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('button')) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'f') {
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+  document.getElementById('prev').onclick = () => show(i - 1);
+  document.getElementById('next').onclick = () => show(i + 1);
+
+  show(i);
+})();
+</script>
+</body>
+</html>
