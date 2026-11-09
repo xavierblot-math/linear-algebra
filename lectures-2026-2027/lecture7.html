@@ -85,10 +85,19 @@
    	</div>
 	It is clearly $\mathbb{R}$-linear.
 	</li>
-    <li><em>Polynomial maps.</em> For \(P\in\mathbb R[X]\), the induced map \(\mathbb R\to\mathbb R\), \(x\mapsto P(x)\), is linear if, and only if, \(P=aX\) for some \(a\in\mathbb R\).
+    <li><em>Polynomial maps.</em> For \(P\in\mathbb R[X]\), the induced map
+      <div class="math">
+     	 \begin{equation*}
+	 	    \begin{split}
+		      \mathbb{R}&\longrightarrow\mathbb{R}\\
+						x&\longmapsto P(x),
+		    \end{split}
+	      \end{equation*} 
+   	  </div>
+      is linear if, and only if, \(P=aX\) for some \(a\in\mathbb R\).
   <div style="border-left:4px solid #c0392b;background:#fdecea;padding:0.5em 0.8em;margin:0.6em 0;">
     <strong style="color:#c0392b;">Erratum.</strong>
-    A previous version of these notes stated that this map is linear if, and only if, \(\deg P=1\). <strong>This was wrong</strong>, for two reasons:
+     In the lecture I stated that this map is linear if, and only if, \(\deg P=1\). <strong>This was wrong</strong>, for two reasons:
     <ul>
       <li>\(P=X+1\) has degree \(1\), but \(x\mapsto x+1\) is not linear, since \(P(0)=1\neq 0\) (see the Lemma above: a linear map sends \(0\) to \(0\));</li>
       <li>\(P=0\) is not of degree \(1\), but it induces the zero map, which is linear.</li>
