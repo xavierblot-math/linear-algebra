@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Linear Algebra — Toolkit: Gauss elimination</title>
+
+  <!-- Style global -->
+<link rel="stylesheet" href="style.css">
+
+  <!-- MathJax -->
+  <script> window.MathJax = { tex:{inlineMath:[['$','$'],['\\(','\\)']] } }; </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Toolkit : Gauss elimination</h1>
+
+  <p>In the first week (Lecture 0) we met systems of linear equations and observed that such a system has
+     either no solution, exactly one solution, or infinitely many. We now turn this observation
+     into a <em>method</em>: a finite procedure which, starting from any system, decides which of
+     the three cases occurs and produces all solutions. This is <em>Gauss elimination</em>
+     (also called <em>row reduction</em>).</p>
+
+
+  <div class="box keyq">
+    <div class="title">The plan</div>
+    <ol class="num-paren">
+      <li>Encode a system by a matrix (no more \(x,y,z\) and \(=\) written again and again).</li>
+      <li>Identify the operations on the system which do not change the solution set: the
+          <em>elementary row operations</em>.</li>
+      <li>Identify the shape of a matrix which is <em>solved</em>: the (reduced) echelon form.</li>
+      <li>Give an algorithm reaching that shape, and read the solutions off it.</li>
+    </ol>
+  </div>
+
+  <h2>Augmented matrices</h2>
+
+  <div class="box definition">
+    <div class="title">Definition (augmented matrix)</div>
+    <p>To the system of \(m\) equations in the \(n\) unknowns \(x_1,\dots,x_n\)
+      \[
+        \begin{cases}
+          a_{11}x_1+\cdots+a_{1n}x_n=b_1,\\
+          \qquad\qquad\vdots\\
+          a_{m1}x_1+\cdots+a_{mn}x_n=b_m,
+        \end{cases}
+      \]
+      we associate its <em>augmented matrix</em>
+      \[
+        \left(\begin{array}{ccc|c}
+          a_{11}&\cdots&a_{1n}&b_1\\
+          \vdots& &\vdots&\vdots\\
+          a_{m1}&\cdots&a_{mn}&b_m
+        \end{array}\right).
+      \]
+      The vertical bar is only a reminder of where the equality sign was; it plays no role in the
+      computations.</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example</div>
+    <div class="math">
+      \[
+        \begin{cases}
+          x+2y+3z=6,\\
+          2x-3y+2z=14,\\
+          3x+y-z=-2,
+        \end{cases}
+        \qquad\rightsquigarrow\qquad
+        \left(\begin{array}{ccc|c}
+          1&2&3&6\\ 2&-3&2&14\\ 3&1&-1&-2
+        \end{array}\right).
+      \]
+    </div>
+    <p>The system is entirely recorded by its coefficients: the letters \(x,y,z\) carry no
+       information beyond the position of the column they sit in.</p>
+  </div>
+
+  <h2>Elementary row operations</h2>
+
+  <p>We will solve systems of linear equations algebraically using the <strong>elimination method</strong>. In this method, there are three valid operations we can perform on our system of equations. These operations, called <strong>elementary row operations</strong>, are performed on the augmented matrix representing the system. Let us first watch them at work on an example.</p>
+
+<div class="box illustration">
+  <div class="title">Example (one system, two bookkeepings)</div>
+  <p>Let us solve a small system, writing at each step the equations on the left and the
+     augmented matrix on the right. Each equation is a row of the matrix, and each manipulation
+     of the equations is an operation on the rows. The row that has just changed is drawn in blue.</p>
+  <div class="math">
+    \[
+      \begin{array}{ccc}
+        \text{System} & & \text{Augmented matrix}\\[8pt]
+        %
+        \left\{\begin{array}{rcrcr} 3x&+&4y&=&10\\ x&+&2y&=&4 \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c} 3&4&10\\ 1&2&4 \end{array}\right)\\[6pt]
+        %
+        \Big\downarrow\ {\scriptstyle\text{swap the two equations}}
+        & & \Big\downarrow\ {\scriptstyle R_1\leftrightarrow R_2}\\[6pt]
+        %
+        \left\{\begin{array}{rcrcr}
+          \color{#14558c}{x}&\color{#14558c}{+}&\color{#14558c}{2y}&\color{#14558c}{=}&\color{#14558c}{4}\\
+          \color{#14558c}{3x}&\color{#14558c}{+}&\color{#14558c}{4y}&\color{#14558c}{=}&\color{#14558c}{10}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          \color{#14558c}{1}&\color{#14558c}{2}&\color{#14558c}{4}\\
+          \color{#14558c}{3}&\color{#14558c}{4}&\color{#14558c}{10}
+        \end{array}\right)\\[6pt]
+        %
+        \Big\downarrow\ {\scriptstyle\text{eq. 2 minus 3 times eq. 1}}
+        & & \Big\downarrow\ {\scriptstyle R_2:=R_2-3R_1}\\[6pt]
+        %
+        \left\{\begin{array}{rcrcr}
+          x&+&2y&=&4\\
+          &&\color{#14558c}{-2y}&\color{#14558c}{=}&\color{#14558c}{-2}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          1&2&4\\
+          \color{#14558c}{0}&\color{#14558c}{-2}&\color{#14558c}{-2}
+        \end{array}\right)\\[6pt]
+        %
+        \Big\downarrow\ {\scriptstyle\text{multiply eq. 2 by }-\frac12}
+        & & \Big\downarrow\ {\scriptstyle R_2:=-\frac12 R_2}\\[6pt]
+        %
+        \left\{\begin{array}{rcrcr}
+          x&+&2y&=&4\\
+          &&\color{#14558c}{y}&\color{#14558c}{=}&\color{#14558c}{1}
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          1&2&4\\
+          \color{#14558c}{0}&\color{#14558c}{1}&\color{#14558c}{1}
+        \end{array}\right)\\[6pt]
+        %
+        \Big\downarrow\ {\scriptstyle\text{eq. 1 minus 2 times eq. 2}}
+        & & \Big\downarrow\ {\scriptstyle R_1:=R_1-2R_2}\\[6pt]
+        %
+        \left\{\begin{array}{rcrcr}
+          \color{#14558c}{x}&&&\color{#14558c}{=}&\color{#14558c}{2}\\
+          &&y&=&1
+        \end{array}\right.
+        & \longleftrightarrow &
+        \left(\begin{array}{cc|c}
+          \color{#14558c}{1}&\color{#14558c}{0}&\color{#14558c}{2}\\
+          0&1&1
+        \end{array}\right)
+      \end{array}
+    \]
+  </div>
+  <p>The last system can be read directly: \(x=2\), \(y=1\). One checks that
+     \(3\cdot2+4\cdot1=10\) and \(2+2\cdot1=4\).</p>
+  <p>The two columns contain exactly the same information. The matrix just saves us from
+     writing \(x\), \(y\), \(+\) and \(=\) again and again. Three kinds of manipulations were used here:
+     swapping two equations, adding a multiple of one equation to another, and multiplying an
+     equation by a nonzero number. These are the three <em>elementary row operations</em>, which we
+     now define formally. The final matrix has
+     the "solved" shape that we will call <em>reduced echelon form</em>.</p>
+</div>
+
+  <div class="box definition">
+    <div class="title">Definition (elementary row operations)</div>
+    <p>Let \(R_1,\dots,R_m\) denote the rows of a matrix. The <em>elementary row operations</em> are
+       the three manipulations of the example:</p>
+    <ol class="num-paren">
+      <li><strong>Replacement:</strong> \(R_i:=R_i+\lambda R_j\) with \(i\neq j\), \(\lambda\in\mathbb{K}\).</li>
+      <li><strong>Interchange:</strong> \(R_i\leftrightarrow R_j\).</li>
+      <li><strong>Scaling:</strong> \(R_i:=\lambda R_i\) with \(\lambda\in\mathbb{K}\setminus\{0\}\).</li>
+    </ol>
+  </div>
+
+
+  <div class="box remark">
+    <div class="title">Remarks</div>
+    <ul>
+      <li>The notation \(R_2:=R_2-2R_1\) is an <em>assignment</em>, as in a computer program: the
+          second row is <em>replaced</em> by the result. It is not an equality.</li>
+      <li>Each elementary operation is invertible, by an operation of the same type:
+          \(R_i:=R_i+\lambda R_j\) is undone by \(R_i:=R_i-\lambda R_j\), an interchange is undone
+          by itself, and \(R_i:=\lambda R_i\) by \(R_i:=\tfrac{1}{\lambda}R_i\). This is exactly
+          where \(\lambda\neq0\) is needed in the scaling.</li>
+    </ul>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (row equivalence)</div>
+    <p>Two matrices \(A,B\) of the same size are <em>row equivalent</em>, written $$A\sim B,$$ if
+       \(B\) can be obtained from \(A\) by finitely many elementary row operations. </p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Remark</div>
+    <p>This is an
+       equivalence relation (reflexive, symmetric by the previous remark, transitive).</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Lemma (the point of all this)</div>
+    <p>If two augmented matrices are row equivalent, then the corresponding systems have the same
+       set of solutions.</p>
+    <p><strong>Proof.</strong> It suffices to treat one elementary operation. Let
+       \(u=(u_1,\dots,u_n)\) be a solution of the system \(S\), and let \(S'\) be obtained from
+       \(S\) by one operation. Every equation of \(S'\) is either an equation of \(S\), or a linear
+       combination of equations of \(S\); since \(u\) satisfies the latter, it satisfies each
+       equation of \(S'\). Hence every solution of \(S\) is a solution of \(S'\). Applying the same
+       argument to the inverse operation, which takes \(S'\) back to \(S\), gives the reverse
+       inclusion. \(\square\)</p>
+  </div>
+
+  <!--<div class="box illustration">
+    <div class="title">Example (an inconsistent system detected)</div>
+    <div class="math">
+      \[
+        \left(\begin{array}{cc|c}1&-1&1\\ -1&1&0\end{array}\right)
+        \xrightarrow{\;R_2:=R_2+R_1\;}
+        \left(\begin{array}{cc|c}1&-1&1\\ 0&0&1\end{array}\right).
+      \]
+    </div>
+    <p>The second row now reads \(0\cdot x+0\cdot y=1\), which no pair \((x,y)\) satisfies. By the
+       Lemma, the original system has no solution either.</p>
+  </div>-->
+
+  <h2>Echelon and reduced echelon forms</h2>
+
+  <p>What should "solved" mean for a matrix? The following two shapes answer this.</p>
+
+  <div class="box definition">
+    <div class="title">Definition (echelon form)</div>
+    <p>The <em>leading entry</em> of a nonzero row is its leftmost nonzero coefficient.
+       A matrix is in <em>echelon form</em> if:</p>
+    <ol class="num-paren">
+      <li>all zero rows are at the bottom;</li>
+      <li>the leading entry of a row is strictly to the right of the leading entry of the row above;</li>
+      <li>all entries below a leading entry are zero.</li>
+    </ol>
+    <p>Note that (3) is a consequence of (1) and (2).</p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (pivots)</div>
+    <p>The <em>pivots</em> of a matrix in echelon form are the leading entries of its nonzero rows.
+       A <em>pivot column</em> is a column containing a pivot. For an arbitrary matrix \(A\), a
+       <em>pivot position</em> of \(A\) is a position which carries a pivot in some echelon form of
+       \(A\).</p>
+  </div>
+
+  <!-- Staircase picture -->
+  <svg viewBox="0 0 380 200" width="380" style="max-width:100%"
+       aria-label="Echelon form: staircase pattern">
+    <!-- parentheses -->
+    <path d="M55,28 C38,65 38,160 55,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+    <path d="M335,28 C352,65 352,160 335,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <!-- augmentation bar (between the last two columns) -->
+    <line x1="295" y1="34" x2="295" y2="188" stroke="#1d1f21" stroke-width="1.2"/>
+
+    <!-- staircase -->
+    <polyline points="46,70 145,70 145,110 195,110 195,150 340,150"
+              fill="none" stroke="#14558c" stroke-width="2"/>
+
+    <!-- pivot boxes -->
+    <g fill="none" stroke="#007d55" stroke-width="1.6">
+      <rect x="58" y="38" width="24" height="24" rx="4"/>
+      <rect x="158" y="78" width="24" height="24" rx="4"/>
+      <rect x="208" y="118" width="24" height="24" rx="4"/>
+    </g>
+
+    <g font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#1d1f21"
+       font-family="system-ui, sans-serif">
+      <!-- row 1 -->
+      <text x="70" y="50" fill="#007d55" font-weight="700">∗</text>
+      <text x="120" y="50">∗</text><text x="170" y="50">∗</text>
+      <text x="220" y="50">∗</text><text x="270" y="50">∗</text><text x="320" y="50">∗</text>
+      <!-- row 2 -->
+      <text x="70" y="90">0</text><text x="120" y="90">0</text>
+      <text x="170" y="90" fill="#007d55" font-weight="700">∗</text>
+      <text x="220" y="90">∗</text><text x="270" y="90">∗</text><text x="320" y="90">∗</text>
+      <!-- row 3 -->
+      <text x="70" y="130">0</text><text x="120" y="130">0</text><text x="170" y="130">0</text>
+      <text x="220" y="130" fill="#007d55" font-weight="700">∗</text>
+      <text x="270" y="130">∗</text><text x="320" y="130">∗</text>
+      <!-- row 4 -->
+      <text x="70" y="170">0</text><text x="120" y="170">0</text><text x="170" y="170">0</text>
+      <text x="220" y="170">0</text><text x="270" y="170">0</text><text x="320" y="170">0</text>
+    </g>
+  </svg>
+  <p style="text-align:center; font-style:italic; color:var(--main);">
+    Echelon form of an augmented matrix: everything below the staircase vanishes; the pivots (in green) are nonzero.
+</p>
+  </p>
+
+  <div class="box illustration">
+    <div class="title">Examples/non-examples</div>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}2&1&5&1\\0&3&1&2\\0&0&7&3\end{array}\right)\ \text{echelon},\qquad
+        \left(\begin{array}{ccc|c}1&2&3&1\\0&0&4&2\\0&0&0&0\end{array}\right)\ \text{echelon},
+      \]
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&1\\0&0&4&2\\0&0&5&3\end{array}\right)\ \text{not echelon}.
+      \]
+    </div>
+    <p>In the last matrix, the leading entry of the third row is not strictly to the right of the
+       one above it.</p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (reduced echelon form)</div>
+    <p>A matrix is in <em>reduced echelon form</em> if it is in echelon form and, in addition:</p>
+    <ol class="num-paren" start="4">
+      <li>every pivot equals \(1\);</li>
+      <li>every pivot is the only nonzero entry of its column.</li>
+    </ol>
+  </div>
+  <svg viewBox="0 0 380 200" width="380" style="max-width:100%"
+       aria-label="Reduced echelon form">
+    <!-- parentheses -->
+    <path d="M55,28 C38,65 38,160 55,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+    <path d="M335,28 C352,65 352,160 335,196" fill="none" stroke="#1d1f21" stroke-width="1.6"/>
+        <!-- augmentation bar (between the last two columns) -->
+    <line x1="295" y1="34" x2="295" y2="188" stroke="#1d1f21" stroke-width="1.2"/>
+    <!-- staircase -->
+    <polyline points="46,70 145,70 145,110 195,110 195,150 340,150"
+              fill="none" stroke="#14558c" stroke-width="2"/>
+
+    <!-- pivot boxes -->
+    <g fill="none" stroke="#007d55" stroke-width="1.6">
+      <rect x="58" y="38" width="24" height="24" rx="4"/>
+      <rect x="158" y="78" width="24" height="24" rx="4"/>
+      <rect x="208" y="118" width="24" height="24" rx="4"/>
+    </g>
+
+    <g font-size="16" text-anchor="middle" dominant-baseline="middle" fill="#1d1f21"
+       font-family="system-ui, sans-serif">
+      <!-- row 1 -->
+      <text x="70" y="50" fill="#007d55" font-weight="700">1</text>
+      <text x="120" y="50">∗</text>
+      <text x="170" y="50" fill="#e11f32">0</text>
+      <text x="220" y="50" fill="#e11f32">0</text>
+      <text x="270" y="50">∗</text><text x="320" y="50">∗</text>
+      <!-- row 2 -->
+      <text x="70" y="90">0</text><text x="120" y="90">0</text>
+      <text x="170" y="90" fill="#007d55" font-weight="700">1</text>
+      <text x="220" y="90" fill="#e11f32">0</text>
+      <text x="270" y="90">∗</text><text x="320" y="90">∗</text>
+      <!-- row 3 -->
+      <text x="70" y="130">0</text><text x="120" y="130">0</text><text x="170" y="130">0</text>
+      <text x="220" y="130" fill="#007d55" font-weight="700">1</text>
+      <text x="270" y="130">∗</text><text x="320" y="130">∗</text>
+      <!-- row 4 -->
+      <text x="70" y="170">0</text><text x="120" y="170">0</text><text x="170" y="170">0</text>
+      <text x="220" y="170">0</text><text x="270" y="170">0</text><text x="320" y="170">0</text>
+    </g>
+  </svg>
+  <p style="text-align:center; font-style:italic; color:var(--main);">
+    Reduced echelon form: every pivot equals \(1\), and there are red zeros above the pivots.
+  </p>
+
+  <div class="box illustration">
+    <div class="title">Examples/non-examples</div>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&0&0&2\\0&1&0&-1\\0&0&1&4\end{array}\right),\quad
+        \left(\begin{array}{cc|c}1&0&\ast\\0&1&\ast\end{array}\right)\ \text{are reduced}.
+      \]
+      \[
+        \left(\begin{array}{cc|c}1&\textcolor{red}{2}&3\\0&1&4\end{array}\right)\ \text{echelon but not reduced}.
+      \]
+    </div>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Theorem</div>
+    <p>Every matrix is row equivalent to one and only one matrix in reduced echelon form.</p>
+    <p><strong>Proof.</strong> Existence is the Gauss algorithm below. We will not prove uniqueness; it is the statement that, no matter how you row reduce, you always get the same matrix in reduced row echelon form.
+      </p>
+  </div>
+
+  <h2>The Gauss algorithm</h2>
+  <!--
+  <div class="box algo">
+    <div class="title">Algorithm (Gauss elimination), run on an example</div>
+    <p>We state each step and apply it at once to the system of the first example, whose augmented
+       matrix is</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&6\\2&-3&2&14\\3&1&-1&-2\end{array}\right).
+      \]
+    </div>
+
+    <p><strong>Phase 1 (forward, "going down"): reach an echelon form.</strong></p>
+
+    <p class="turn">First turn</p>
+    <ol class="num-paren">
+      <li>Consider the leftmost nonzero column; the pivot position is at its top.
+        <div class="run">
+          <p>Here this is column \(1\), and the pivot position carries \(1\).</p>
+          <div class="math">
+            \[
+              \left(\begin{array}{ccc|c}\color{#007d55}{\boxed{1}}&2&3&6\\2&-3&2&14\\3&1&-1&-2\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>If necessary, interchange rows so that the pivot position carries a nonzero entry.
+        <div class="run"><p>Nothing to do: the entry \(1\) is nonzero.</p></div>
+      </li>
+      <li>(Optional, but convenient) scale the row so that the pivot equals \(1\).
+        <div class="run"><p>Nothing to do: the pivot is already \(1\).</p></div>
+      </li>
+      <li>By replacements \(R_i:=R_i-\lambda R_{\text{pivot}}\), make all entries below the pivot zero.
+        <div class="run">
+          <div class="math">
+            \[
+              \xrightarrow[\;R_3:=R_3-3R_1\;]{\;R_2:=R_2-2R_1\;}
+              \left(\begin{array}{ccc|c}1&2&3&6\\0&-7&-4&2\\0&-5&-10&-20\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>Cover the pivot row and repeat on what remains, until nothing nonzero is left.
+        <div class="run">
+          <p>The covered part is drawn in grey; we now work on the two bottom rows.</p>
+          <div class="math">
+            \[
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                0&-7&-4&2\\ 0&-5&-10&-20\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <p class="turn">Second turn</p>
+    <ol class="num-paren">
+      <li>Leftmost nonzero column of the uncovered part, pivot position at its top.
+        <div class="run">
+          <p>This is column \(2\); the pivot position carries \(-7\).</p>
+          <div class="math">
+            \[
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                0&\color{#007d55}{\boxed{-7}}&-4&2\\ 0&-5&-10&-20\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>Interchange if necessary.
+        <div class="run">
+          <p>Not necessary, since \(-7\neq0\); but we do it anyway, because \(-5\) will become
+             \(1\) without producing fractions.</p>
+          <div class="math">
+            \[
+              \xrightarrow{\;R_2\leftrightarrow R_3\;}
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                0&-5&-10&-20\\ 0&-7&-4&2\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>Scale the row so that the pivot equals \(1\).
+        <div class="run">
+          <div class="math">
+            \[
+              \xrightarrow{\;R_2:=-\tfrac15R_2\;}
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                0&\color{#007d55}{\boxed{1}}&2&4\\ 0&-7&-4&2\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>Clear the entries below the pivot.
+        <div class="run">
+          <div class="math">
+            \[
+              \xrightarrow{\;R_3:=R_3+7R_2\;}
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                0&1&2&4\\ 0&0&10&30\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>Cover the pivot row and repeat.
+        <div class="run">
+          <div class="math">
+            \[
+              \left(\begin{array}{ccc|c}
+                \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+                \color{#aab2b9}{0}&\color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{4}\\
+                0&0&10&30\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <p class="turn">Third turn</p>
+    <ol class="num-paren">
+      <li>Leftmost nonzero column of what remains: column \(3\), with \(10\) in the pivot position.</li>
+      <li>No interchange needed.</li>
+      <li>Scale:
+        <div class="run">
+          <div class="math">
+            \[
+              \xrightarrow{\;R_3:=\tfrac1{10}R_3\;}
+              \left(\begin{array}{ccc|c}1&2&3&6\\0&1&2&4\\0&0&\color{#007d55}{\boxed{1}}&3\end{array}\right)
+            \]
+          </div>
+        </div>
+      </li>
+      <li>There is nothing below the pivot to clear.</li>
+      <li>Nothing is left to treat: Phase 1 is over. The matrix is in echelon form, with pivots
+          \(1,1,1\) in columns \(1,2,3\).</li>
+    </ol>
+
+    <p><strong>Phase 2 (backward, "going up"): reach the reduced echelon form.</strong></p>
+    <ol class="num-paren" start="6">
+      <li>Scale each pivot row so that every pivot equals \(1\).
+        <div class="run"><p>Already done, since we scaled at step 3 of each turn.</p></div>
+      </li>
+      <li>Starting from the rightmost pivot and moving left, use replacements to clear all entries
+          <em>above</em> each pivot.
+        <div class="run">
+          <p>Rightmost pivot, in column \(3\):</p>
+          <div class="math">
+            \[
+              \xrightarrow[\;R_1:=R_1-3R_3\;]{\;R_2:=R_2-2R_3\;}
+              \left(\begin{array}{ccc|c}1&2&0&-3\\0&1&0&-2\\0&0&1&3\end{array}\right)
+            \]
+          </div>
+          <p>Next pivot, in column \(2\):</p>
+          <div class="math">
+            \[
+              \xrightarrow{\;R_1:=R_1-2R_2\;}
+              \left(\begin{array}{ccc|c}1&0&0&1\\0&1&0&-2\\0&0&1&3\end{array}\right)
+            \]
+          </div>
+          <p>Above the pivot of column \(1\) there is nothing: the matrix is in reduced echelon
+             form.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p>The final matrix reads \(x=1\), \(y=-2\), \(z=3\), so \(S=\{(1,-2,3)\}\); one checks directly
+       that this triple satisfies the three original equations.</p>
+    <p>The algorithm terminates: each turn of Phase 1 removes one row and at least one column from
+       the part of the matrix still to be treated.</p>
+  </div>-->
+  <div class="box algo">
+    <div class="title">Algorithm (Gauss elimination)</div>
+    <p><strong>Phase 1 (forward, "going down"): reach an echelon form.</strong></p>
+    <ol class="num-paren">
+      <li>Consider the leftmost nonzero column; the pivot position is at its top.</li>
+      <li>If necessary, interchange rows so that the pivot position carries a nonzero entry.</li>
+      <li>(Optional, but convenient) scale the row so that the pivot equals \(1\).</li>
+      <li>By replacements \(R_i:=R_i-\lambda R_{\text{pivot}}\), make all entries below the pivot zero.</li>
+      <li>Cover the pivot row and repeat these five steps on what remains, until nothing nonzero is left.</li>
+    </ol>
+    <p><strong>Phase 2 (backward, "going up"): reach the reduced echelon form.</strong></p>
+    <ol class="num-paren" start="6">
+      <li>Scale each pivot row so that every pivot equals \(1\).</li>
+      <li>Starting from the rightmost pivot and moving left, use replacements to clear all entries
+          <em>above</em> each pivot.</li>
+    </ol>
+    <p>The algorithm terminates: each turn of Phase 1 removes one row and at least one column from
+       the part of the matrix still to be treated.</p>
+  </div>
+
+<div class="box illustration">
+  <div class="title">The algorithm at a glance</div>
+  <p>Before running the algorithm on actual numbers, let us watch its structure. Each
+     \(\star\) stands for an arbitrary number. Use the buttons (or the arrow keys) to go
+     through the steps.</p>
+
+  <div class="gauss-stepper" id="gauss-stepper" tabindex="0">
+    <style>
+      .gauss-stepper{
+        --gs-ink:#1d1f21; --gs-green:#007d55; --gs-blue:#14558c;
+        --gs-red:#e11f32; --gs-grey:#aab2b9; --gs-orange:#c2610c;
+        outline:none; margin:1em 0 .5em;
+      }
+      .gauss-stepper .gs-head{ display:flex; flex-wrap:wrap; align-items:center; gap:.5em; min-height:1.8em; }
+      .gauss-stepper .gs-tag{ font-weight:700; color:var(--gs-blue); }
+      .gauss-stepper .gs-badge{ font-size:.85em; font-weight:700; color:#fff; background:var(--gs-green);
+        padding:.15em .6em; border-radius:999px; }
+      .gauss-stepper .gs-badge[hidden]{ display:none; }
+      .gauss-stepper .gs-stage{ display:flex; justify-content:center; margin:.8em 0; }
+      .gauss-stepper .gs-grid{ display:grid; grid-template-columns:repeat(5, 2.5em); }
+      .gauss-stepper .gs-labels{ padding:0 14px; margin-bottom:.15em; }
+      .gauss-stepper .gs-label{ text-align:center; font-size:.85em; color:#6b7278; font-style:italic; }
+      .gauss-stepper .gs-label.free{ color:var(--gs-orange); font-weight:700; }
+      .gauss-stepper .gs-paren{ border-left:1.6px solid var(--gs-ink); border-right:1.6px solid var(--gs-ink);
+        border-radius:16px; padding:6px 12px; }
+      .gauss-stepper .gs-cell{ height:2.3em; display:flex; align-items:center; justify-content:center;
+        font-size:1.12em; color:var(--gs-ink); border-radius:7px; transition:color .25s, background-color .25s; }
+      .gauss-stepper .gs-cell.rhs{ border-left:1.3px solid var(--gs-ink); border-radius:0; }
+      .gauss-stepper .gs-cell.covered{ color:var(--gs-grey); }
+      .gauss-stepper .gs-cell.pivot{ color:var(--gs-green); font-weight:700;
+        box-shadow:inset 0 0 0 1.8px var(--gs-green); }
+      .gauss-stepper .gs-cell.target{ color:var(--gs-blue); font-weight:700; background:rgba(20,85,140,.13); }
+      .gauss-stepper .gs-cell.newzero{ color:var(--gs-red); font-weight:700; }
+      .gauss-stepper .gs-cell.look{ color:var(--gs-orange); font-weight:700;
+        outline:1.8px dashed var(--gs-orange); outline-offset:-4px; }
+      .gauss-stepper .gs-text{ min-height:5.2em; line-height:1.5; }
+      .gauss-stepper .gs-controls{ display:flex; align-items:center; justify-content:center; gap:.6em; margin-top:.4em; }
+      .gauss-stepper button{ font:inherit; font-size:.92em; padding:.35em .9em; border-radius:8px; cursor:pointer;
+        border:1.3px solid var(--gs-blue); background:#fff; color:var(--gs-blue); }
+      .gauss-stepper button:hover:not(:disabled){ background:rgba(20,85,140,.08); }
+      .gauss-stepper button:disabled{ opacity:.35; cursor:default; }
+      .gauss-stepper .gs-count{ font-size:.9em; color:#6b7278; min-width:4.5em; text-align:center; }
+    </style>
+
+    <div class="gs-head"><span class="gs-tag"></span><span class="gs-badge" hidden></span></div>
+    <div class="gs-stage">
+      <div>
+        <div class="gs-grid gs-labels"></div>
+        <div class="gs-paren"><div class="gs-grid gs-matrix"></div></div>
+      </div>
+    </div>
+    <div class="gs-text"></div>
+    <div class="gs-controls">
+      <button type="button" class="gs-restart">↺ Restart</button>
+      <button type="button" class="gs-prev">← Previous</button>
+      <span class="gs-count"></span>
+      <button type="button" class="gs-next">Next →</button>
+    </div>
+
+    <script>
+    (function () {
+      /* Each row is 5 tokens (4 unknowns | right-hand side).
+         Token = value (* for a star) + optional marker:
+           p pivot (green box)   t entry being cleared (blue)
+           r zero created in Phase 2 (red)   z entry to look at (orange, dashed) */
+      var S = [
+        { tag:"Start", cov:[],
+          rows:["* * * * *","* * * * *","* * * * *","* * * * *"],
+          text:"An augmented matrix: \\(4\\) equations in \\(4\\) unknowns \\(x_1,\\dots,x_4\\). The last column, after the bar, is the right-hand side." },
+        { tag:"Phase 1 · Steps 1–2", cov:[],
+          rows:["*p * * * *","* * * * *","* * * * *","* * * * *"],
+          text:"The leftmost nonzero column is column \\(1\\); the pivot position is its top entry. If that entry is \\(0\\), interchange with a lower row having a nonzero entry there." },
+        { tag:"Phase 1 · Step 3", cov:[],
+          rows:["1p * * * *","* * * * *","* * * * *","* * * * *"],
+          text:"Scale the row so that the pivot equals \\(1\\)." },
+        { tag:"Phase 1 · Step 4", cov:[],
+          rows:["1p * * * *","*t * * * *","*t * * * *","*t * * * *"],
+          text:"Clear the entries below the pivot, by replacements \\(R_i:=R_i-\\lambda R_1\\)." },
+        { tag:"Phase 1 · Step 5", cov:[0],
+          rows:["1 * * * *","0 * * * *","0 * * * *","0 * * * *"],
+          text:"Cover the pivot row (in grey) and start again on the rows that remain." },
+        { tag:"Phase 1 · Steps 1–3", cov:[0],
+          rows:["1 * * * *","0 1p * * *","0 * * * *","0 * * * *"],
+          text:"In the uncovered part, the leftmost nonzero column is column \\(2\\). Interchange rows if needed, then scale to get a pivot equal to \\(1\\)." },
+        { tag:"Phase 1 · Step 4", cov:[0],
+          rows:["1 * * * *","0 1p * * *","0 *t * * *","0 *t * * *"],
+          text:"Clear the entries below the pivot." },
+        { tag:"Phase 1 · Step 5", cov:[0,1],
+          rows:["1 * * * *","0 1 * * *","0 0 * * *","0 0 * * *"],
+          text:"Cover the second row as well." },
+        { tag:"Phase 1 · Step 1", cov:[0,1],
+          rows:["1 * * * *","0 1 * * *","0 0 0z * *","0 0 0z * *"],
+          text:"Suppose that, in the uncovered part, column \\(3\\) is entirely zero. <strong>This can happen!</strong> Then column \\(3\\) receives no pivot and we move right, to column \\(4\\). The unknown \\(x_3\\) will be a <em>free variable</em>." },
+        { tag:"Phase 1 · Steps 1–3", cov:[0,1],
+          rows:["1 * * * *","0 1 * * *","0 0 0 1p *","0 0 0 * *"],
+          text:"The pivot position is the top of column \\(4\\) in the uncovered part: get a \\(1\\) there." },
+        { tag:"Phase 1 · Step 4", cov:[0,1],
+          rows:["1 * * * *","0 1 * * *","0 0 0 1p *","0 0 0 *t *"],
+          text:"Clear the entry below the pivot." },
+        { tag:"Phase 1 · Step 5", cov:[0,1,2],
+          rows:["1 * * * *","0 1 * * *","0 0 0 1 *","0 0 0 0 0z"],
+          text:"Cover the third row. What remains is the row \\((0\\ 0\\ 0\\ 0\\mid b)\\). Here we assume \\(b=0\\). Had \\(b\\) been nonzero, it would be a pivot in the last column, i.e. the equation \\(0=b\\): the system would have <em>no solution</em>." },
+        { tag:"End of Phase 1", badge:"Echelon form", cov:[],
+          rows:["1p * * * *","0 1p * * *","0 0 0 1p *","0 0 0 0 0"],
+          text:"Nothing nonzero is left: the matrix is in echelon form, with pivots in columns \\(1\\), \\(2\\), \\(4\\). Step 6 (make every pivot equal to \\(1\\)) is already done, since we scaled at each turn." },
+        { tag:"Phase 2 · Step 7", cov:[],
+          rows:["1 * * *t *","0 1 * *t *","0 0 0 1p *","0 0 0 0 0"],
+          text:"Start from the rightmost pivot (column \\(4\\)) and clear the entries <em>above</em> it, by replacements \\(R_i:=R_i-\\lambda R_3\\)." },
+        { tag:"Phase 2 · Step 7", cov:[],
+          rows:["1 *t * 0r *","0 1p * 0r *","0 0 0 1 *","0 0 0 0 0"],
+          text:"Move to the next pivot on the left (column \\(2\\)) and clear the entry above it." },
+        { tag:"End of Phase 2", badge:"Reduced echelon form", cov:[], free:true,
+          rows:["1p 0r * 0r *","0 1p * 0r *","0 0 0 1p *","0 0 0 0 0"],
+          text:"There is nothing above the pivot of column \\(1\\): the matrix is in reduced echelon form. The basic variables are \\(x_1,x_2,x_4\\) (pivot columns), and \\(x_3\\) is free. Compare with the staircase picture of the reduced echelon form." }
+      ];
+
+      var root = document.getElementById("gauss-stepper");
+      var q = function (s) { return root.querySelector(s); };
+      var tagEl = q(".gs-tag"), badgeEl = q(".gs-badge"), labelsEl = q(".gs-labels"),
+          matEl = q(".gs-matrix"), textEl = q(".gs-text"), countEl = q(".gs-count"),
+          prevB = q(".gs-prev"), nextB = q(".gs-next"), restartB = q(".gs-restart");
+      var MARK = { p:"pivot", t:"target", r:"newzero", z:"look" };
+      var k = 0;
+
+      function render() {
+        var st = S[k];
+        tagEl.textContent = st.tag;
+        badgeEl.hidden = !st.badge;
+        badgeEl.textContent = st.badge || "";
+
+        var lab = "";
+        for (var c = 0; c < 5; c++) {
+          lab += '<div class="gs-label' + (st.free && c === 2 ? ' free' : '') + '">' +
+                 (c < 4 ? 'x<sub>' + (c + 1) + '</sub>' + (st.free && c === 2 ? ' free' : '') : '') + '</div>';
+        }
+        labelsEl.innerHTML = lab;
+
+        var html = "";
+        st.rows.forEach(function (row, r) {
+          row.split(" ").forEach(function (tok, c) {
+            var v = tok.charAt(0), m = tok.charAt(1), cls = "gs-cell";
+            if (c === 4) cls += " rhs";
+            if (st.cov.indexOf(r) >= 0) cls += " covered";
+            if (MARK[m]) cls += " " + MARK[m];
+            html += '<div class="' + cls + '">' + (v === "*" ? "★" : v) + '</div>';
+          });
+        });
+        matEl.innerHTML = html;
+
+        textEl.innerHTML = st.text;
+        countEl.textContent = (k + 1) + " / " + S.length;
+        prevB.disabled = (k === 0);
+        nextB.disabled = (k === S.length - 1);
+        if (window.MathJax && MathJax.typesetPromise) {
+          if (MathJax.typesetClear) MathJax.typesetClear([textEl]);
+          MathJax.typesetPromise([textEl]).catch(function () {});
+        }
+      }
+
+      prevB.addEventListener("click", function () { if (k > 0) { k--; render(); } });
+      nextB.addEventListener("click", function () { if (k < S.length - 1) { k++; render(); } });
+      restartB.addEventListener("click", function () { k = 0; render(); });
+      root.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" && k < S.length - 1) { k++; render(); e.preventDefault(); }
+        if (e.key === "ArrowLeft"  && k > 0)            { k--; render(); e.preventDefault(); }
+      });
+
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.startup.promise.then(render);
+      } else {
+        render();
+        window.addEventListener("load", render);
+      }
+    })();
+    </script>
+  </div>
+</div>
+
+
+  <div class="box illustration">
+    <div class="title">A first example</div>
+    <p>We start with a system where the numbers are friendly: no interchange is needed, and no
+       fraction appears.</p>
+    <div class="math">
+      \[
+        \begin{cases}
+          x+y+z=6,\\
+          2x+3y+z=11,\\
+          x+2y+3z=14,
+        \end{cases}
+        \qquad\rightsquigarrow\qquad
+        \left(\begin{array}{ccc|c}\color{#007d55}{\boxed{1}}&1&1&6\\2&3&1&11\\1&2&3&14\end{array}\right).
+      \]
+    </div>
+
+    <p><strong>Phase 1.</strong> The pivot of column \(1\) is already \(1\); we clear the entries
+       below it. In the remaining rows, the pivot of column \(2\) is again \(1\); we clear the entry
+       below it. Finally we scale the last row so that its pivot equals \(1\):</p>
+    <div class="math">
+      \[
+        \xrightarrow[\;R_3:=R_3-R_1\;]{\;R_2:=R_2-2R_1\;}
+        \left(\begin{array}{ccc|c}1&1&1&6\\0&\color{#007d55}{\boxed{1}}&-1&-1\\0&1&2&8\end{array}\right)
+        \xrightarrow{\;R_3:=R_3-R_2\;}
+        \left(\begin{array}{ccc|c}1&1&1&6\\0&1&-1&-1\\0&0&3&9\end{array}\right)
+        \xrightarrow{\;R_3:=\tfrac13R_3\;}
+        \left(\begin{array}{ccc|c}1&1&1&6\\0&1&-1&-1\\0&0&\color{#007d55}{\boxed{1}}&3\end{array}\right).
+      \]
+    </div>
+    <p>The matrix is in echelon form, with pivots in columns \(1,2,3\).</p>
+
+    <p><strong>Phase 2.</strong> We clear the entries above the pivot of column \(3\), then the
+       entry above the pivot of column \(2\):</p>
+    <div class="math">
+      \[
+        \xrightarrow[\;R_1:=R_1-R_3\;]{\;R_2:=R_2+R_3\;}
+        \left(\begin{array}{ccc|c}1&1&\color{#e11f32}{0}&3\\0&1&\color{#e11f32}{0}&2\\0&0&1&3\end{array}\right)
+        \xrightarrow{\;R_1:=R_1-R_2\;}
+        \left(\begin{array}{ccc|c}1&\color{#e11f32}{0}&0&1\\0&1&0&2\\0&0&1&3\end{array}\right).
+      \]
+    </div>
+    <p>The matrix is in reduced echelon form and reads \(x=1\), \(y=2\), \(z=3\), so
+       \(S=\{(1,2,3)\}\).</p>
+    <p><strong>Check</strong>, in the original system:</p>
+    <div class="math">
+      \[
+        1+2+3=6,\qquad 2\cdot1+3\cdot2+3=11,\qquad 1+2\cdot2+3\cdot3=14.
+      \]
+    </div>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Worked example: the algorithm run step by step</div>
+    <p>Let us now solve the system of the first example, whose augmented matrix is</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&6\\2&-3&2&14\\3&1&-1&-2\end{array}\right).
+      \]
+    </div>
+    <p>We follow the steps of the algorithm in order, greying out the rows that have already been
+       covered and boxing the pivot in use.</p>
+
+    <p><strong>Phase 1.</strong></p>
+
+    <p class="turn">First turn</p>
+    <ul>
+      <li><em>Step 1.</em> The leftmost nonzero column is column \(1\); the pivot position is at its
+          top, and carries \(1\).</li>
+         <div class="math">
+          \[
+            \left(\begin{array}{ccc|c}
+              \color{#007d55}{\boxed{1}}&2&3&6\\2&-3&2&14\\3&1&-1&-2\end{array}\right).
+          \]
+        </div>
+      <li><em>Step 2.</em> That entry is nonzero, so no interchange is needed.</li>
+      <li><em>Step 3.</em> The pivot is already \(1\), so no scaling is needed.
+       
+      </li>
+      <li><em>Step 4.</em> We clear the two entries below the pivot:
+        <div class="math">
+          \[
+            \xrightarrow[\;R_3:=R_3-3R_1\;]{\;R_2:=R_2-2R_1\;}
+            \left(\begin{array}{ccc|c}1&2&3&6\\0&-7&-4&2\\0&-5&-10&-20\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 5.</em> We cover the first row (in grey below) and start again on the two rows
+          that remain.</li>
+        <div class="math">
+          \[
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              0&-7&-4&2\\ 0&-5&-10&-20\end{array}\right).
+          \]
+        </div>
+    </ul>
+
+    <p class="turn">Second turn</p>
+    <ul>
+      <li><em>Step 1.</em> In the uncovered part, the leftmost nonzero column is column \(2\); the
+          pivot position is its top entry, \(-7\):
+        <div class="math">
+          \[
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              0&\color{#007d55}{\boxed{-7}}&-4&2\\ 0&-5&-10&-20\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 2.</em> No interchange is <em>needed</em>, since \(-7\neq0\). We perform one
+          anyway: with \(-5\) in the pivot position, the scaling of step 3 will not create
+          fractions. This is the kind of freedom the algorithm leaves us:
+        <div class="math">
+          \[
+            \xrightarrow{\;R_2\leftrightarrow R_3\;}
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              0&-5&-10&-20\\ 0&-7&-4&2\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 3.</em> We scale to get a pivot equal to \(1\):
+        <div class="math">
+          \[
+            \xrightarrow{\;R_2:=-\tfrac15R_2\;}
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              0&\color{#007d55}{\boxed{1}}&2&4\\ 0&-7&-4&2\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 4.</em> We clear the entry below the pivot:
+        <div class="math">
+          \[
+            \xrightarrow{\;R_3:=R_3+7R_2\;}
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              0&1&2&4\\ 0&0&10&30\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 5.</em> We cover the second row as well, and go on with the last one.</li>
+    </ul>
+
+    <p class="turn">Third turn</p>
+    <ul>
+      <li><em>Step 1.</em> Only the third row is left; its leftmost nonzero column is column \(3\),
+          with \(10\) in the pivot position.</li>
+      <li><em>Step 2.</em> Nonzero, so no interchange.</li>
+      <li><em>Step 3.</em> We scale:
+        <div class="math">
+          \[
+            \xrightarrow{\;R_3:=\tfrac1{10}R_3\;}
+            \left(\begin{array}{ccc|c}
+              \color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{3}&\color{#aab2b9}{6}\\
+              \color{#aab2b9}{0}&\color{#aab2b9}{1}&\color{#aab2b9}{2}&\color{#aab2b9}{4}\\
+              0&0&\color{#007d55}{\boxed{1}}&3\end{array}\right).
+          \]
+        </div>
+      </li>
+      <li><em>Step 4.</em> There is nothing below the pivot.</li>
+      <li><em>Step 5.</em> Covering the third row leaves nothing, so Phase 1 stops here.</li>
+    </ul>
+
+    <p>The matrix is now in echelon form, with pivots \(1,1,1\) in columns \(1,2,3\):</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&2&3&6\\0&1&2&4\\0&0&1&3\end{array}\right).
+      \]
+    </div>
+
+    <p><strong>Phase 2.</strong></p>
+    <ul>
+      <li><em>Step 6.</em> Every pivot already equals \(1\): we scaled at step 3 of each turn, so
+          there is nothing to do. (Had we skipped the optional scalings, this is where they would
+          be paid for.)</li>
+      <li><em>Step 7.</em> We start from the rightmost pivot, in column \(3\), and clear what is
+          above it:
+        <div class="math">
+          \[
+            \xrightarrow[\;R_1:=R_1-3R_3\;]{\;R_2:=R_2-2R_3\;}
+            \left(\begin{array}{ccc|c}1&2&\color{#e11f32}{0}&-3\\0&1&\color{#e11f32}{0}&-2\\0&0&1&3\end{array}\right).
+          \]
+        </div>
+        Then the pivot of column \(2\):
+        <div class="math">
+          \[
+            \xrightarrow{\;R_1:=R_1-2R_2\;}
+            \left(\begin{array}{ccc|c}1&\color{#e11f32}{0}&0&1\\0&1&0&-2\\0&0&1&3\end{array}\right).
+          \]
+        </div>
+        Above the pivot of column \(1\) there is nothing, so we are done.
+      </li>
+    </ul>
+
+    <p>The matrix is in reduced echelon form and reads \(x=1\), \(y=-2\), \(z=3\). The solution set
+       is therefore \(S=\{(1,-2,3)\}\).</p>
+    <p><strong>Check</strong>, in the original system:</p>
+    <div class="math">
+      \[
+        1+2\cdot(-2)+3\cdot3=6,\qquad 2\cdot1-3\cdot(-2)+2\cdot3=14,\qquad 3\cdot1+(-2)-3=-2.
+      \]
+    </div>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Remark (always check)</div>
+    <p>Row reduction involves many small computations, and a single sign error changes the answer.
+       Substituting the result into the <em>original</em> system costs little and catches most mistakes.
+       When there are infinitely many solutions, substitute the parametric form: the parameters must
+       cancel, for every value of the parameters.</p>
+  </div>
+
+  <h2>Reading the solutions off the reduced echelon form</h2>
+
+  <div class="box definition">
+    <div class="title">Definition (consistent system)</div>
+    <p>A system is <em>consistent</em> if it has at least one solution, and <em>inconsistent</em> if it
+       has none.</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Criterion of inconsistency</div>
+    <p>A system is inconsistent (has no solution) if and only if an echelon form of its augmented
+       matrix has a row \((0\ \cdots\ 0\mid b)\) with \(b\neq0\); equivalently, if and only if the
+       last column is a pivot column.</p>
+    <p><strong>Proof.</strong> Such a row is the equation \(0=b\), which has no solution, so by the
+       Lemma above the system has none. Conversely, if no such row occurs, the recipe below produces
+       a solution. \(\square\)</p>
+  </div>
+
+  <div class="box definition">
+    <div class="title">Definition (basic and free variables)</div>
+    <p>Assume the system is consistent, and let \(A\) be an echelon form of its augmented matrix.
+       The unknown \(x_i\) is called <em>basic</em> if the \(i\)-th column of \(A\) is a pivot
+       column, and <em>free</em> otherwise. (The last column is not the column of an unknown, so it
+       is not concerned.)</p>
+  </div>
+
+  <div class="box algo">
+    <div class="title">Recipe (parametric form)</div>
+    <ol class="num-paren">
+      <li>Row reduce the augmented matrix to reduced echelon form.</li>
+      <li>Write down the corresponding system.</li>
+      <li>Move all free variables to the right-hand side.</li>
+    </ol>
+    <p>Each basic variable is then expressed in terms of the free ones, and every choice of values
+       for the free variables gives exactly one solution.</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example with no free variable</div>
+    <p>Suppose the reduced echelon form is</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&0&0&2\\0&1&0&-1\\0&0&1&4\end{array}\right)
+        \quad\rightsquigarrow\quad
+        \begin{cases}x_1=2,\\ x_2=-1,\\ x_3=4.\end{cases}
+      \]
+    </div>
+    <p>Every column of unknowns is a pivot column: all variables are basic, and step 3 of the recipe
+       has nothing to move. The solution is read directly: \(S=\{(2,-1,4)\}\).</p>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example with one free variable</div>
+    <p>Suppose the reduced echelon form is</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{ccc|c}1&0&3&5\\0&1&4&6\end{array}\right)
+        \quad\rightsquigarrow\quad
+        \begin{cases}x_1+3x_3=5,\\ x_2+4x_3=6.\end{cases}
+      \]
+    </div>
+    <p>The pivots are in columns \(1\) and \(2\), so \(x_1,x_2\) are basic and \(x_3\) is free:</p>
+    <div class="math">
+      \[
+        \begin{cases}x_1=5-3x_3,\\ x_2=6-4x_3,\\ x_3 \ \text{free}.\end{cases}
+      \]
+    </div>
+    <p>Writing \(x_3=t\), the solution set admits the <em>parametric description</em></p>
+    <div class="math">
+      \[
+        S=\left\{\begin{pmatrix}5-3t\\6-4t\\t\end{pmatrix}  \bigm|\ t\in\mathbb{K}\right\}
+        =\left\{\begin{pmatrix}5\\6\\0\end{pmatrix}
+        +t\begin{pmatrix}-3\\-4\\1\end{pmatrix}\ \Bigm|\ t\in\mathbb{K}\right\},
+      \]
+    </div>
+    <p>The system was an
+       implicit description of \(S\) (a test that a triple must pass); the parametric form
+       is an explicit one (a machine producing all elements of \(S\)). </p>
+    <p>Geometrically, \(S\)
+       is the line of \(\mathbb{R}^3\) through \(P=(5,6,0)\) with direction \(v=(-3,-4,1)\).</p>
+
+  <!-- Solution line picture -->
+  <svg viewBox="0 0 400 300" width="400" style="max-width:100%"
+       aria-label="The solution set as a line through (5,6,0) with direction (-3,-4,1)">
+
+    <!-- axes -->
+    <g stroke="#1d1f21" stroke-width="1.4" fill="none">
+      <line x1="143" y1="196" x2="43"  y2="253"/>
+      <line x1="108" y1="203" x2="351" y2="203"/>
+      <line x1="130" y1="225" x2="130" y2="39"/>
+    </g>
+    <g fill="#1d1f21">
+      <path d="M43,253 L49.1,245.6 L52.5,251.5 Z"/>
+      <path d="M351,203 L342,199.6 L342,206.4 Z"/>
+      <path d="M130,39 L126.6,48 L133.4,48 Z"/>
+    </g>
+
+    <!-- the solution line -->
+    <line x1="240" y1="285" x2="52" y2="63" stroke="#14558c" stroke-width="2.4"/>
+
+    <!-- position vector of P -->
+    <line x1="130" y1="203" x2="204" y2="243" stroke="#e11f32" stroke-width="2"/>
+    <path d="M204,243 L194.5,241.7 L197.7,235.7 Z" fill="#e11f32"/>
+
+    <!-- direction vector, attached at P -->
+    <line x1="204" y1="243" x2="150" y2="179" stroke="#007d55" stroke-width="2"/>
+    <path d="M150,179 L158.4,183.7 L153.2,188.1 Z" fill="#007d55"/>
+
+    <circle cx="130" cy="203" r="2.6" fill="#1d1f21"/>
+
+    <g font-family="system-ui, sans-serif" font-size="14" fill="#1d1f21">
+      <text x="35"  y="266" text-anchor="middle">x</text>
+      <text x="361" y="209" text-anchor="middle">y</text>
+      <text x="130" y="27"  text-anchor="middle">z</text>
+      <text x="122" y="192" text-anchor="end">O</text>
+      <text x="222" y="252" font-weight="700" fill="#e11f32">P = (5, 6, 0)</text>
+      <text x="166" y="174" font-weight="700" fill="#007d55">v = (−3, −4, 1)</text>
+      <text x="72"  y="56"  font-size="15" font-weight="700" fill="#14558c">S</text>
+    </g>
+  </svg>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Example with two free variables</div>
+    <p>Suppose the reduced echelon form, for a system in the four unknowns \(x_1,x_2,x_3,x_4\), is</p>
+    <div class="math">
+      \[
+        \left(\begin{array}{cccc|c}\color{#007d55}{\boxed{1}}&2&0&-1&3\\0&0&\color{#007d55}{\boxed{1}}&2&1\end{array}\right)
+        \quad\rightsquigarrow\quad
+        \begin{cases}x_1+2x_2-x_4=3,\\ x_3+2x_4=1.\end{cases}
+      \]
+    </div>
+    <p>The pivots are in columns \(1\) and \(3\), so \(x_1,x_3\) are basic and \(x_2,x_4\) are free:</p>
+    <div class="math">
+      \[
+        \begin{cases}x_1=3-2x_2+x_4,\\ x_2 \ \text{free},\\ x_3=1-2x_4,\\ x_4 \ \text{free}.\end{cases}
+      \]
+    </div>
+    <p>Writing \(x_2=s\) and \(x_4=t\), the solution set admits the parametric description</p>
+    <div class="math">
+      \[
+        S=\left\{\begin{pmatrix}3-2s+t\\s\\1-2t\\t\end{pmatrix}\ \Bigm|\ s,t\in\mathbb{K}\right\}
+        =\left\{\begin{pmatrix}3\\0\\1\\0\end{pmatrix}
+        +s\begin{pmatrix}-2\\1\\0\\0\end{pmatrix}
+        +t\begin{pmatrix}1\\0\\-2\\1\end{pmatrix}\ \Bigm|\ s,t\in\mathbb{K}\right\}.
+      \]
+    </div>
+    <p>Each free variable contributes one parameter and one direction vector: the vector multiplied
+       by \(s\) has a \(1\) in position \(2\) and a \(0\) in position \(4\), and the reverse for
+       the vector multiplied by \(t\). Geometrically, \(S\) is a plane of \(\mathbb{R}^4\) through
+       \((3,0,1,0)\).</p>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Theorem (existence and uniqueness)</div>
+    <p>Let \(S\) be a system of \(m\) equations in \(n\) unknowns, and let \(r\) be the number of
+       pivots of an echelon form of its augmented matrix.</p>
+    <ol class="alpha-paren">
+      <li>If the last column is a pivot column, then \(S\) has no solution.</li>
+      <li>Otherwise, if \(r=n\) (every column of unknowns carries a pivot), then \(S\) has a unique
+          solution.</li>
+      <li>Otherwise \(r&lt;n\), there is at least one free variable, and \(S\) has infinitely many
+          solutions.</li>
+    </ol>
+    <p><strong>Proof.</strong> (a) is the criterion of inconsistency. In the other cases the recipe
+       expresses the \(r\) basic variables in terms of the \(n-r\) free ones, and the solutions are
+       in bijection with \(\mathbb{K}^{\,n-r}\): a single one if \(r=n\), infinitely many if
+       \(r&lt;n\), since \(\mathbb{K}\) is infinite. \(\square\)</p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">One consequence</div>
+    <p>Since \(r\le m\), a system with fewer equations than unknowns (\(m&lt;n\)) is never
+          uniquely solvable: it has no solution or infinitely many.</p>
+  </div>
+
+<div class="box illustration">
+  <div class="title">Picture (two equations, two unknowns)</div>
+  <p>Each equation is a line in \(\mathbb{R}^2\), and a solution is a point lying on both.
+     Here are three explicit systems, each reduced by one replacement.</p>
+
+  <style>
+    .three-cases{ display:flex; flex-wrap:wrap; justify-content:center; gap:1.2em; margin:1em 0; }
+    .three-cases .case{ flex:1 1 220px; max-width:260px; text-align:center; }
+    .three-cases .case h4{ margin:.2em 0 .4em; color:#14558c; font-size:1em; }
+    .three-cases svg{ width:160px; max-width:100%; display:block; margin:0 auto .4em; }
+    .three-cases .verdict{ font-size:.92em; margin-top:.3em; }
+  </style>
+
+  <div class="three-cases">
+
+    <!-- Case 1: unique solution -->
+    <div class="case">
+      <h4>Unique solution</h4>
+      <svg viewBox="0 0 160 160" aria-label="Lines x+y=3 and x-y=1 meeting at (2,1)">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="0" x2="160" y2="160" stroke="#e63946" stroke-width="2"/>
+        <line x1="32" y1="160" x2="160" y2="32" stroke="#007d55" stroke-width="2"/>
+        <circle cx="96" cy="96" r="4" fill="#14558c"/>
+        <text x="102" y="90" font-size="12" fill="#14558c" font-family="system-ui, sans-serif">(2,1)</text>
+      </svg>
+      \[
+        \begin{cases}\color{#e63946}{x+y=3}\\ \color{#007d55}{x-y=1}\end{cases}
+      \]
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&3\\1&-1&1\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&3\\0&\color{#007d55}{\boxed{-2}}&-2\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">A pivot in every column of unknowns:
+        \(S=\{(2,1)\}\). Check: \(2+1=3\), \(2-1=1\).</div>
+    </div>
+
+    <!-- Case 2: no solution -->
+    <div class="case">
+      <h4>No solution</h4>
+      <svg viewBox="0 0 160 160" aria-label="Parallel lines x+y=1 and x+y=3">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="64" x2="96" y2="160" stroke="#e63946" stroke-width="2"/>
+        <line x1="0" y1="0" x2="160" y2="160" stroke="#007d55" stroke-width="2"/>
+      </svg>
+      \[
+        \begin{cases}\color{#e63946}{x+y=1}\\ \color{#007d55}{x+y=3}\end{cases}
+      \]
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&1\\1&1&3\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&1\\0&0&\color{#e11f32}{\boxed{2}}\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">A pivot in the last column: the second row reads \(0=2\),
+        so \(S=\varnothing\).</div>
+    </div>
+
+    <!-- Case 3: infinitely many -->
+    <div class="case">
+      <h4>Infinitely many</h4>
+      <svg viewBox="0 0 160 160" aria-label="The lines x+y=2 and 2x+2y=4 coincide">
+        <g stroke="#1d1f21" stroke-width="1" opacity=".55">
+          <line x1="0" y1="128" x2="160" y2="128"/><line x1="32" y1="0" x2="32" y2="160"/>
+        </g>
+        <line x1="0" y1="32" x2="128" y2="160" stroke="#e63946" stroke-width="4"/>
+        <line x1="0" y1="32" x2="128" y2="160" stroke="#007d55" stroke-width="2" stroke-dasharray="6 5"/>
+      </svg>
+      \[
+        \begin{array}{c}
+          \left(\begin{array}{cc|c}1&1&2\\2&2&4\end{array}\right)\\[2pt]
+          \Big\downarrow\ {\scriptstyle R_2:=R_2-2R_1}\\[2pt]
+          \left(\begin{array}{cc|c}\color{#007d55}{\boxed{1}}&1&2\\0&0&0\end{array}\right)
+        \end{array}
+      \]
+      <div class="verdict">No pivot in column 2: \(y\) is free, and
+        \(S=\{(2-t,\,t)\mid t\in\mathbb{R}\}\). Check: \((2-t)+t=2\),
+        \(2(2-t)+2t=4\).</div>
+    </div>
+
+  </div>
+
+  <p>These are exactly the three cases of the theorem. Elimination is the algebraic way of telling
+     them apart, and it keeps working when no picture is available.</p>
+</div>
+
+
+  <div class="box illustration">
+    <div class="title">Picture (three equations, three unknowns)</div>
+    <p>See the three examples in Lecture 0. </p>
+  </div>
+
+  <h2>Structure of the solution set and dimension</h2>
+
+  <p>With dimension theory at hand, we can say precisely what kind of set the parametric form
+     describes.</p>
+
+  <div class="box definition">
+    <div class="title">Definition (associated homogeneous system)</div>
+    <p>A system is <em>homogeneous</em> if all its right-hand sides vanish: \(b_1=\cdots=b_m=0\).
+       The <em>homogeneous system associated with</em> a system \((\Sigma)\) is the system
+       \((\Sigma_0)\) with the same left-hand sides and all right-hand sides replaced by \(0\). On
+       augmented matrices, the last column is replaced by zeros.</p>
+    <div class="math">
+      \[
+        (\Sigma)\ \begin{cases}x_1+3x_3=\color{#e11f32}{5}\\ x_2+4x_3=\color{#e11f32}{6}\end{cases}
+        \qquad\rightsquigarrow\qquad
+        (\Sigma_0)\ \begin{cases}x_1+3x_3=\color{#e11f32}{0}\\ x_2+4x_3=\color{#e11f32}{0}\end{cases}
+      \]
+    </div>
+  </div>
+
+  <div class="box lemma">
+    <div class="title">Proposition (structure of the solution set)</div>
+    <p>Let \((\Sigma)\) be a consistent system with \(n\) unknowns, let \(r\) be the number of pivots
+       of an echelon form of its augmented matrix, let \(S\) be its set of solutions, and \(S_0\) the
+       set of solutions of \((\Sigma_0)\).</p>
+    <ol class="num-paren">
+      <li>\(S_0\) is a vector subspace of \(\mathbb{K}^n\), and \(\dim S_0=n-r\), the number of free
+          variables.</li>
+      <li>For any particular solution \(p\in S\),
+          \(S=p+S_0:=\{\,p+v\mid v\in S_0\,\}\).</li>
+    </ol>
+    <p>In particular, \(S\) is a vector subspace of \(\mathbb{K}^n\) if, and only if, \((\Sigma)\) is
+       homogeneous.</p>
+
+    <p><strong>Proof.</strong> <em>\(S_0\) is a subspace.</em> The zero vector satisfies every
+       equation of \((\Sigma_0)\). Let \(u,v\in S_0\) and \(\lambda,\mu\in\mathbb{K}\). For each \(i\),
+      \[
+        a_{i1}(\lambda u_1+\mu v_1)+\cdots+a_{in}(\lambda u_n+\mu v_n)
+        =\lambda\,(a_{i1}u_1+\cdots+a_{in}u_n)+\mu\,(a_{i1}v_1+\cdots+a_{in}v_n)=0,
+      \]
+       so \(\lambda u+\mu v\in S_0\).</p>
+    <p><em>Pivots of \((\Sigma_0)\).</em> Apply to the augmented matrix of \((\Sigma_0)\) the row
+       operations which bring that of \((\Sigma)\) to reduced echelon form. The coefficient columns
+       change in the same way, and the last column stays zero, since each operation replaces rows by
+       linear combinations of rows. As \((\Sigma)\) is consistent, its last column is not a pivot
+       column. So both systems have the same \(r\) pivot columns, hence the same basic and free
+       variables.</p>
+    <p><em>A basis of \(S_0\).</em> Let \(x_{j_1},\ldots,x_{j_{n-r}}\) be the free variables. By the
+       recipe applied to \((\Sigma_0)\), the free variables take arbitrary values, and each basic
+       variable is a linear combination of them, with no constant term. For \(k=1,\ldots,n-r\), let
+       \(v_k\in S_0\) be the solution with \(x_{j_k}=1\) and \(x_{j_l}=0\) for \(l\neq k\).</p>
+    <ul>
+      <li><em>Spanning.</em> Let \(x\in S_0\) and \(t_k=x_{j_k}\). Then
+          \(y=x-(t_1v_1+\cdots+t_{n-r}v_{n-r})\) lies in \(S_0\), and all its free variables vanish;
+          hence so do its basic variables, and \(y=0\).</li>
+      <li><em>Linear independence.</em> The coordinate of index \(j_k\) of
+          \(t_1v_1+\cdots+t_{n-r}v_{n-r}\) is \(t_k\). So if this combination is \(0\), all
+          \(t_k\) vanish.</li>
+    </ul>
+    <p>Thus \(v_1,\ldots,v_{n-r}\) is a basis of \(S_0\), and \(\dim S_0=n-r\). (If \(r=n\), the
+       family is empty and \(S_0=\{0\}\).)</p>
+    <p><em>\(S=p+S_0\).</em> Let \(x\in\mathbb{K}^n\). Since \(p\in S\), for each \(i\),
+      \[
+        a_{i1}(x_1-p_1)+\cdots+a_{in}(x_n-p_n)=(a_{i1}x_1+\cdots+a_{in}x_n)-b_i .
+      \]
+       So \(x\) satisfies the \(i\)-th equation of \((\Sigma)\) if, and only if, \(x-p\) satisfies the
+       \(i\)-th equation of \((\Sigma_0)\). Hence \(x\in S\iff x-p\in S_0\).</p>
+    <p><em>Last claim.</em> If \((\Sigma)\) is homogeneous, then \(S=S_0\). Otherwise some
+       \(b_i\neq0\), so \(0\) does not satisfy the \(i\)-th equation, and \(0\notin S\). \(\square\)</p>
+  </div>
+
+  <div class="box remark">
+    <div class="title">Remarks</div>
+    <ol class="num-paren">
+      <li>In general \(S\) is not a vector space but a <em>translate</em> of one, of dimension
+          \(n-r\): a point if \(n-r=0\), a line if \(n-r=1\), a plane if \(n-r=2\), and so on.</li>
+      <li>This recovers the existence and uniqueness theorem: a consistent system has a unique
+          solution if, and only if, \(S_0=\{0\}\), that is \(r=n\).</li>
+      <li>Since \(r\le m\), the solutions of a homogeneous system of \(m\) equations in \(n\)
+          unknowns form a subspace of dimension \(n-r\ge n-m\). This is the bound of Remark
+          (Dimension matters) in Lecture 6: \(m\) hyperplanes of \(\mathbb{K}^n\) meet in a subspace
+          of dimension at least \(n-m\).</li>
+    </ol>
+  </div>
+
+  <div class="box illustration">
+    <div class="title">Examples</div>
+    <ol class="num-paren">
+      <li>For the system \((\Sigma)\) above, the pivots are in columns \(1,2\), so \(r=2\) and
+          \(x_3\) is free. Taking \(x_3=0\) gives \(p=(5,6,0)\in S\); taking \(x_3=1\) in
+          \((\Sigma_0)\) gives \(v_1=(-3,-4,1)\). Check: \(-3+3\cdot1=0\) and \(-4+4\cdot1=0\). Hence
+        <div class="math">
+          \[
+            S_0=\langle(-3,-4,1)\rangle,\qquad \dim S_0=3-2=1,\qquad
+            S=(5,6,0)+\langle(-3,-4,1)\rangle,
+          \]
+        </div>
+          the line of the picture above, which does not pass through \(0\).</li>
+      <li>In Example (Two planes in \(\mathbb{R}^3\)) of Lecture 6, \(P\cap Q\) is the set of
+          solutions of the homogeneous system \(x+y+z=0\), \(x-y=0\):
+        <div class="math">
+          \[
+            \left(\begin{array}{ccc|c}1&1&1&0\\1&-1&0&0\end{array}\right)
+            \xrightarrow{R_2:=R_2-R_1}
+            \left(\begin{array}{ccc|c}1&1&1&0\\0&-2&-1&0\end{array}\right)
+            \xrightarrow[R_1:=R_1-R_2]{R_2:=-\frac12R_2}
+            \left(\begin{array}{ccc|c}1&0&\tfrac12&0\\0&1&\tfrac12&0\end{array}\right).
+          \]
+        </div>
+          So \(r=2\), \(z\) is free, and \(\dim(P\cap Q)=3-2=1\), as predicted by Grassmann's formula.
+          Taking \(z=-2\) gives \((1,1,-2)\), the vector found there. Check: \(1+1-2=0\) and
+          \(1-1=0\).</li>
+    </ol>
+  </div>
+
+  <div class="box keyq">
+    <div class="title">Summary</div>
+    <ul>
+      <li>System \(\rightsquigarrow\) augmented matrix; elimination \(\rightsquigarrow\) elementary
+          row operations.</li>
+      <li>Row equivalent matrices have the same solution set, because each operation is invertible.</li>
+      <li>Gauss: Phase 1 gives an echelon form, Phase 2 the reduced echelon form, which is unique.</li>
+      <li>Pivots decide everything: pivot in the last column \(\Rightarrow\) no solution; a pivot in
+          every column of unknowns \(\Rightarrow\) exactly one; a missing pivot \(\Rightarrow\) a
+          free variable, hence infinitely many, described in parametric form.</li>
+      <li>Structure: \(S=p+S_0\), where \(S_0\), the solution set of the homogeneous system, is a
+          subspace of dimension \(n-r\).</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
